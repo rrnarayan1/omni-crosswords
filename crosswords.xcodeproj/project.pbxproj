@@ -10,10 +10,11 @@
 		1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206724C4F44000240AF8 /* AppDelegate.swift */; };
 		1C73206A24C4F44000240AF8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206924C4F44000240AF8 /* SceneDelegate.swift */; };
 		1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206B24C4F44000240AF8 /* crosswords.xcdatamodeld */; };
-		1C73206F24C4F44000240AF8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206E24C4F44000240AF8 /* ContentView.swift */; };
+		1C73206F24C4F44000240AF8 /* CrosswordListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206E24C4F44000240AF8 /* CrosswordListView.swift */; };
 		1C73207124C4F44200240AF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207024C4F44200240AF8 /* Assets.xcassets */; };
 		1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207324C4F44200240AF8 /* Preview Assets.xcassets */; };
 		1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */; };
+		1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73208C24C688A800240AF8 /* CrosswordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,11 +22,12 @@
 		1C73206724C4F44000240AF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1C73206924C4F44000240AF8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		1C73206C24C4F44000240AF8 /* crosswords.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = crosswords.xcdatamodel; sourceTree = "<group>"; };
-		1C73206E24C4F44000240AF8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1C73206E24C4F44000240AF8 /* CrosswordListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListView.swift; sourceTree = "<group>"; };
 		1C73207024C4F44200240AF8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1C73207324C4F44200240AF8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1C73207624C4F44200240AF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1C73207824C4F44200240AF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C73208C24C688A800240AF8 /* CrosswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +62,8 @@
 			children = (
 				1C73206724C4F44000240AF8 /* AppDelegate.swift */,
 				1C73206924C4F44000240AF8 /* SceneDelegate.swift */,
-				1C73206E24C4F44000240AF8 /* ContentView.swift */,
+				1C73206E24C4F44000240AF8 /* CrosswordListView.swift */,
+				1C73208C24C688A800240AF8 /* CrosswordView.swift */,
 				1C73207024C4F44200240AF8 /* Assets.xcassets */,
 				1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */,
 				1C73207824C4F44200240AF8 /* Info.plist */,
@@ -151,8 +154,9 @@
 			files = (
 				1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */,
 				1C73206A24C4F44000240AF8 /* SceneDelegate.swift in Sources */,
-				1C73206F24C4F44000240AF8 /* ContentView.swift in Sources */,
+				1C73206F24C4F44000240AF8 /* CrosswordListView.swift in Sources */,
 				1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */,
+				1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
