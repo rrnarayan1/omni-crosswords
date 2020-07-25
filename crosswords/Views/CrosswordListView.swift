@@ -19,10 +19,7 @@ struct CrosswordListView: View {
             VStack {
                 Button(action: {
                     let crossword = Crossword(context: self.managedObjectContext)
-                    crossword.length = 5
-                    crossword.height = 5
-                    crossword.id = 1
-                    crossword.entry = Array(repeating: Array(repeating: "", count: 5), count: 5)
+                    buildCrossword(crossword: crossword)
                     do {
                         try self.managedObjectContext.save()
                     } catch {
