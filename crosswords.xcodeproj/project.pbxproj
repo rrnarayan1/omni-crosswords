@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C06D8F024D142EC00B734BB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */; };
+		1C06D8F324D28F2300B734BB /* JsonToCrossword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */; };
 		1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */; };
 		1C6A26B724CA7340002F8DAD /* CrosswordCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */; };
 		1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206724C4F44000240AF8 /* AppDelegate.swift */; };
@@ -17,12 +19,16 @@
 		1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207324C4F44200240AF8 /* Preview Assets.xcassets */; };
 		1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */; };
 		1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73208C24C688A800240AF8 /* CrosswordView.swift */; };
+		8FF77E4AF3B2C6617E786F64 /* Pods_crosswords.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7023B19304F84E38529C2F4E /* Pods_crosswords.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonToCrossword.swift; sourceTree = "<group>"; };
 		1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBuilder.swift; sourceTree = "<group>"; };
+		1C1B32528D01C514E4C01B6F /* Pods-crosswords.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.release.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.release.xcconfig"; sourceTree = "<group>"; };
 		1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordCellView.swift; sourceTree = "<group>"; };
-		1C73206424C4F44000240AF8 /* crosswords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = crosswords.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C73206424C4F44000240AF8 /* OmniCrosswords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmniCrosswords.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C73206724C4F44000240AF8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1C73206924C4F44000240AF8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		1C73206C24C4F44000240AF8 /* crosswords.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = crosswords.xcdatamodel; sourceTree = "<group>"; };
@@ -32,6 +38,8 @@
 		1C73207624C4F44200240AF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1C73207824C4F44200240AF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C73208C24C688A800240AF8 /* CrosswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordView.swift; sourceTree = "<group>"; };
+		7023B19304F84E38529C2F4E /* Pods_crosswords.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_crosswords.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F7CC2A8854497EB136E8E3D9 /* Pods-crosswords.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.debug.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,12 +47,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FF77E4AF3B2C6617E786F64 /* Pods_crosswords.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C06D8F124D28F0700B734BB /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
 		1C6A26B524CA7311002F8DAD /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -60,13 +77,15 @@
 			children = (
 				1C73206624C4F44000240AF8 /* crosswords */,
 				1C73206524C4F44000240AF8 /* Products */,
+				55C1F8DEE41D38B1C9084B2F /* Pods */,
+				CAD8A5F0AF0C67205CC6CDC2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		1C73206524C4F44000240AF8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1C73206424C4F44000240AF8 /* crosswords.app */,
+				1C73206424C4F44000240AF8 /* OmniCrosswords.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -74,12 +93,14 @@
 		1C73206624C4F44000240AF8 /* crosswords */ = {
 			isa = PBXGroup;
 			children = (
+				1C06D8F124D28F0700B734BB /* Firebase */,
 				1C6A26B524CA7311002F8DAD /* Views */,
 				1C73206724C4F44000240AF8 /* AppDelegate.swift */,
 				1C73206924C4F44000240AF8 /* SceneDelegate.swift */,
 				1C73207024C4F44200240AF8 /* Assets.xcassets */,
 				1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */,
 				1C73207824C4F44200240AF8 /* Info.plist */,
+				1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */,
 				1C73206B24C4F44000240AF8 /* crosswords.xcdatamodeld */,
 				1C73207224C4F44200240AF8 /* Preview Content */,
 				1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */,
@@ -95,6 +116,23 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		55C1F8DEE41D38B1C9084B2F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				F7CC2A8854497EB136E8E3D9 /* Pods-crosswords.debug.xcconfig */,
+				1C1B32528D01C514E4C01B6F /* Pods-crosswords.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CAD8A5F0AF0C67205CC6CDC2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7023B19304F84E38529C2F4E /* Pods_crosswords.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -102,9 +140,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1C73207B24C4F44200240AF8 /* Build configuration list for PBXNativeTarget "crosswords" */;
 			buildPhases = (
+				ED6E297EF29A5B5EBFF2943C /* [CP] Check Pods Manifest.lock */,
 				1C73206024C4F44000240AF8 /* Sources */,
 				1C73206124C4F44000240AF8 /* Frameworks */,
 				1C73206224C4F44000240AF8 /* Resources */,
+				E4E2B0F518F9227584C0ECC7 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -112,7 +152,7 @@
 			);
 			name = crosswords;
 			productName = crosswords;
-			productReference = 1C73206424C4F44000240AF8 /* crosswords.app */;
+			productReference = 1C73206424C4F44000240AF8 /* OmniCrosswords.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -154,12 +194,55 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */,
+				1C06D8F024D142EC00B734BB /* GoogleService-Info.plist in Resources */,
 				1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */,
 				1C73207124C4F44200240AF8 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E4E2B0F518F9227584C0ECC7 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ED6E297EF29A5B5EBFF2943C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-crosswords-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1C73206024C4F44000240AF8 /* Sources */ = {
@@ -172,6 +255,7 @@
 				1C6A26B724CA7340002F8DAD /* CrosswordCellView.swift in Sources */,
 				1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */,
 				1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */,
+				1C06D8F324D28F2300B734BB /* JsonToCrossword.swift in Sources */,
 				1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,6 +390,7 @@
 		};
 		1C73207C24C4F44200240AF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F7CC2A8854497EB136E8E3D9 /* Pods-crosswords.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -317,8 +402,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.crosswords;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
+				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -326,6 +411,7 @@
 		};
 		1C73207D24C4F44200240AF8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C1B32528D01C514E4C01B6F /* Pods-crosswords.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -337,8 +423,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.crosswords;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
+				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

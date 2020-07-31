@@ -10,14 +10,15 @@ import SwiftUI
 
 struct CrosswordCellView: View {
     var crossword: Crossword
+    var boxWidth: CGFloat
     var rowNum: Int
     var colNum: Int
     var tag: Int {
-        rowNum*5+colNum
+        rowNum*Int(crossword.length)+colNum
     }
     
     var symbol: Int {
-        crossword.symbols![rowNum][colNum]
+        crossword.symbols![tag]
     }
     
     @Binding var focusedTag: Int
@@ -26,11 +27,11 @@ struct CrosswordCellView: View {
     
     var body: some View {
         ZStack(alignment: .topLeading){
-            CrosswordTextFieldView(crossword: crossword, rowNum: rowNum, colNum: colNum, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted, goingAcross: self.$goingAcross)
+            CrosswordTextFieldView(crossword: crossword, boxWidth: self.boxWidth, rowNum: rowNum, colNum: colNum, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted, goingAcross: self.$goingAcross)
             if symbol > 0 {
                 Text(String(symbol))
-                    .font(.system(size: 14))
-                    .padding(5)
+                    .font(.system(size: self.boxWidth/4))
+                    .padding(self.boxWidth/10)
             }
         }
     }
@@ -38,10 +39,11 @@ struct CrosswordCellView: View {
 
 struct CrosswordTextFieldView: UIViewRepresentable {
     var crossword: Crossword
+    var boxWidth: CGFloat
     var rowNum: Int
     var colNum: Int
     var tag: Int {
-        rowNum*5+colNum
+        rowNum*Int(crossword.length)+colNum
     }
     
     @Binding var focusedTag: Int
@@ -53,12 +55,15 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.tag = self.tag
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
-        textField.text = self.crossword.entry?[self.rowNum][self.colNum]
+        textField.autocapitalizationType = .allCharacters
+        textField.text = self.crossword.entry?[self.tag]
         textField.layer.borderColor = UIColor.black.cgColor
         textField.layer.borderWidth = 1
         textField.textAlignment = NSTextAlignment.center
-        textField.font = UIFont(name: textField.font!.fontName, size: 32)
-        if (textField.text! == ("XXX")) {
+        textField.font = UIFont(name: textField.font!.fontName, size: boxWidth/2)
+        textField.keyboardType = UIKeyboardType.alphabet
+        textField.tintColor = UIColor.clear
+        if (textField.text! == (".")) {
             textField.backgroundColor = UIColor.black
         }
         textField.addTarget(context.coordinator, action: #selector(context.coordinator.touchTextFieldWhileFocused), for: .touchDown)
@@ -66,8 +71,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiTextField: NoActionTextField, context: Context) {
-        if uiTextField.text != self.crossword.entry?[self.rowNum][self.colNum] {
-            self.crossword.entry?[self.rowNum][self.colNum] = uiTextField.text!
+        if uiTextField.text != self.crossword.entry?[self.tag] {
+            self.crossword.entry?[self.tag] = uiTextField.text!
         }
         
         if self.isEditable() {
@@ -93,7 +98,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     }
     
     func isEditable() -> Bool {
-        return self.crossword.entry![self.rowNum][self.colNum] != "XXX"
+        return self.crossword.entry![self.tag] != "."
     }
     
     class Coordinator: NSObject, UITextFieldDelegate {
@@ -124,7 +129,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         func textField(_ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
-            if (textField.text == "XXX") {
+            if (textField.text == ".") {
                 return false
             }
             textField.text = string.uppercased()
@@ -143,20 +148,27 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         func changeFocusToTag(_ tag: Int) {
+            if (tag >= parent.crossword.symbols!.count) {
+                parent.focusedTag = -1
+                parent.isHighlighted = Array(repeating: false, count: parent.crossword.symbols!.count)
+                return
+            }
             parent.focusedTag = tag
-            if (parent.crossword.tagToCluesMap?[tag] == nil) {
+            if (parent.crossword.tagToCluesMap?[tag] == nil || parent.crossword.tagToCluesMap?[tag].count == 0) {
+                parent.focusedTag = -1
+                parent.isHighlighted = Array(repeating: false, count: parent.crossword.symbols!.count)
                 return
             }
             setHighlighting(tag)
         }
         
         func setHighlighting(_ tag: Int) {
-            var newHighlighted = Array(repeating: false, count: 25)
+            var newHighlighted = Array(repeating: false, count: parent.crossword.symbols!.count)
             newHighlighted[tag] = true
             
-            let clues: Array<String> = (parent.crossword.tagToCluesMap?[tag])!
-            let directionalLetter : Character = parent.goingAcross ? "A" : "D"
-            let clue: String = clues[0].last == directionalLetter ? clues[0] : clues[1]
+            let clues: Dictionary<String, String> = (parent.crossword.tagToCluesMap?[tag])!
+            let directionalLetter : String = parent.goingAcross ? "A" : "D"
+            let clue: String = clues[directionalLetter]!
             let clueTags: Array<Int> = (parent.crossword.clueToTagsMap?[clue])!
             for clueTag in clueTags {
                 newHighlighted[clueTag] = true

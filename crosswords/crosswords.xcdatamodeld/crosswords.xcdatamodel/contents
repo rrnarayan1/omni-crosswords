@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Crossword" representedClassName="Crossword" syncable="YES" codeGenerationType="class">
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="clues" optional="YES" attributeType="Transformable" customClassName="Dictionary&lt;String, String&gt;"/>
         <attribute name="clueToTagsMap" optional="YES" attributeType="Transformable" customClassName="Dictionary&lt;String,Array&lt;Int&gt;&gt;"/>
-        <attribute name="entry" optional="YES" attributeType="Transformable" customClassName="Array&lt;Array&lt;String&gt;&gt;"/>
+        <attribute name="copyright" optional="YES" attributeType="String"/>
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="entry" optional="YES" attributeType="Transformable" customClassName="Array&lt;String&gt;"/>
         <attribute name="height" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="length" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="symbols" optional="YES" attributeType="Transformable" customClassName="Array&lt;Array&lt;Int&gt;&gt;"/>
-        <attribute name="tagToCluesMap" optional="YES" attributeType="Transformable" customClassName="Dictionary&lt;Int, Array&lt;String&gt;&gt;"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="outletName" optional="YES" attributeType="String"/>
+        <attribute name="solution" optional="YES" attributeType="Transformable" customClassName="Array&lt;String&gt;"/>
+        <attribute name="symbols" optional="YES" attributeType="Transformable" customClassName="Array&lt;Int&gt;"/>
+        <attribute name="tagToCluesMap" optional="YES" attributeType="Transformable" customClassName="Array&lt;Dictionary&lt;String, String&gt;&gt;"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Crossword" positionX="-340.7421875" positionY="131.96875" width="128" height="148"/>
+        <element name="Crossword" positionX="-340.7421875" positionY="131.96875" width="128" height="268"/>
     </elements>
 </model>
