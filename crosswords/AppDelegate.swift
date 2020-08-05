@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Firebase
+import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        IQKeyboardManager.shared.enable = true
+        IQKeyboardManager.shared.keyboardDistanceFromTextField = 40
+        IQKeyboardManager.shared.shouldShowToolbarPlaceholder = true
+        IQKeyboardManager.shared.previousNextDisplayMode = IQPreviousNextDisplayMode.alwaysShow
+        IQKeyboardManager.shared.toolbarManageBehaviour = IQAutoToolbarManageBehaviour.byPosition
+        IQKeyboardManager.shared.toolbarDoneBarButtonItemText = "Hide"
+        IQKeyboardManager.shared.toolbarPreviousNextAllowedClasses.append(UIScrollView.self)
         FirebaseApp.configure()
         return true
     }

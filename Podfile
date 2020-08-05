@@ -8,5 +8,6 @@ target 'crosswords' do
   # Pods for crosswords
   pod 'Firebase/Firestore'
   pod 'FirebaseFirestoreSwift'
+  pod 'IQKeyboardManagerSwift'
 
 end

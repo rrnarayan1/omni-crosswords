@@ -18,7 +18,7 @@ func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
     crossword.copyright = data.get("copyright") as? String
     crossword.outletName = data.get("crossword_outlet_name") as? String
     crossword.title = data.get("title") as? String
-    crossword.date = (data.get("date") as! Timestamp).dateValue() as? Date
+    crossword.date = (data.get("date") as! Timestamp).dateValue()
     crossword.id = data.documentID
     crossword.clues = data.get("clues") as? Dictionary<String, String>
     crossword.solution = data.get("solution") as? Array<String>
