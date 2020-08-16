@@ -9,7 +9,9 @@
 import UIKit
 import CoreData
 import Firebase
+import FirebaseAuth
 import IQKeyboardManagerSwift
+import FontAwesome_swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,9 +25,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.shouldShowToolbarPlaceholder = true
         IQKeyboardManager.shared.previousNextDisplayMode = IQPreviousNextDisplayMode.alwaysShow
         IQKeyboardManager.shared.toolbarManageBehaviour = IQAutoToolbarManageBehaviour.byPosition
-        IQKeyboardManager.shared.toolbarDoneBarButtonItemText = "Hide"
         IQKeyboardManager.shared.toolbarPreviousNextAllowedClasses.append(UIScrollView.self)
         FirebaseApp.configure()
+        Auth.auth().signInAnonymously() { (authResult, error) in
+            
+        }
         return true
     }
 
@@ -82,8 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                print("Could not save core data :(")
             }
         }
     }

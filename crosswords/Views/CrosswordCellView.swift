@@ -8,6 +8,7 @@
 
 import SwiftUI
 import IQKeyboardManagerSwift
+import FontAwesome_swift
 
 struct CrosswordCellView: View {
     var crossword: Crossword
@@ -58,6 +59,14 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         rowNum*Int(crossword.length)+colNum
     }
     
+    var rightImage: UIImage {
+        if (self.goingAcross) {
+            return UIImage.fontAwesomeIcon(name: .arrowsAltV, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 25, height: 25))
+        } else {
+            return UIImage.fontAwesomeIcon(name: .arrowsAltH, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 25, height: 25))
+        }
+    }
+    
     @Binding var focusedTag: Int
     @Binding var isHighlighted: Array<Int>
     @Binding var goingAcross: Bool
@@ -85,13 +94,21 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiTextField: NoActionTextField, context: Context) {
-        uiTextField.addKeyboardToolbarWithTarget(target: context.coordinator, titleText: self.currentClue, rightBarButtonConfiguration: IQBarButtonItemConfiguration.init(title: "hide", action: #selector(context.coordinator.hideKeyboard)), previousBarButtonConfiguration: IQBarButtonItemConfiguration.init(title: "prev", action: #selector(context.coordinator.goToPreviousClue)), nextBarButtonConfiguration: IQBarButtonItemConfiguration.init(title: "next", action: #selector(context.coordinator.goToNextClue)))
+        
+        uiTextField.addKeyboardToolbarWithTarget(target: context.coordinator, titleText: self.currentClue, rightBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: rightImage, action: #selector(context.coordinator.touchTextFieldWhileFocused)),
+            previousBarButtonConfiguration: IQBarButtonItemConfiguration.init(title: "prev", action: #selector(context.coordinator.goToPreviousClue)),
+            nextBarButtonConfiguration: IQBarButtonItemConfiguration.init(title: "next", action: #selector(context.coordinator.goToNextClue)))
+
         if uiTextField.text != self.crossword.entry?[self.tag] {
             uiTextField.text = self.crossword.entry?[self.tag]
         }
-        
+
         if focusedTag < 0 {
             uiTextField.resignFirstResponder()
+        }
+
+        if self.crossword.solved {
+            uiTextField.keyboardToolbar.barTintColor = UIColor.systemGreen
         }
         
         if self.isEditable() {
@@ -148,7 +165,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         var parent: CrosswordTextFieldView
         
         @objc func touchTextFieldWhileFocused(textField: NoActionTextField) {
-            print("tap on field")
             toggleDirection(tag: parent.tag, crossword: parent.crossword, goingAcross: parent.$goingAcross, isHighlighted: parent.$isHighlighted)
         }
         
@@ -200,7 +216,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         func textField(_ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
-            if (textField.text == "." || string == ".") {
+            if (textField.text == "." || string == "." || parent.focusedTag < 0) {
                 return false
             }
             
@@ -210,6 +226,15 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             } else {
                 parent.crossword.entry![parent.focusedTag] = string.uppercased()
             }
+            
+            if (parent.crossword.entry == parent.crossword.solution) {
+                parent.crossword.solved = true
+            } else if (parent.crossword.solved) {
+                parent.crossword.solved = false
+            }
+            
+            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            
             if (!string.isEmpty) {
                 moveFocusToNextField(textField)
             }
@@ -217,10 +242,20 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         func moveFocusToNextField(_ textField: UITextField) {
+            let tagToGoTo: Int
             if (parent.goingAcross) {
-                changeFocusToTag(parent.focusedTag + 1)
+                tagToGoTo = parent.focusedTag + 1
             } else {
-                changeFocusToTag(parent.focusedTag + Int(parent.crossword.length))
+                tagToGoTo = parent.focusedTag + Int(parent.crossword.length)
+            }
+            
+            if (tagToGoTo >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[tagToGoTo] == nil
+                || parent.crossword.tagToCluesMap?[tagToGoTo].count == 0) {
+                let nextClueId: String = parent.getNextClueID()
+                let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
+                changeFocusToTag(nextTag)
+            } else {
+                changeFocusToTag(tagToGoTo)
             }
         }
         

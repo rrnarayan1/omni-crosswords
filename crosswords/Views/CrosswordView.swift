@@ -24,19 +24,34 @@ struct CrosswordView: View {
     var displayTitle: String {
         let date = self.crossword.date!
         let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
         formatter.dateStyle = .short
-        return self.crossword.outletName! + " - " + formatter.string(from: date)
+        var prefix: String = ""
+        if (self.crossword.solved) {
+            prefix = "Solved: "
+        }
+        return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
     
     @ViewBuilder
     var body: some View {
-        ScrollView {
-            { () -> CrosswordGridView in
-                let currentClue = getCurrentClue()
-                return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross)
-            }()
-            .padding(.top, 30)
-        }.navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+        VStack{
+            ScrollView {
+                { () -> CrosswordGridView in
+                    let currentClue = getCurrentClue()
+                    return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross)
+                }()
+                .padding(.top, 30)
+            }
+            Spacer()
+            Text(self.crossword.title!)
+            Text(self.crossword.author!)
+            if (self.crossword.notes! != "") {
+                Text(self.crossword.notes!)
+            }
+            Text(self.crossword.copyright!)
+        }
+            .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
     }
     
     func resetArray(count: Int) -> Array<Bool> {
@@ -64,7 +79,6 @@ struct CrosswordGridView: View {
     
     
     var body: some View {
-
         VStack(spacing: 0) {
             ForEach((0...self.crossword.height-1), id: \.self) { rowNum in
                 HStack (spacing: 0) {
@@ -84,15 +98,3 @@ struct CrosswordGridView: View {
         }
     }
 }
-
-struct CrosswordView_Previews: PreviewProvider {
-    static var previews: some View {
-        let crossword = Crossword()
-        crossword.height = 3
-        crossword.length = 3
-        crossword.id = "id"
-        crossword.entry = Array(repeating: "", count: 9)
-        return CrosswordView(crossword: crossword)
-    }
-}
-
