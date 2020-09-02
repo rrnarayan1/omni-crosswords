@@ -15,13 +15,14 @@ struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @State var fetchDisabled = false
     @State var showSettings = false
+    @State var openCrossword: Crossword? = nil
     @ObservedObject var userSettings = UserSettings()
     
     @FetchRequest(entity: Crossword.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Crossword.date, ascending: false)])
     
     var crosswords: FetchedResults<Crossword>
     var showSolvedPuzzles: Bool {
-        UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? false
+        UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
     }
     
     var subscriptions: Array<String> {
@@ -39,10 +40,12 @@ struct CrosswordListView: View {
     
     var body: some View {
         NavigationView {
-            List(self.crosswords.filter { !$0.solved || self.showSolvedPuzzles }, id: \.id) { crossword in
+            List(self.crosswords.filter { !$0.solved || self.showSolvedPuzzles || self.openCrossword == $0 }, id: \.id) { crossword in
                 NavigationLink(
                     destination: CrosswordView(crossword: crossword)
-                        .environment(\.managedObjectContext, self.managedObjectContext)
+                        .environment(\.managedObjectContext, self.managedObjectContext),
+                    tag: crossword,
+                    selection: self.$openCrossword
                 ) {
                     HStack {
                         Text(self.getCrosswordListTitle(crossword: crossword))
@@ -61,7 +64,7 @@ struct CrosswordListView: View {
                     Button(action: {
                         self.showSettings.toggle()
                     }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .cog, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize.init(width: 30, height: 30)))
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .cog, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
                     }
                     .sheet(isPresented: $showSettings) {
                         SettingsView()
@@ -69,7 +72,7 @@ struct CrosswordListView: View {
                     Button(action: {
                         self.refreshCrosswords()
                     }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: UIColor.systemGreen, size: CGSize.init(width: 30, height: 30)))
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
                     }.disabled(fetchDisabled)
                 }
             )
@@ -77,6 +80,10 @@ struct CrosswordListView: View {
     }
     
     func refreshCrosswords() -> Void {
+        if (self.fetchDisabled) {
+            return
+        }
+        
         self.fetchDisabled = true
         let lastDate: Date
         

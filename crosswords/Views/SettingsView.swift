@@ -24,6 +24,14 @@ struct SettingsView: View {
                     Text("Show solved puzzles in list")
                 }.frame(width: 300)
                 
+                Toggle(isOn: $userSettings.skipCompletedCells) {
+                    Text("Skip Completed Cells")
+                }.frame(width: 300)
+                
+                Toggle(isOn: $userSettings.defaultErrorTracking) {
+                    Text("Error Tracking on By Default")
+                }.frame(width: 300)
+                
                 DeletionPickerView()
                 
                 Button(action: {
@@ -35,11 +43,30 @@ struct SettingsView: View {
                 .sheet(isPresented: $showSubscriptions) {
                     SubscriptionsView()
                 }
+                Spacer()
             }
             .navigationBarTitle("Settings")
             .padding(30)
         }
     }
+}
+
+struct CrosswordSettingsView: View {
+    @Binding var errorTracking: Bool
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading) {
+                Toggle(isOn: $errorTracking) {
+                    Text("Error Tracking")
+                }.frame(width: 200)
+                Spacer()
+            }
+            .navigationBarTitle("Crossword Settings")
+            .padding(30)
+        }
+    }
+    
 }
 
 struct DeletionPickerView: View {
@@ -66,7 +93,7 @@ struct SubscriptionsView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(alignment: .leading) {
                 ForEach((0..<allSubscriptions.count), id: \.self) { i in
                     HStack {
                         Text(allSubscriptions[i])
@@ -115,8 +142,22 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var skipCompletedCells: Bool {
+        didSet {
+            UserDefaults.standard.set(skipCompletedCells, forKey: "skipCompletedCells")
+        }
+    }
+    
+    @Published var defaultErrorTracking: Bool {
+        didSet {
+            UserDefaults.standard.set(defaultErrorTracking, forKey: "defaultErrorTracking")
+        }
+    }
+    
     init() {
-        self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? false
+        self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
+        self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
+        self.defaultErrorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
     }

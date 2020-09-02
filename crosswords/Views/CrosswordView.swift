@@ -8,14 +8,19 @@
 
 import SwiftUI
 import IQKeyboardManagerSwift
+import FontAwesome_swift
 
 struct CrosswordView: View {
     var crossword: Crossword
     
     @Environment(\.managedObjectContext) var managedObjectContext
+    @ObservedObject var userSettings = UserSettings()
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
+    @State var showCrosswordSettings = false
+    @State var errorTracking : Bool = false
+    @State var forceUpdate = false
     
     var boxWidth: CGFloat {
         (UIScreen.screenWidth-5)/CGFloat(crossword.length)
@@ -26,7 +31,7 @@ struct CrosswordView: View {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(abbreviation: "UTC")
         formatter.dateStyle = .short
-        var prefix: String = ""
+        var prefix: String = self.forceUpdate ? "" : " "
         if (self.crossword.solved) {
             prefix = "Solved: "
         }
@@ -37,21 +42,38 @@ struct CrosswordView: View {
     var body: some View {
         VStack{
             ScrollView {
-                { () -> CrosswordGridView in
+                {() -> CrosswordGridView in
                     let currentClue = getCurrentClue()
-                    return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross)
+                    return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate)
                 }()
                 .padding(.top, 30)
             }
             Spacer()
-            Text(self.crossword.title!)
-            Text(self.crossword.author!)
-            if (self.crossword.notes! != "") {
-                Text(self.crossword.notes!)
+            VStack (alignment: .center){
+                Text(self.crossword.title!).multilineTextAlignment(.center)
+                Text(self.crossword.author!).multilineTextAlignment(.center)
+                if (self.crossword.notes! != "") {
+                    Text(self.crossword.notes!).multilineTextAlignment(.center)
+                }
+                Text(self.crossword.copyright!).multilineTextAlignment(.center)
             }
-            Text(self.crossword.copyright!)
+        }
+        .onAppear {
+            self.errorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
         }
             .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+            .navigationBarItems(trailing:
+                HStack {
+                    Button(action: {
+                        self.showCrosswordSettings.toggle()
+                    }) {
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                    }
+                    .sheet(isPresented: $showCrosswordSettings) {
+                        CrosswordSettingsView(errorTracking: self.$errorTracking)
+                    }
+                }
+            )
     }
     
     func resetArray(count: Int) -> Array<Bool> {
@@ -76,6 +98,8 @@ struct CrosswordGridView: View {
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
+    @Binding var doErrorTracking: Bool
+    @Binding var forceUpdate: Bool
     
     
     var body: some View {
@@ -90,7 +114,9 @@ struct CrosswordGridView: View {
                             colNum: Int(colNum),
                             currentClue: self.currentClue, focusedTag: self.$focusedTag,
                             isHighlighted: self.$highlighted,
-                            goingAcross: self.$goingAcross
+                            goingAcross: self.$goingAcross,
+                            doErrorTracking: self.$doErrorTracking,
+                            forceUpdate: self.$forceUpdate
                         ).frame(width: self.boxWidth, height: self.boxWidth)
                     }
                 }

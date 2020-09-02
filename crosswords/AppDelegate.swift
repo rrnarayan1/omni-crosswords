@@ -22,10 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         IQKeyboardManager.shared.enable = true
         IQKeyboardManager.shared.keyboardDistanceFromTextField = 40
-        IQKeyboardManager.shared.shouldShowToolbarPlaceholder = true
-        IQKeyboardManager.shared.previousNextDisplayMode = IQPreviousNextDisplayMode.alwaysShow
+        
         IQKeyboardManager.shared.toolbarManageBehaviour = IQAutoToolbarManageBehaviour.byPosition
         IQKeyboardManager.shared.toolbarPreviousNextAllowedClasses.append(UIScrollView.self)
+        IQKeyboardManager.shared.toolbarNextBarButtonItemImage = nextImage
+        IQKeyboardManager.shared.toolbarPreviousBarButtonItemImage = previousImage
+        IQKeyboardManager.shared.toolbarDoneBarButtonItemText = ""
         FirebaseApp.configure()
         Auth.auth().signInAnonymously() { (authResult, error) in
             
