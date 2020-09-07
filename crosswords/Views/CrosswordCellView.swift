@@ -48,6 +48,13 @@ struct CrosswordCellView: View {
             }
             
         }
+//        .contextMenu {
+//            Button(action: {
+//                       print("menu button")
+//                   }) {
+//                       Text("Choose Country")
+//                   }
+//        }
     }
 }
 
@@ -111,15 +118,17 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     
     func updateUIView(_ uiTextField: NoActionTextField, context: Context) {
         if (uiTextField.isFirstResponder) {
+            let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
             uiTextField.addKeyboardToolbarWithTarget(
                 target: context.coordinator,
-                titleText: currentClue,
+                titleText: currentClueForce,
                 rightBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: rightImage, action: #selector(context.coordinator.pressToggleButton)),
                 previousBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: previousImage, action: #selector(context.coordinator.goToPreviousClue)),
                 nextBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: nextImage, action: #selector(context.coordinator.goToNextClue)))
+            
             uiTextField.keyboardToolbar.previousBarButton.isEnabled = true
             uiTextField.keyboardToolbar.nextBarButton.isEnabled = true
-            
+        
             if self.crossword.solved {
                 uiTextField.keyboardToolbar.barTintColor = UIColor.systemGreen
             } else {
@@ -309,7 +318,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                     if (newTag >= parent.crossword.entry!.count ||
                         parent.crossword.tagToCluesMap?[newTag] == nil ||
                         parent.crossword.tagToCluesMap?[newTag].count == 0 ||
-                        parent.crossword.symbols![newTag] == 0) {
+                        parent.crossword.symbols![newTag] == -1) {
                         let nextClueId: String = parent.getNextClueID()
                         let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
                         changeFocusToTag(nextTag)

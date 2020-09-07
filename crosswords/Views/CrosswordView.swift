@@ -62,6 +62,7 @@ struct CrosswordView: View {
             self.errorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
         }
             .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+            .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
             .navigationBarItems(trailing:
                 HStack {
                     Button(action: {

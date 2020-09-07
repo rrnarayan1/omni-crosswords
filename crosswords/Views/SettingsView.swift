@@ -45,7 +45,8 @@ struct SettingsView: View {
                 }
                 Spacer()
             }
-            .navigationBarTitle("Settings")
+            .navigationBarTitle("Settings", displayMode: .large)
+            .navigationBarColor(.systemGray6)
             .padding(30)
         }
     }
@@ -62,7 +63,8 @@ struct CrosswordSettingsView: View {
                 }.frame(width: 200)
                 Spacer()
             }
-            .navigationBarTitle("Crossword Settings")
+            .navigationBarTitle("Crossword Settings", displayMode: .large)
+            .navigationBarColor(.systemGray6)
             .padding(30)
         }
     }
@@ -104,7 +106,7 @@ struct SubscriptionsView: View {
                     }
                 }
             }
-            .navigationBarTitle("Subscriptions")
+            .navigationBarTitle("Subscriptions", displayMode: .large)
             .padding(30)
         }
     }
