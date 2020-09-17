@@ -23,7 +23,9 @@ struct CrosswordView: View {
     @State var forceUpdate = false
     
     var boxWidth: CGFloat {
-        (UIScreen.screenWidth-5)/CGFloat(crossword.length)
+        let maxSize: CGFloat = 45.0
+        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
+        return min(defaultSize, maxSize)
     }
     
     var displayTitle: String {

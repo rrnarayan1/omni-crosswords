@@ -29,9 +29,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.toolbarPreviousBarButtonItemImage = previousImage
         IQKeyboardManager.shared.toolbarDoneBarButtonItemText = ""
         FirebaseApp.configure()
-        Auth.auth().signInAnonymously() { (authResult, error) in
-            
-        }
         return true
     }
 

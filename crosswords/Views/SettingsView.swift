@@ -9,6 +9,8 @@
 import SwiftUI
 import Combine
 import FontAwesome_swift
+import Firebase
+import FirebaseAuth
 
 let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal"]
 
@@ -156,11 +158,14 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var user: User?
+    
     init() {
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
         self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
         self.defaultErrorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
+        self.user = Auth.auth().currentUser
     }
 }

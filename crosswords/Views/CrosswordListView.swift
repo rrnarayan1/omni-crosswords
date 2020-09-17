@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 import FirebaseFirestoreSwift
 import FontAwesome_swift
 
@@ -40,6 +41,12 @@ struct CrosswordListView: View {
     
     var body: some View {
         NavigationView {
+            if (userSettings.user == nil) {
+                Image(uiImage: UIImage.fontAwesomeIcon(name: .spinner, style: .solid, textColor: .systemGray, size: CGSize.init(width: 30, height: 30)))
+                .onAppear(perform: {
+                    self.checkUser()
+                })
+            } else {
             List(self.crosswords.filter { !$0.solved || self.showSolvedPuzzles || self.openCrossword == $0 }, id: \.id) { crossword in
                 NavigationLink(
                     destination: CrosswordView(crossword: crossword)
@@ -76,6 +83,18 @@ struct CrosswordListView: View {
                     }.disabled(fetchDisabled)
                 }
             )
+        }
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
+    }
+    
+    func checkUser() -> Void {
+        if (Auth.auth().currentUser == nil) {
+            Auth.auth().signInAnonymously {(authResult, error) in
+                if (error == nil) {
+                    self.userSettings.user = authResult?.user
+                }
+            }
         }
     }
     
