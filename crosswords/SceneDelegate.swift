@@ -9,6 +9,7 @@
 import UIKit
 import SwiftUI
 import CoreData
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -31,7 +32,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: crosswordView)
+            window.rootViewController = UIHostingController(rootView: crosswordView
+                .environmentObject(TimerWrapper()))
             self.window = window
             window.makeKeyAndVisible()
         }
@@ -91,5 +93,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
           fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
       }
+    }
+}
+
+class TimerWrapper : ObservableObject {
+    var timer : Timer!
+    let didChange = PassthroughSubject<TimerWrapper,Never>()
+    @Published var count = 0 {
+        didSet {
+            self.didChange.send(self)
+        }
+    }
+    func start(_ startTime:Int = 0) {
+        self.timer?.invalidate()
+        self.count = startTime
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
+            _ in
+            self.count += 1
+        }
+    }
+    
+    func stop() {
+        self.timer?.invalidate()
     }
 }

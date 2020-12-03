@@ -14,6 +14,8 @@ struct CrosswordView: View {
     var crossword: Crossword
     
     @Environment(\.managedObjectContext) var managedObjectContext
+    @EnvironmentObject var timerWrapper : TimerWrapper
+    
     @ObservedObject var userSettings = UserSettings()
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
@@ -39,6 +41,7 @@ struct CrosswordView: View {
         }
         return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @ViewBuilder
     var body: some View {
@@ -49,19 +52,24 @@ struct CrosswordView: View {
                     return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate)
                 }()
                 .padding(.top, 30)
-            }
-            Spacer()
-            VStack (alignment: .center){
-                Text(self.crossword.title!).multilineTextAlignment(.center)
-                Text(self.crossword.author!).multilineTextAlignment(.center)
-                if (self.crossword.notes! != "") {
-                    Text(self.crossword.notes!).multilineTextAlignment(.center)
+                Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
+                    .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
+                Spacer()
+                VStack (alignment: .center){
+                    Text(self.crossword.title!).multilineTextAlignment(.center)
+                    Text(self.crossword.author!).multilineTextAlignment(.center)
+                    if (self.crossword.notes! != "") {
+                        Text(self.crossword.notes!).multilineTextAlignment(.center)
+                    }
+                    Text(self.crossword.copyright!).multilineTextAlignment(.center)
                 }
-                Text(self.crossword.copyright!).multilineTextAlignment(.center)
             }
         }
         .onAppear {
             self.errorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
+            if (!self.crossword.solved) {
+                self.timerWrapper.start(Int(self.crossword.solvedTime))
+            }
         }
             .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
             .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
@@ -91,6 +99,15 @@ struct CrosswordView: View {
         let directionalLetter : String = self.goingAcross ? "A" : "D"
         return self.crossword.clues![possibleClues[directionalLetter]!]!
     }
+}
+
+func toTime(_ currentTimeInSeconds: Int) -> String {
+    let timeInSeconds = currentTimeInSeconds
+    let numMin = timeInSeconds / 60
+    let numSec = timeInSeconds % 60
+    
+    let secString: String = numSec < 10 ? "0"+String(numSec) : String(numSec)
+    return String(numMin) + ":" + secString
 }
 
 struct CrosswordGridView: View {

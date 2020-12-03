@@ -58,6 +58,9 @@ struct CrosswordListView: View {
                         Text(self.getCrosswordListTitle(crossword: crossword))
                         if (crossword.solved) {
                             Spacer()
+                            if (crossword.solvedTime > 0) {
+                                Text(toTime(Int(crossword.solvedTime))).foregroundColor(Color.init(UIColor.systemGreen))
+                            }
                             Image(uiImage: UIImage.fontAwesomeIcon(name: .checkCircle, style: FontAwesomeStyle.regular, textColor: UIColor.systemGreen, size: CGSize.init(width: 30, height: 30)))
                         }
                     }

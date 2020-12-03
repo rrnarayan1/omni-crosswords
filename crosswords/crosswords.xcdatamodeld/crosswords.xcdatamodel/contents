@@ -14,11 +14,12 @@
         <attribute name="outletName" optional="YES" attributeType="String"/>
         <attribute name="solution" optional="YES" attributeType="Transformable" customClassName="Array&lt;String&gt;"/>
         <attribute name="solved" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="solvedTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="symbols" optional="YES" attributeType="Transformable" customClassName="Array&lt;Int&gt;"/>
         <attribute name="tagToCluesMap" optional="YES" attributeType="Transformable" customClassName="Array&lt;Dictionary&lt;String, String&gt;&gt;"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Crossword" positionX="-340.7421875" positionY="131.96875" width="128" height="283"/>
+        <element name="Crossword" positionX="-340.7421875" positionY="131.96875" width="128" height="298"/>
     </elements>
 </model>

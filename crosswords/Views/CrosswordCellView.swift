@@ -48,13 +48,13 @@ struct CrosswordCellView: View {
             }
             
         }
-//        .contextMenu {
-//            Button(action: {
-//                       print("menu button")
-//                   }) {
-//                       Text("Choose Country")
-//                   }
-//        }
+        .contextMenu {
+            Button(action: {
+                self.crossword.entry![self.focusedTag] = self.crossword.solution![self.focusedTag]
+           }) {
+               Text("Solve Square")
+           }
+        }
     }
 }
 
@@ -93,6 +93,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var goingAcross: Bool
     @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
+    @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var timerWrapper : TimerWrapper
     
     func makeUIView(context: Context) -> NoActionTextField {
         let textField = NoActionTextField(frame: .zero)
@@ -108,7 +110,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.keyboardType = UIKeyboardType.alphabet
         textField.tintColor = UIColor.clear
         if (textField.text! == (".")) {
-            textField.backgroundColor = UIColor.label
+            textField.textColor = UIColor.black
+            textField.backgroundColor = UIColor.black
         }
         textField.keyboardToolbar.titleBarButton.titleColor = UIColor.label
         textField.keyboardToolbar.titleBarButton.titleFont = UIFont(name: "Helvetica", size: 14)
@@ -147,12 +150,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         if self.isEditable() {
             if isHighlighted.contains(self.tag) {
                 if (self.tag == focusedTag) {
-                    uiTextField.backgroundColor = UIColor.systemGray2
+                    uiTextField.backgroundColor = colorScheme == .dark ? UIColor.systemGray3 : UIColor.systemGray2
                 } else {
                     uiTextField.backgroundColor = UIColor.systemGray5
                 }
             } else {
-                uiTextField.backgroundColor = UIColor.systemBackground
+                uiTextField.backgroundColor = colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
             }
         }
         
@@ -290,9 +293,11 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             
             if (parent.crossword.entry == parent.crossword.solution) {
                 parent.crossword.solved = true
+                parent.timerWrapper.stop()
             } else if (parent.crossword.solved) {
                 parent.crossword.solved = false
             }
+            parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
             
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
             
@@ -347,6 +352,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
         
+        // does not take settings / completed squares into account
         func changeFocusToTag(_ tag: Int) {
             changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$isHighlighted)
         }
