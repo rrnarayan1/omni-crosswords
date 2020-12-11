@@ -184,8 +184,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     }
     
     func getNextClueID() -> String {
+        getNextClueID(tag: self.focusedTag)
+    }
+    
+    func getNextClueID(tag: Int) -> String {
         let directionalLetter: String = self.goingAcross == true ? "A" : "D"
-        let currentClueID: String = self.crossword.tagToCluesMap![self.focusedTag][directionalLetter]!
+        let currentClueID: String = self.crossword.tagToCluesMap![tag][directionalLetter]!
         let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
         for i in currentClueNum+1..<self.crossword.clues!.count {
             let trialClueID: String = String(i)+directionalLetter
@@ -308,35 +312,46 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         func moveFocusToNextField(_ textField: UITextField) {
-            let tagToGoTo: Int = getNextTagId()
-            
-            if (tagToGoTo >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[tagToGoTo] == nil
-                || parent.crossword.tagToCluesMap?[tagToGoTo].count == 0) {
-                let nextClueId: String = parent.getNextClueID()
-                let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
-                changeFocusToTag(nextTag)
-            } else if (parent.crossword.entry![tagToGoTo] != "" && parent.skipCompletedCells) {
-                // skip to next square
-                var newTag: Int = parent.focusedTag
-                for _ in (1..<parent.crossword.length) {
-                    newTag = getNextTagId(newTag)
-                    if (newTag >= parent.crossword.entry!.count ||
-                        parent.crossword.tagToCluesMap?[newTag] == nil ||
-                        parent.crossword.tagToCluesMap?[newTag].count == 0 ||
-                        parent.crossword.symbols![newTag] == -1) {
-                        let nextClueId: String = parent.getNextClueID()
-                        let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
-                        changeFocusToTag(nextTag)
-                        return
-                    } else if (parent.crossword.entry![newTag] == "") {
-                        changeFocusToTag(newTag)
-                        return
+            let nextTag: Int = getNextTagId()
+            if (nextTag >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[nextTag] == nil || parent.crossword.tagToCluesMap?[nextTag].count == 0 || parent.crossword.entry![nextTag] != "") {
+                if (parent.skipCompletedCells) {
+                    // skip to next uncompleted square
+                    var possibleTag: Int = getNextTagId(parent.focusedTag)
+                    var oldTag: Int = parent.focusedTag
+                    for _ in (1..<parent.crossword.entry!.count) {
+                        if (possibleTag >= parent.crossword.entry!.count ||
+                                parent.crossword.symbols![possibleTag] == -1 ||
+                                parent.crossword.tagToCluesMap?[possibleTag] == nil ||
+                                parent.crossword.tagToCluesMap?[possibleTag].count == 0) {
+                            // if we're checking the end, start checking again from the start
+                            // if we're at a block, start checking the next clue
+                            // if we're beyond the bounds of the puzzle, start checking next clue
+                            let possibleNextClueId: String = parent.getNextClueID(tag: oldTag)
+                            possibleTag = parent.crossword.clueToTagsMap![possibleNextClueId]!.min()!
+                        } else if (parent.crossword.entry![possibleTag] == "") {
+                            // if the possibleTag is empty, go there
+                            changeFocusToTag(possibleTag)
+                            return
+                        } else {
+                            // possibleTag's cell is full, so move to next cell
+                            oldTag = possibleTag
+                            possibleTag = getNextTagId(possibleTag)
+                        }
                     }
-                }
                 // if it reaches here, just try the next cell
-                changeFocusToTag(tagToGoTo)
+                changeFocusToTag(nextTag)
+                } else if (nextTag >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[nextTag] == nil || parent.crossword.tagToCluesMap?[nextTag].count == 0) {
+                    // they don't want to skip completed cells, so when we're at the end of the puzzle/at a square, go to start of the next clue
+                    let nextClueId: String = parent.getNextClueID()
+                    let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
+                    changeFocusToTag(nextTag)
+                } else {
+                    // they don't want to skip completed cells, and we're checking a valid square, so just go to that square
+                    changeFocusToTag(nextTag)
+                }
             } else {
-                changeFocusToTag(tagToGoTo)
+                // the next cell is a valid empty square
+                changeFocusToTag(nextTag)
             }
         }
         

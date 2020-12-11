@@ -56,12 +56,14 @@ struct CrosswordView: View {
                     .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
                 Spacer()
                 VStack (alignment: .center){
-                    Text(self.crossword.title!).multilineTextAlignment(.center)
-                    Text(self.crossword.author!).multilineTextAlignment(.center)
-                    if (self.crossword.notes! != "") {
-                        Text(self.crossword.notes!).multilineTextAlignment(.center)
+                    if (self.focusedTag == -1) {
+                        Text(self.crossword.title!).multilineTextAlignment(.center)
+                        Text(self.crossword.author!).multilineTextAlignment(.center)
+                        if (self.crossword.notes! != "") {
+                            Text(self.crossword.notes!).multilineTextAlignment(.center)
+                        }
+                        Text(self.crossword.copyright!).multilineTextAlignment(.center)
                     }
-                    Text(self.crossword.copyright!).multilineTextAlignment(.center)
                 }
             }
         }
