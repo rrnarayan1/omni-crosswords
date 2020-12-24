@@ -18,6 +18,7 @@ struct SettingsView: View {
     
     @ObservedObject var userSettings = UserSettings()
     @State var showSubscriptions = false
+    @State var showKeyboardShortcuts = false
     
     var body: some View {
         NavigationView {
@@ -37,7 +38,6 @@ struct SettingsView: View {
                 DeletionPickerView()
                 
                 Button(action: {
-                    print(allSubscriptions)
                     self.showSubscriptions.toggle()
                 }) {
                     Text("Configure Puzzle Subscriptions")
@@ -45,6 +45,15 @@ struct SettingsView: View {
                 .sheet(isPresented: $showSubscriptions) {
                     SubscriptionsView()
                 }
+                
+                Button(action: {
+                    self.showKeyboardShortcuts.toggle()
+                }) {
+                    Text("View Keyboard Shortcuts")
+                }
+                .sheet(isPresented: $showKeyboardShortcuts) {
+                    KeyboardShortcutsView()
+                }.padding(.top, 20)
                 Spacer()
             }
             .navigationBarTitle("Settings", displayMode: .large)
@@ -89,6 +98,51 @@ struct DeletionPickerView: View {
             .frame(width: 150)
             .clipped()
         }
+    }
+}
+
+struct KeyboardShortcutsView: View {
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Go left one cell: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+            }
+            HStack {
+                Text("Go right one cell: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+            }
+            HStack {
+                Text("Go up one cell: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowUp, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+            }
+            HStack {
+                Text("Go down one cell: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowDown, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+            }
+            HStack {
+                Text("Go to next clue: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowAltCircleUp, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .plus, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 15, height: 15)))
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+                
+            }
+            HStack {
+                Text("Go to previous clue: ")
+                Spacer()
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowAltCircleUp, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .plus, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 15, height: 15)))
+                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+                
+            }
+        }
+        .frame(width: 200)
     }
 }
 

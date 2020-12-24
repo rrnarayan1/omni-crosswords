@@ -10,6 +10,5 @@ target 'crosswords' do
   pod 'Firebase/Auth'
   pod 'FontAwesome.swift'
   pod 'FirebaseFirestoreSwift'
-  pod 'IQKeyboardManagerSwift'
 
 end

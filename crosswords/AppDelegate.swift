@@ -10,24 +10,51 @@ import UIKit
 import CoreData
 import Firebase
 import FirebaseAuth
-import IQKeyboardManagerSwift
 import FontAwesome_swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    override var keyCommands: [UIKeyCommand]? {
+        return [
+            UIKeyCommand(title: "Next Clue", action: #selector(handleNextClue(sender:)), input: UIKeyCommand.inputRightArrow, modifierFlags: .shift),
+            
+            UIKeyCommand(title: "Previous Clue", action: #selector(handlePreviousClue(sender:)), input: UIKeyCommand.inputLeftArrow, modifierFlags: .shift),
+            
+            UIKeyCommand(title: "Left Cell", action: #selector(handleLeftCell(sender:)), input: UIKeyCommand.inputLeftArrow),
+            UIKeyCommand(title: "Right Cell", action: #selector(handleRightCell(sender:)), input: UIKeyCommand.inputRightArrow),
+            UIKeyCommand(title: "Up Cell", action: #selector(handleUpCell(sender:)), input: UIKeyCommand.inputUpArrow),
+            UIKeyCommand(title: "Down Cell", action: #selector(handleDownCell(sender:)), input: UIKeyCommand.inputDownArrow)
+        ]
+    }
+    
+    @objc func handleNextClue(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("nextClue"), object: "")
+    }
+    
+    @objc func handlePreviousClue(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("previousClue"), object: "")
+    }
+    
+    @objc func handleRightCell(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("rightCell"), object: "")
+    }
+    
+    @objc func handleLeftCell(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("leftCell"), object: "")
+    }
+    
+    @objc func handleUpCell(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("upCell"), object: "")
+    }
+    
+    @objc func handleDownCell(sender: UIKeyCommand) {
+        NotificationCenter.default.post(name: .init("downCell"), object: "")
+    }
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        IQKeyboardManager.shared.enable = true
-        IQKeyboardManager.shared.keyboardDistanceFromTextField = 40
-        
-        IQKeyboardManager.shared.toolbarManageBehaviour = IQAutoToolbarManageBehaviour.byPosition
-        IQKeyboardManager.shared.toolbarPreviousNextAllowedClasses.append(UIScrollView.self)
-        IQKeyboardManager.shared.toolbarNextBarButtonItemImage = nextImage
-        IQKeyboardManager.shared.toolbarPreviousBarButtonItemImage = previousImage
-        IQKeyboardManager.shared.toolbarDoneBarButtonItemText = ""
         FirebaseApp.configure()
         return true
     }

@@ -7,22 +7,32 @@
 //
 
 import SwiftUI
-import IQKeyboardManagerSwift
 import FontAwesome_swift
 
 struct CrosswordView: View {
     var crossword: Crossword
+    var componentHeights: CGFloat {
+        let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+        
+        // 40 is height of keyboard toolbar
+        // 45 is height of navigation bar
+        return 40 + 45 + statusBarHeight + self.boxWidth*CGFloat(self.crossword.height)
+    }
     
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var timerWrapper : TimerWrapper
     
     @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
     @State var showCrosswordSettings = false
     @State var errorTracking : Bool = false
     @State var forceUpdate = false
+    @State var scrolledRow = 0
+    @State var isKeyboardOpen = false
     
     var boxWidth: CGFloat {
         let maxSize: CGFloat = 45.0
@@ -47,22 +57,42 @@ struct CrosswordView: View {
     var body: some View {
         VStack{
             ScrollView {
-                {() -> CrosswordGridView in
-                    let currentClue = getCurrentClue()
-                    return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate)
-                }()
-                .padding(.top, 30)
-                Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
-                    .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
-                Spacer()
-                VStack (alignment: .center){
-                    if (self.focusedTag == -1) {
-                        Text(self.crossword.title!).multilineTextAlignment(.center)
-                        Text(self.crossword.author!).multilineTextAlignment(.center)
-                        if (self.crossword.notes! != "") {
-                            Text(self.crossword.notes!).multilineTextAlignment(.center)
+                ScrollViewReader { scrollreader in
+                    {() -> CrosswordGridView in
+                        let currentClue = getCurrentClue()
+                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate, isKeyboardOpen: self.$isKeyboardOpen)
+                    }()
+                    .onChange(of: focusedTag, perform: {newFocusedTag in
+                        if (newFocusedTag < 0) {
+                            self.isKeyboardOpen = false
                         }
-                        Text(self.crossword.copyright!).multilineTextAlignment(.center)
+                        if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
+                            let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
+                            let oneThirdsRowNumber = Int(self.crossword.height/3)
+                            let middleRowNumber = Int(self.crossword.height/2)
+                            let twoThirdsRowNumber = Int(self.crossword.height/3)*2
+                            if (newRowNumber > twoThirdsRowNumber && self.scrolledRow != middleRowNumber + 2) {
+                                scrollreader.scrollTo("row"+String(middleRowNumber + 2), anchor: .center)
+                                self.scrolledRow = middleRowNumber + 2
+                            } else if (newRowNumber < oneThirdsRowNumber && self.scrolledRow != middleRowNumber - 2){
+                                scrollreader.scrollTo("row"+String(middleRowNumber - 2), anchor: .center)
+                                self.scrolledRow = middleRowNumber - 2
+                            }
+                        }
+                    })
+                    .padding(.top, 30)
+                    Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
+                        .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
+                    Spacer()
+                    VStack (alignment: .center){
+                        if (self.focusedTag == -1) {
+                            Text(self.crossword.title!).multilineTextAlignment(.center)
+                            Text(self.crossword.author!).multilineTextAlignment(.center)
+                            if (self.crossword.notes! != "") {
+                                Text(self.crossword.notes!).multilineTextAlignment(.center)
+                            }
+                            Text(self.crossword.copyright!).multilineTextAlignment(.center)
+                        }
                     }
                 }
             }
@@ -101,6 +131,17 @@ struct CrosswordView: View {
         let directionalLetter : String = self.goingAcross ? "A" : "D"
         return self.crossword.clues![possibleClues[directionalLetter]!]!
     }
+    
+    func getRowNumberFromTag(_ tag: Int) -> Int {
+        return tag / Int(self.crossword.length)
+    }
+    
+    func shouldScroll(_ keyboardHeight: CGFloat) -> Bool {
+//        print(self.componentHeights)
+//        print(keyboardHeight)
+//        print(UIScreen.screenHeight)
+        return (self.componentHeights + keyboardHeight) > UIScreen.screenHeight;
+    }
 }
 
 func toTime(_ currentTimeInSeconds: Int) -> String {
@@ -122,6 +163,7 @@ struct CrosswordGridView: View {
     @Binding var goingAcross: Bool
     @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
+    @Binding var isKeyboardOpen: Bool
     
     
     var body: some View {
@@ -138,8 +180,10 @@ struct CrosswordGridView: View {
                             isHighlighted: self.$highlighted,
                             goingAcross: self.$goingAcross,
                             doErrorTracking: self.$doErrorTracking,
-                            forceUpdate: self.$forceUpdate
+                            forceUpdate: self.$forceUpdate,
+                            isKeyboardOpen: self.$isKeyboardOpen
                         ).frame(width: self.boxWidth, height: self.boxWidth)
+                        .id("row"+String(rowNum))
                     }
                 }
             }

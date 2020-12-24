@@ -107,9 +107,8 @@ class TimerWrapper : ObservableObject {
     func start(_ startTime:Int = 0) {
         self.timer?.invalidate()
         self.count = startTime
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
-            _ in
-            self.count += 1
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {[weak self] _ in
+            self?.count += 1
         }
     }
     

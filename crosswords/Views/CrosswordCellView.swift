@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import IQKeyboardManagerSwift
 import FontAwesome_swift
 
 struct CrosswordCellView: View {
@@ -29,10 +28,11 @@ struct CrosswordCellView: View {
     @Binding var goingAcross: Bool
     @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
+    @Binding var isKeyboardOpen: Bool
     
     var body: some View {
         ZStack(alignment: .topLeading){
-            CrosswordTextFieldView(crossword: crossword, boxWidth: self.boxWidth, rowNum: rowNum, colNum: colNum, currentClue: currentClue, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$doErrorTracking, forceUpdate: self.$forceUpdate)
+            CrosswordTextFieldView(crossword: crossword, boxWidth: self.boxWidth, rowNum: rowNum, colNum: colNum, currentClue: currentClue, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$doErrorTracking, forceUpdate: self.$forceUpdate, isKeyboardOpen: self.$isKeyboardOpen)
             if symbol > 0 {
                 Text(String(symbol))
                     .font(.system(size: self.boxWidth/4))
@@ -40,14 +40,6 @@ struct CrosswordCellView: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            if (self.focusedTag == self.tag) {
-                toggleDirection(tag: self.tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$isHighlighted)
-            } else {
-                changeFocus(tag: self.tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-            
-        }
         .contextMenu {
             Button(action: {
                 self.crossword.entry![self.focusedTag] = self.crossword.solution![self.focusedTag]
@@ -55,15 +47,37 @@ struct CrosswordCellView: View {
                Text("Solve Square")
            }
         }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("nextClue"))) { notification in
+            if (self.tag == 0) {
+                goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("previousClue"))) { notification in
+            if (self.tag == 0) {
+                goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("rightCell"))) { notification in
+            if (self.tag == 0) {
+                goToRightCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("leftCell"))) { notification in
+            if (self.tag == 0) {
+                goToLeftCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("upCell"))) { notification in
+            if (self.tag == 0) {
+                goToUpCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("downCell"))) { notification in
+            if (self.tag == 0) {
+                goToDownCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
+            }
+        }
     }
-}
-
-var nextImage: UIImage {
-    UIImage.fontAwesomeIcon(name: .chevronRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
-}
-
-var previousImage: UIImage {
-    UIImage.fontAwesomeIcon(name: .chevronLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
 }
 
 struct CrosswordTextFieldView: UIViewRepresentable {
@@ -76,7 +90,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         rowNum*Int(crossword.length)+colNum
     }
     
-    var rightImage: UIImage {
+    var toggleImage: UIImage {
         if (self.goingAcross) {
             return UIImage.fontAwesomeIcon(name: .arrowsAltV, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
         } else {
@@ -88,11 +102,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
     }
     
+    
     @Binding var focusedTag: Int
     @Binding var isHighlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
+    @Binding var isKeyboardOpen: Bool
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
     
@@ -113,30 +129,22 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             textField.textColor = UIColor.black
             textField.backgroundColor = UIColor.black
         }
-        textField.keyboardToolbar.titleBarButton.titleColor = UIColor.label
-        textField.keyboardToolbar.titleBarButton.titleFont = UIFont(name: "Helvetica", size: 14)
-        textField.addTarget(context.coordinator, action: #selector(context.coordinator.touchTextFieldWhileFocused), for: .touchDown)
+        
+        textField.addTarget(context.coordinator, action: #selector(context.coordinator.touchTextFieldWhileFocused), for: .allTouchEvents)
+        textField.addToolbar()
         return textField
     }
     
     func updateUIView(_ uiTextField: NoActionTextField, context: Context) {
         if (uiTextField.isFirstResponder) {
-            let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
-            uiTextField.addKeyboardToolbarWithTarget(
-                target: context.coordinator,
-                titleText: currentClueForce,
-                rightBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: rightImage, action: #selector(context.coordinator.pressToggleButton)),
-                previousBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: previousImage, action: #selector(context.coordinator.goToPreviousClue)),
-                nextBarButtonConfiguration: IQBarButtonItemConfiguration.init(image: nextImage, action: #selector(context.coordinator.goToNextClue)))
-            
-            uiTextField.keyboardToolbar.previousBarButton.isEnabled = true
-            uiTextField.keyboardToolbar.nextBarButton.isEnabled = true
-        
-            if self.crossword.solved {
-                uiTextField.keyboardToolbar.barTintColor = UIColor.systemGreen
-            } else {
-                uiTextField.keyboardToolbar.barTintColor = UIColor.systemGray6
+            if (!uiTextField.gestureRecognizers!.contains(where: { (gestureRecognizer) -> Bool in
+                gestureRecognizer is SingleTouchDownGestureRecognizer
+            })) {
+                let gesture = SingleTouchDownGestureRecognizer(target: context.coordinator, action: #selector(context.coordinator.touchTextFieldWhileFocused))
+                uiTextField.addGestureRecognizer(gesture)
             }
+            let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
+            uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, coordinator: context.coordinator, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
         }
 
         if uiTextField.text != self.crossword.entry?[self.tag] {
@@ -150,9 +158,9 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         if self.isEditable() {
             if isHighlighted.contains(self.tag) {
                 if (self.tag == focusedTag) {
-                    uiTextField.backgroundColor = colorScheme == .dark ? UIColor.systemGray3 : UIColor.systemGray2
+                    uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.5)
                 } else {
-                    uiTextField.backgroundColor = UIColor.systemGray5
+                    uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
                 }
             } else {
                 uiTextField.backgroundColor = colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
@@ -184,33 +192,15 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     }
     
     func getNextClueID() -> String {
-        getNextClueID(tag: self.focusedTag)
+        return self.getNextClueID(tag: self.focusedTag)
     }
     
     func getNextClueID(tag: Int) -> String {
-        let directionalLetter: String = self.goingAcross == true ? "A" : "D"
-        let currentClueID: String = self.crossword.tagToCluesMap![tag][directionalLetter]!
-        let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
-        for i in currentClueNum+1..<self.crossword.clues!.count {
-            let trialClueID: String = String(i)+directionalLetter
-            if self.crossword.clues?[trialClueID] != nil {
-                return trialClueID
-            }
-        }
-        return String(1)+directionalLetter
+        return OmniCrosswords.getNextClueID(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross)
     }
     
     func getPreviousClueID() -> String {
-        let directionalLetter: String = self.goingAcross == true ? "A" : "D"
-        let currentClueID: String = self.crossword.tagToCluesMap![self.focusedTag][directionalLetter]!
-        let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
-        for i in (1..<currentClueNum).reversed() {
-            let trialClueID: String = String(i)+directionalLetter
-            if self.crossword.clues?[trialClueID] != nil {
-                return trialClueID
-            }
-        }
-        return String(1)+directionalLetter
+        return OmniCrosswords.getPreviousClueID(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross)
     }
     
     class Coordinator: NSObject, UITextFieldDelegate {
@@ -229,15 +219,11 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         @objc func goToNextClue(textField: NoActionTextField) {
-            let nextClueId: String = parent.getNextClueID()
-            let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
-            changeFocusToTag(nextTag)
+            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$isHighlighted)
         }
         
         @objc func goToPreviousClue(textField: NoActionTextField) {
-            let prevClueId: String = parent.getPreviousClueID()
-            let prevTag: Int = parent.crossword.clueToTagsMap![prevClueId]!.min()!
-            changeFocusToTag(prevTag)
+            OmniCrosswords.goToPreviousClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$isHighlighted)
         }
         
         @objc func hideKeyboard(textField: NoActionTextField) {
@@ -257,8 +243,18 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             if (!parent.isEditable()){
                 return false
             }
+            
+            if (parent.focusedTag == parent.tag) {
+                toggleDirection(tag: parent.tag, crossword: parent.crossword, goingAcross: parent.$goingAcross, isHighlighted: parent.$isHighlighted)
+            }
+                
             changeFocusToTag(parent.tag)
-            return true
+            if (parent.isKeyboardOpen) {
+                return false
+            } else {
+                parent.isKeyboardOpen = true
+                return true
+            }
         }
         
         func didPressBackspace(_ textField: UITextField) {
@@ -394,6 +390,84 @@ func toggleDirection(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>,
     setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, isHighlighted: isHighlighted)
 }
 
+func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
+    let directionalLetter: String = goingAcross == true ? "A" : "D"
+    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
+    let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
+    for i in (currentClueNum+1..<crossword.clues!.count) {
+        let trialClueID: String = String(i)+directionalLetter
+        if crossword.clues?[trialClueID] != nil {
+            return trialClueID
+        }
+    }
+    return String(1)+directionalLetter
+}
+
+func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    let nextClueId: String = getNextClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
+    let nextTag: Int = crossword.clueToTagsMap![nextClueId]!.min()!
+    changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+}
+
+func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    for i in (tag+1..<crossword.symbols!.count) {
+        if (crossword.symbols![i] != -1) {
+            changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            return
+        }
+    }
+}
+
+func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    for i in (0..<tag).reversed() {
+        if (crossword.symbols![i] != -1) {
+            changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            return
+        }
+    }
+}
+
+func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    var proposedTag = tag - Int(crossword.length)
+    while(proposedTag > 0) {
+        if (crossword.symbols![proposedTag] != -1) {
+            changeFocus(tag: proposedTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            return
+        }
+        proposedTag -= Int(crossword.length)
+    }
+}
+
+func goToDownCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    var proposedTag = tag + Int(crossword.length)
+    while(proposedTag < crossword.symbols!.count) {
+        if (crossword.symbols![proposedTag] != -1) {
+            changeFocus(tag: proposedTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            return
+        }
+        proposedTag += Int(crossword.length)
+    }
+}
+
+func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    let prevClueId: String = getPreviousClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
+    let prevTag: Int = crossword.clueToTagsMap![prevClueId]!.min()!
+    changeFocus(tag: prevTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+}
+
+func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
+    let directionalLetter: String = goingAcross == true ? "A" : "D"
+    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
+    let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
+    for i in (1..<currentClueNum).reversed() {
+        let trialClueID: String = String(i)+directionalLetter
+        if crossword.clues?[trialClueID] != nil {
+            return trialClueID
+        }
+    }
+    return String(1)+directionalLetter
+}
+
 func setHighlighting(tag: Int, crossword: Crossword, goingAcross: Bool, isHighlighted: Binding<Array<Int>>) {
     var newHighlighted = Array<Int>()
     newHighlighted.append(tag)
@@ -420,6 +494,20 @@ class NoActionTextField: UITextField {
         if let delegate = self.delegate as? CrosswordTextFieldView.Coordinator {
             delegate.didPressBackspace(self)
         }
+    }
+}
+
+class SingleTouchDownGestureRecognizer: UIGestureRecognizer {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent) {
+        if self.state == .possible {
+            self.state = .recognized
+        }
+    }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent) {
+        self.state = .failed
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent) {
+        self.state = .failed
     }
 }
 
