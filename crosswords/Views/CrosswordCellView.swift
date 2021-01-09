@@ -33,16 +33,23 @@ struct CrosswordCellView: View {
     var body: some View {
         ZStack(alignment: .topLeading){
             CrosswordTextFieldView(crossword: crossword, boxWidth: self.boxWidth, rowNum: rowNum, colNum: colNum, currentClue: currentClue, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$doErrorTracking, forceUpdate: self.$forceUpdate, isKeyboardOpen: self.$isKeyboardOpen)
-            if symbol > 0 {
-                Text(String(symbol))
+            if symbol % 1000 > 0 {
+                Text(String(symbol % 1000))
                     .font(.system(size: self.boxWidth/4))
                     .padding(self.boxWidth/25)
+            }
+            if symbol >= 1000 {
+                Circle()
+                    .stroke(lineWidth: 0.5)
             }
         }
         .contentShape(Rectangle())
         .contextMenu {
             Button(action: {
                 self.crossword.entry![self.focusedTag] = self.crossword.solution![self.focusedTag]
+                if (self.crossword.entry == self.crossword.solution) {
+                    self.crossword.solved = true
+                }
            }) {
                Text("Solve Square")
            }

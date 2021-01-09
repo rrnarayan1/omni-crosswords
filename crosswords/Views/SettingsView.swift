@@ -28,11 +28,15 @@ struct SettingsView: View {
                 }.frame(width: 300)
                 
                 Toggle(isOn: $userSettings.skipCompletedCells) {
-                    Text("Skip Completed Cells")
+                    Text("Skip completed cells")
                 }.frame(width: 300)
                 
                 Toggle(isOn: $userSettings.defaultErrorTracking) {
-                    Text("Error Tracking on By Default")
+                    Text("Error tracking on by default")
+                }.frame(width: 300)
+                
+                Toggle(isOn: $userSettings.showTimer) {
+                    Text("Show timer")
                 }.frame(width: 300)
                 
                 DeletionPickerView()
@@ -212,6 +216,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var showTimer: Bool {
+        didSet {
+            UserDefaults.standard.set(showTimer, forKey: "showTimer")
+        }
+    }
+    
     @Published var user: User?
     
     init() {
@@ -221,5 +231,6 @@ class UserSettings: ObservableObject {
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
         self.user = Auth.auth().currentUser
+        self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
     }
 }

@@ -35,7 +35,7 @@ struct CrosswordView: View {
     @State var isKeyboardOpen = false
     
     var boxWidth: CGFloat {
-        let maxSize: CGFloat = 45.0
+        let maxSize: CGFloat = 40.0
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
         return min(defaultSize, maxSize)
     }
@@ -52,6 +52,7 @@ struct CrosswordView: View {
         return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
     
     @ViewBuilder
     var body: some View {
@@ -81,8 +82,10 @@ struct CrosswordView: View {
                         }
                     })
                     .padding(.top, 30)
-                    Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
-                        .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
+                    if (showTimer) {
+                        Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
+                            .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
+                    }
                     Spacer()
                     VStack (alignment: .center){
                         if (self.focusedTag == -1) {

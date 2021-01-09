@@ -54,16 +54,7 @@ struct CrosswordListView: View {
                     tag: crossword,
                     selection: self.$openCrossword
                 ) {
-                    HStack {
-                        Text(self.getCrosswordListTitle(crossword: crossword))
-                        if (crossword.solved) {
-                            Spacer()
-                            if (crossword.solvedTime > 0) {
-                                Text(toTime(Int(crossword.solvedTime))).foregroundColor(Color.init(UIColor.systemGreen))
-                            }
-                            Image(uiImage: UIImage.fontAwesomeIcon(name: .checkCircle, style: FontAwesomeStyle.regular, textColor: UIColor.systemGreen, size: CGSize.init(width: 30, height: 30)))
-                        }
-                    }
+                    CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword, showSettings: self.showSettings)
                 }
             }.onAppear(perform: {
                 self.refreshCrosswords()
@@ -161,6 +152,70 @@ struct CrosswordListView: View {
             }
         }
     }
+}
+
+struct CrosswordListView_Previews: PreviewProvider {
+    static var previews: some View {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        return CrosswordListView().environment(\.managedObjectContext, context)
+    }
+}
+
+struct CrosswordListItemView: View {
+    var crossword: Crossword
+    @State var openCrossword: Crossword?
+    @State var showSettings: Bool
+    @ObservedObject var userSettings = UserSettings()
+    
+    var crosswordProgress: CGFloat {
+        if (openCrossword != nil && crossword.id == openCrossword!.id) {
+            return getCrosswordProgress(crossword: openCrossword!)
+        } else {
+            return getCrosswordProgress(crossword: crossword)
+        }
+        
+    }
+    
+    var currentTime: String {
+        if (showSettings) {
+            return " "+toTime(Int(crossword.solvedTime))
+        } else {
+            return toTime(Int(crossword.solvedTime))
+        }
+    }
+
+    var body: some View {
+        HStack {
+            Text(self.getCrosswordListTitle(crossword: crossword))
+            Spacer()
+            if (crossword.solved) {
+                if (userSettings.showTimer && crossword.solvedTime > 0) {
+                    Text(currentTime).foregroundColor(Color.init(UIColor.systemGreen))
+                }
+                Image(uiImage: UIImage.fontAwesomeIcon(name: .checkCircle, style: FontAwesomeStyle.regular, textColor: UIColor.systemGreen, size: CGSize.init(width: 30, height: 30)))
+            }
+            else if (crosswordProgress > 0) {
+                if (userSettings.showTimer && crossword.solvedTime > 0) {
+                    Text(currentTime).foregroundColor(Color.init(UIColor.systemOrange))
+                }
+                ZStack{
+                    Circle()
+                        .stroke(lineWidth: 5.0)
+                        .opacity(0.3)
+                        .foregroundColor(Color(UIColor.systemOrange))
+                        .rotationEffect(Angle(degrees: 270.0))
+                        .frame(width: 30, height: 30)
+                    Circle()
+                        .trim(from: 0.0, to: crosswordProgress)
+                        .stroke(style: StrokeStyle(lineWidth: 5.0, lineCap: .round, lineJoin: .round))
+                        .foregroundColor(Color(UIColor.systemOrange))
+                        .rotationEffect(Angle(degrees: 270.0))
+                        .frame(width: 30, height: 30)
+                }
+            }
+        }
+    }
     
     func getCrosswordListTitle(crossword: Crossword) -> String {
         let date = crossword.date!
@@ -169,12 +224,15 @@ struct CrosswordListView: View {
         formatter.dateStyle = .short
         return crossword.outletName! + " - " + formatter.string(from: date)
     }
-}
-
-struct CrosswordListView_Previews: PreviewProvider {
-    static var previews: some View {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        
-        return CrosswordListView().environment(\.managedObjectContext, context)
+    
+    func getCrosswordProgress(crossword: Crossword) -> CGFloat {
+        let emptySquares = (crossword.symbols?.filter({ (symbol) -> Bool in
+            symbol != -1
+        }).count)
+        let filledSquares = crossword.entry?.filter({ (entry) -> Bool in
+            entry != "." && !entry.isEmpty
+        }).count
+        let retval = CGFloat(filledSquares!)/CGFloat(emptySquares!)
+        return retval
     }
 }

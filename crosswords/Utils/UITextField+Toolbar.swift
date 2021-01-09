@@ -26,15 +26,16 @@ extension UITextField {
     func changeToolbar(clueTitle: String, toggleImage: UIImage, coordinator: CrosswordTextFieldView.Coordinator, barColor: UIColor) {
         let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
-        let clueTitleLabel = UILabel()
+        let clueTitleLabel = UITextView()
         clueTitleLabel.text = clueTitle
-        clueTitleLabel.font = UIFont.systemFont(ofSize: 15)
+        clueTitleLabel.font = UIFont.systemFont(ofSize: 13)
         clueTitleLabel.textColor = UIColor.label
+        clueTitleLabel.frame.size.width = UIScreen.screenWidth-150
+        clueTitleLabel.backgroundColor = UIColor.clear
+        clueTitleLabel.isEditable = false
         clueTitleLabel.textAlignment = NSTextAlignment.center
-        clueTitleLabel.numberOfLines = 2
-        clueTitleLabel.lineBreakMode = .byWordWrapping
-        clueTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        clueTitleLabel.preferredMaxLayoutWidth = UIScreen.screenWidth-150
+        clueTitleLabel.allowsEditingTextAttributes = false
+        clueTitleLabel.isSelectable = false
         
         
         let clueTitle = UIBarButtonItem.init(customView: clueTitleLabel)
