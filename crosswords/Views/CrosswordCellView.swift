@@ -118,6 +118,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var isKeyboardOpen: Bool
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
+    @ObservedObject var userSettings = UserSettings()
     
     func makeUIView(context: Context) -> NoActionTextField {
         let textField = NoActionTextField(frame: .zero)
@@ -289,6 +290,16 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
             if (textField.text == "." || string == "." || parent.focusedTag < 0) {
+                return false
+            }
+            
+            if (string == " " && parent.userSettings.spaceTogglesDirection) {
+                toggleDirection(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, isHighlighted: parent.$isHighlighted)
+                return false
+            }
+            
+            if (string == " ") {
+                moveFocusToNextField(textField)
                 return false
             }
             

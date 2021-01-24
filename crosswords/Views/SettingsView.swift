@@ -39,6 +39,10 @@ struct SettingsView: View {
                     Text("Show timer")
                 }.frame(width: 300)
                 
+                Toggle(isOn: $userSettings.spaceTogglesDirection) {
+                    Text("Space bar toggles direction")
+                }.frame(width: 300)
+                
                 DeletionPickerView()
                 
                 Button(action: {
@@ -222,6 +226,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var spaceTogglesDirection: Bool {
+        didSet {
+            UserDefaults.standard.set(spaceTogglesDirection, forKey: "spaceTogglesDirection")
+        }
+    }
+    
     @Published var user: User?
     
     init() {
@@ -232,5 +242,6 @@ class UserSettings: ObservableObject {
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
         self.user = Auth.auth().currentUser
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
+        self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
     }
 }
