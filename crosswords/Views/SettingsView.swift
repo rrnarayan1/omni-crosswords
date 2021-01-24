@@ -43,6 +43,10 @@ struct SettingsView: View {
                     Text("Space bar toggles direction")
                 }.frame(width: 300)
                 
+                Toggle(isOn: $userSettings.enableHapticFeedback) {
+                    Text("Enable haptic feedback")
+                }.frame(width: 300)
+                
                 DeletionPickerView()
                 
                 Button(action: {
@@ -232,6 +236,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var enableHapticFeedback: Bool {
+        didSet {
+            UserDefaults.standard.set(enableHapticFeedback, forKey: "enableHapticFeedback")
+        }
+    }
+    
     @Published var user: User?
     
     init() {
@@ -243,5 +253,6 @@ class UserSettings: ObservableObject {
         self.user = Auth.auth().currentUser
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
         self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
+        self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
     }
 }

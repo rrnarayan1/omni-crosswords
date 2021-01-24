@@ -404,6 +404,10 @@ func toggleDirection(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>,
     if (crossword.entry![tag] == ".") {
         return
     }
+    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
+        let impactMed = UIImpactFeedbackGenerator(style: .medium)
+        impactMed.impactOccurred()
+    }
     goingAcross.wrappedValue = !goingAcross.wrappedValue
     setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, isHighlighted: isHighlighted)
 }
@@ -422,6 +426,10 @@ func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String 
 }
 
 func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
+        let impactMed = UIImpactFeedbackGenerator(style: .medium)
+        impactMed.impactOccurred()
+    }
     let nextClueId: String = getNextClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let nextTag: Int = crossword.clueToTagsMap![nextClueId]!.min()!
     changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
@@ -468,6 +476,10 @@ func goToDownCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag:
 }
 
 func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
+        let impactMed = UIImpactFeedbackGenerator(style: .medium)
+        impactMed.impactOccurred()
+    }
     let prevClueId: String = getPreviousClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let prevTag: Int = crossword.clueToTagsMap![prevClueId]!.min()!
     changeFocus(tag: prevTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
