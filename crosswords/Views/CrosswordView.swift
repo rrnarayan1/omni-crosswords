@@ -29,6 +29,7 @@ struct CrosswordView: View {
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
     @State var showCrosswordSettings = false
+    @State var showShareSheet = false
     @State var errorTracking : Bool = false
     @State var forceUpdate = false
     @State var scrolledRow = 0
@@ -118,8 +119,26 @@ struct CrosswordView: View {
                     .sheet(isPresented: $showCrosswordSettings) {
                         CrosswordSettingsView(errorTracking: self.$errorTracking)
                     }
+                    Button(action: shareSheet) {
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                    }
                 }
             )
+    }
+    
+    func shareSheet() {
+        var shareMessage: String
+        if (self.crossword.solved) {
+            shareMessage = "I solved the " + self.crossword.outletName! + " crossword in "
+            shareMessage += String(toTime(Int(self.crossword.solvedTime)))
+            shareMessage += ". Download OmniCrosswords and try to beat my time!"
+        } else {
+            shareMessage = "I'm in the middle of solving the " + self.crossword.outletName! + " crossword"
+            shareMessage += ". Download OmniCrosswords and help me out!"
+        }
+        let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
+        let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
     }
     
     func resetArray(count: Int) -> Array<Bool> {

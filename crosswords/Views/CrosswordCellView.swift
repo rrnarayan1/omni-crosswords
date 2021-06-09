@@ -165,10 +165,18 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         if self.isEditable() {
             if isHighlighted.contains(self.tag) {
-                if (self.tag == focusedTag) {
-                    uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.5)
+                if (colorScheme == .dark) {
+                    if (self.tag == focusedTag) {
+                        uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.8)
+                    } else {
+                        uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.5)
+                    }
                 } else {
-                    uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+                    if (self.tag == focusedTag) {
+                        uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.6)
+                    } else {
+                        uiTextField.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.2)
+                    }
                 }
             } else {
                 uiTextField.backgroundColor = colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
