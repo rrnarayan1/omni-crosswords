@@ -14,7 +14,8 @@ import FontAwesome_swift
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    @State var fetchDisabled = false
+    @State var refreshEnabled = false
+    let semaphore = DispatchSemaphore(value: 1)
     @State var showSettings = false
     @State var openCrossword: Crossword? = nil
     @ObservedObject var userSettings = UserSettings()
@@ -57,7 +58,12 @@ struct CrosswordListView: View {
                     CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword, showSettings: self.showSettings)
                 }
             }.onAppear(perform: {
-                self.refreshCrosswords()
+                DispatchQueue.global().async {
+                    semaphore.wait()
+                    self.refreshCrosswords()
+                    self.refreshEnabled = true
+                    semaphore.signal()
+                }
             })
             .navigationBarTitle("Crosswords")
             .navigationBarItems(trailing:
@@ -70,11 +76,17 @@ struct CrosswordListView: View {
                     .sheet(isPresented: $showSettings) {
                         SettingsView()
                     }
-                    Button(action: {
-                        self.refreshCrosswords()
-                    }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }.disabled(fetchDisabled)
+                    if (self.refreshEnabled) {
+                        Button(action: {
+                            DispatchQueue.global().async {
+                                semaphore.wait()
+                                self.refreshCrosswords()
+                                semaphore.signal()
+                            }
+                        }) {
+                            Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                        }.disabled(!self.refreshEnabled)
+                    }
                 }
             )
         }
@@ -93,11 +105,6 @@ struct CrosswordListView: View {
     }
     
     func refreshCrosswords() -> Void {
-        if (self.fetchDisabled) {
-            return
-        }
-        
-        self.fetchDisabled = true
         let lastDate: Date
         
         if self.crosswords.count == 0 {
@@ -135,7 +142,6 @@ struct CrosswordListView: View {
             }
         }
         checkForDeletions()
-        self.fetchDisabled = false
     }
     
     func checkForDeletions() -> Void {
@@ -150,6 +156,10 @@ struct CrosswordListView: View {
             } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved {
                 self.managedObjectContext.delete(crossword)
             }
+//            if crossword.date! > Date.init(timeInterval: -86400, since: Date()) {
+//                self.managedObjectContext.delete(crossword)
+//            }
+            
         }
     }
 }

@@ -27,7 +27,7 @@ func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
     let tagToCluesList = data.get("tag_to_clue_map") as? Array<Dictionary<String, String>>
     crossword.tagToCluesMap = tagToCluesList
     crossword.solved = false
-    crossword.solvedTime = 0
+    crossword.addedTime = Date().timeIntervalSince1970
     
     
     crossword.clueToTagsMap = [:]
