@@ -15,13 +15,12 @@ import FontAwesome_swift
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @State var refreshEnabled = false
-    let semaphore = DispatchSemaphore(value: 1)
     @State var showSettings = false
     @State var openCrossword: Crossword? = nil
     @ObservedObject var userSettings = UserSettings()
+    let refreshQueue = DispatchQueue(label: "refresh")
     
     @FetchRequest(entity: Crossword.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Crossword.date, ascending: false)])
-    
     var crosswords: FetchedResults<Crossword>
     var showSolvedPuzzles: Bool {
         UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
@@ -58,12 +57,7 @@ struct CrosswordListView: View {
                     CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword, showSettings: self.showSettings)
                 }
             }.onAppear(perform: {
-                DispatchQueue.global().async {
-                    semaphore.wait()
-                    self.refreshCrosswords()
-                    self.refreshEnabled = true
-                    semaphore.signal()
-                }
+                self.refreshCrosswords()
             })
             .navigationBarTitle("Crosswords")
             .navigationBarItems(trailing:
@@ -76,17 +70,11 @@ struct CrosswordListView: View {
                     .sheet(isPresented: $showSettings) {
                         SettingsView()
                     }
-                    if (self.refreshEnabled) {
-                        Button(action: {
-                            DispatchQueue.global().async {
-                                semaphore.wait()
-                                self.refreshCrosswords()
-                                semaphore.signal()
-                            }
-                        }) {
-                            Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                        }.disabled(!self.refreshEnabled)
-                    }
+                    Button(action: {
+                        self.refreshCrosswords()
+                    }) {
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: self.refreshEnabled ? UIColor.systemBlue : UIColor.systemGray, size: CGSize.init(width: 30, height: 30)))
+                    }.disabled(!self.refreshEnabled)
                 }
             )
         }
@@ -105,43 +93,44 @@ struct CrosswordListView: View {
     }
     
     func refreshCrosswords() -> Void {
-        let lastDate: Date
+        self.refreshEnabled = false
         
-        if self.crosswords.count == 0 {
-            // 1 week ago
-            lastDate = Date.init(timeInterval: -604800, since: Date())
-        } else {
-            lastDate = self.crosswords[0].date!
-        }
-        
-        
-        
-        let db = Firestore.firestore()
-        let docRef = db.collection("crosswords").whereField("date", isGreaterThanOrEqualTo: lastDate).whereField("crossword_outlet_name", in: subscriptions)
-        
-        let crosswordIds: Array<String> = crosswords.map { (crossword) -> String in
-            crossword.id!
-        }
-        
-        docRef.getDocuments {(querySnapshot, error) in
-            if let error = error {
-                print("Error getting documents: \(error)")
+        refreshQueue.async() {
+            let lastDate: Date
+            if self.crosswords.count == 0 {
+                lastDate = Date.init(timeInterval: -604800, since: Date())
             } else {
-                for document in querySnapshot!.documents {
-                    if (crosswordIds.contains(document.documentID)) {
-                        continue
-                    }
-                    let crossword = Crossword(context: self.managedObjectContext)
-                    jsonToCrossword(crossword: crossword, data: document)
-                    do {
-                        try self.managedObjectContext.save()
-                    } catch {
-                        print(error.localizedDescription)
+                lastDate = self.crosswords[0].date!
+            }
+            
+            let db = Firestore.firestore()
+            let docRef = db.collection("crosswords").whereField("date", isGreaterThanOrEqualTo: lastDate).whereField("crossword_outlet_name", in: subscriptions)
+            
+            let crosswordIds: Array<String> = crosswords.map { (crossword) -> String in
+                crossword.id!
+            }
+            
+            docRef.getDocuments {(querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        if (crosswordIds.contains(document.documentID)) {
+                            continue
+                        }
+                        let crossword = Crossword(context: self.managedObjectContext)
+                        jsonToCrossword(crossword: crossword, data: document)
+                        do {
+                            try self.managedObjectContext.save()
+                        } catch {
+                            print(error.localizedDescription)
+                        }
                     }
                 }
+                checkForDeletions()
+                self.refreshEnabled = true
             }
         }
-        checkForDeletions()
     }
     
     func checkForDeletions() -> Void {
@@ -156,19 +145,12 @@ struct CrosswordListView: View {
             } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved {
                 self.managedObjectContext.delete(crossword)
             }
+// Commented out - this deletes the most recent day's crossword
 //            if crossword.date! > Date.init(timeInterval: -86400, since: Date()) {
 //                self.managedObjectContext.delete(crossword)
 //            }
             
         }
-    }
-}
-
-struct CrosswordListView_Previews: PreviewProvider {
-    static var previews: some View {
-        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-        
-        return CrosswordListView().environment(\.managedObjectContext, context)
     }
 }
 
