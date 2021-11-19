@@ -49,26 +49,20 @@ struct SettingsView: View {
                 
                 DeletionPickerView()
                 
-                Button(action: {
-                    self.showSubscriptions.toggle()
-                }) {
-                    Text("Configure Puzzle Subscriptions")
-                }
-                .sheet(isPresented: $showSubscriptions) {
-                    SubscriptionsView()
-                }
+                NavigationLink(
+                    destination: SubscriptionsView(),
+                    label: {Text("Configure Puzzle Subscriptions")}
+                ).padding(.top, 20)
                 
-                Button(action: {
-                    self.showKeyboardShortcuts.toggle()
-                }) {
-                    Text("View Keyboard Shortcuts")
-                }
-                .sheet(isPresented: $showKeyboardShortcuts) {
-                    KeyboardShortcutsView()
-                }.padding(.top, 20)
+                NavigationLink(
+                    destination: KeyboardShortcutsView(),
+                    label: {Text("View Keyboard Shortcuts")}
+                ).padding(.top, 20)
+                
                 Spacer()
             }
             .navigationBarTitle("Settings", displayMode: .large)
+            .navigationViewStyle(StackNavigationViewStyle())
             .navigationBarColor(.systemGray6)
             .padding(30)
         }
@@ -154,6 +148,7 @@ struct KeyboardShortcutsView: View {
                 
             }
         }
+        .navigationBarTitle("Keyboard Shortcuts", displayMode: .large)
         .frame(width: 200)
     }
 }
@@ -162,21 +157,19 @@ struct SubscriptionsView: View {
     @ObservedObject var userSettings = UserSettings()
     
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                ForEach((0..<allSubscriptions.count), id: \.self) { i in
-                    HStack {
-                        Text(allSubscriptions[i])
-                        Spacer()
-                        Button(action: {self.toggleSubscription(allSubscriptions[i])}) {
-                            Image(uiImage: self.hasSub(allSubscriptions[i]) ? UIImage.fontAwesomeIcon(name: .checkSquare, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)) : UIImage.fontAwesomeIcon(name: .square, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-                        }
+        VStack(alignment: .leading) {
+            ForEach((0..<allSubscriptions.count), id: \.self) { i in
+                HStack {
+                    Text(allSubscriptions[i])
+                    Spacer()
+                    Button(action: {self.toggleSubscription(allSubscriptions[i])}) {
+                        Image(uiImage: self.hasSub(allSubscriptions[i]) ? UIImage.fontAwesomeIcon(name: .checkSquare, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)) : UIImage.fontAwesomeIcon(name: .square, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
                     }
                 }
             }
-            .navigationBarTitle("Subscriptions", displayMode: .large)
-            .padding(30)
         }
+        .navigationBarTitle("Subscriptions", displayMode: .large)
+        .padding(30)
     }
     
     func toggleSubscription(_ sub: String) -> Void {
