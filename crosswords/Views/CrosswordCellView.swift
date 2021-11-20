@@ -54,36 +54,6 @@ struct CrosswordCellView: View {
                Text("Solve Square")
            }
         }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("nextClue"))) { notification in
-            if (self.tag == 0) {
-                goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("previousClue"))) { notification in
-            if (self.tag == 0) {
-                goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("rightCell"))) { notification in
-            if (self.tag == 0) {
-                goToRightCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("leftCell"))) { notification in
-            if (self.tag == 0) {
-                goToLeftCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("upCell"))) { notification in
-            if (self.tag == 0) {
-                goToUpCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("downCell"))) { notification in
-            if (self.tag == 0) {
-                goToDownCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$isHighlighted)
-            }
-        }
     }
 }
 
@@ -207,10 +177,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         return self.crossword.entry![self.tag] != "."
     }
     
-    func getNextClueID() -> String {
-        return self.getNextClueID(tag: self.focusedTag)
-    }
-    
     func getNextClueID(tag: Int) -> String {
         return OmniCrosswords.getNextClueID(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross)
     }
@@ -221,6 +187,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     
     class Coordinator: NSObject, UITextFieldDelegate {
         var parent: CrosswordTextFieldView
+        
+        init(_ textField: CrosswordTextFieldView) {
+            self.parent = textField
+        }
         
         @objc func touchTextFieldWhileFocused(textField: NoActionTextField) {
             if (parent.tag == parent.focusedTag) {
@@ -244,10 +214,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         @objc func hideKeyboard(textField: NoActionTextField) {
             changeFocusToTag(-1)
-        }
-
-        init(_ textField: CrosswordTextFieldView) {
-            self.parent = textField
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -334,47 +300,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         func moveFocusToNextField(_ textField: UITextField) {
-            let nextTag: Int = getNextTagId()
-            if (nextTag >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[nextTag] == nil || parent.crossword.tagToCluesMap?[nextTag].count == 0 || parent.crossword.entry![nextTag] != "") {
-                if (parent.skipCompletedCells) {
-                    // skip to next uncompleted square
-                    var possibleTag: Int = getNextTagId(parent.focusedTag)
-                    var oldTag: Int = parent.focusedTag
-                    for _ in (1..<parent.crossword.entry!.count) {
-                        if (possibleTag >= parent.crossword.entry!.count ||
-                                parent.crossword.symbols![possibleTag] == -1 ||
-                                parent.crossword.tagToCluesMap?[possibleTag] == nil ||
-                                parent.crossword.tagToCluesMap?[possibleTag].count == 0) {
-                            // if we're checking the end, start checking again from the start
-                            // if we're at a block, start checking the next clue
-                            // if we're beyond the bounds of the puzzle, start checking next clue
-                            let possibleNextClueId: String = parent.getNextClueID(tag: oldTag)
-                            possibleTag = parent.crossword.clueToTagsMap![possibleNextClueId]!.min()!
-                        } else if (parent.crossword.entry![possibleTag] == "") {
-                            // if the possibleTag is empty, go there
-                            changeFocusToTag(possibleTag)
-                            return
-                        } else {
-                            // possibleTag's cell is full, so move to next cell
-                            oldTag = possibleTag
-                            possibleTag = getNextTagId(possibleTag)
-                        }
-                    }
-                // if it reaches here, just try the next cell
-                changeFocusToTag(nextTag)
-                } else if (nextTag >= parent.crossword.symbols!.count || parent.crossword.tagToCluesMap?[nextTag] == nil || parent.crossword.tagToCluesMap?[nextTag].count == 0) {
-                    // they don't want to skip completed cells, so when we're at the end of the puzzle/at a square, go to start of the next clue
-                    let nextClueId: String = parent.getNextClueID()
-                    let nextTag: Int = parent.crossword.clueToTagsMap![nextClueId]!.min()!
-                    changeFocusToTag(nextTag)
-                } else {
-                    // they don't want to skip completed cells, and we're checking a valid square, so just go to that square
-                    changeFocusToTag(nextTag)
-                }
-            } else {
-                // the next cell is a valid empty square
-                changeFocusToTag(nextTag)
-            }
+            OmniCrosswords.moveFocusToNextField(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$isHighlighted)
         }
         
         func getNextTagId() -> Int {
@@ -394,130 +320,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$isHighlighted)
         }
     }
-}
-
-func changeFocus(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>,
-                      isHighlighted: Binding<Array<Int>>) {
-    if (tag < 0 || tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil
-        || crossword.tagToCluesMap?[tag].count == 0) {
-        focusedTag.wrappedValue = -1
-        isHighlighted.wrappedValue = Array<Int>()
-        return
-    }
-    focusedTag.wrappedValue = tag
-    setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross, isHighlighted: isHighlighted)
-}
-
-func toggleDirection(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
-    if (crossword.entry![tag] == ".") {
-        return
-    }
-    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
-        let impactMed = UIImpactFeedbackGenerator(style: .medium)
-        impactMed.impactOccurred()
-    }
-    goingAcross.wrappedValue = !goingAcross.wrappedValue
-    setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, isHighlighted: isHighlighted)
-}
-
-func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-    let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
-    let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
-    for i in (currentClueNum+1..<crossword.clues!.count) {
-        let trialClueID: String = String(i)+directionalLetter
-        if crossword.clues?[trialClueID] != nil {
-            return trialClueID
-        }
-    }
-    return String(1)+directionalLetter
-}
-
-func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
-        let impactMed = UIImpactFeedbackGenerator(style: .medium)
-        impactMed.impactOccurred()
-    }
-    let nextClueId: String = getNextClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
-    let nextTag: Int = crossword.clueToTagsMap![nextClueId]!.min()!
-    changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-}
-
-func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    for i in (tag+1..<crossword.symbols!.count) {
-        if (crossword.symbols![i] != -1) {
-            changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-            return
-        }
-    }
-}
-
-func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    for i in (0..<tag).reversed() {
-        if (crossword.symbols![i] != -1) {
-            changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-            return
-        }
-    }
-}
-
-func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    var proposedTag = tag - Int(crossword.length)
-    while(proposedTag > 0) {
-        if (crossword.symbols![proposedTag] != -1) {
-            changeFocus(tag: proposedTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-            return
-        }
-        proposedTag -= Int(crossword.length)
-    }
-}
-
-func goToDownCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    var proposedTag = tag + Int(crossword.length)
-    while(proposedTag < crossword.symbols!.count) {
-        if (crossword.symbols![proposedTag] != -1) {
-            changeFocus(tag: proposedTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-            return
-        }
-        proposedTag += Int(crossword.length)
-    }
-}
-
-func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
-    if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
-        let impactMed = UIImpactFeedbackGenerator(style: .medium)
-        impactMed.impactOccurred()
-    }
-    let prevClueId: String = getPreviousClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
-    let prevTag: Int = crossword.clueToTagsMap![prevClueId]!.min()!
-    changeFocus(tag: prevTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-}
-
-func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-    let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
-    let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
-    for i in (1..<currentClueNum).reversed() {
-        let trialClueID: String = String(i)+directionalLetter
-        if crossword.clues?[trialClueID] != nil {
-            return trialClueID
-        }
-    }
-    return String(1)+directionalLetter
-}
-
-func setHighlighting(tag: Int, crossword: Crossword, goingAcross: Bool, isHighlighted: Binding<Array<Int>>) {
-    var newHighlighted = Array<Int>()
-    newHighlighted.append(tag)
-    
-    let clues: Dictionary<String, String> = (crossword.tagToCluesMap?[tag])!
-    let directionalLetter: String = goingAcross ? "A" : "D"
-    let clue: String = clues[directionalLetter]!
-    let clueTags: Array<Int> = (crossword.clueToTagsMap?[clue])!
-    for clueTag in clueTags {
-        newHighlighted.append(clueTag)
-    }
-    isHighlighted.wrappedValue = newHighlighted
 }
 
 class NoActionTextField: UITextField {

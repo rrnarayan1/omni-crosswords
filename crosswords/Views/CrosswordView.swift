@@ -107,23 +107,41 @@ struct CrosswordView: View {
                 self.timerWrapper.start(Int(self.crossword.solvedTime))
             }
         }
-            .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
-            .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
-            .navigationBarItems(trailing:
-                HStack {
-                    Button(action: {
-                        self.showCrosswordSettings.toggle()
-                    }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }
-                    .sheet(isPresented: $showCrosswordSettings) {
-                        CrosswordSettingsView(errorTracking: self.$errorTracking)
-                    }
-                    Button(action: shareSheet) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("nextClue"))) { notification in
+            goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("previousClue"))) { notification in
+            goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("rightCell"))) { notification in
+            goToRightCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("leftCell"))) { notification in
+            goToLeftCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("upCell"))) { notification in
+            goToUpCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("downCell"))) { notification in
+            goToDownCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+        .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
+        .navigationBarItems(trailing:
+            HStack {
+                Button(action: {
+                    self.showCrosswordSettings.toggle()
+                }) {
+                    Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
                 }
-            )
+                .sheet(isPresented: $showCrosswordSettings) {
+                    CrosswordSettingsView(errorTracking: self.$errorTracking)
+                }
+                Button(action: shareSheet) {
+                    Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                }
+            }
+        )
     }
     
     func shareSheet() {
