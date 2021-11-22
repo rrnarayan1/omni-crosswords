@@ -69,25 +69,6 @@ struct SettingsView: View {
     }
 }
 
-struct CrosswordSettingsView: View {
-    @Binding var errorTracking: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                Toggle(isOn: $errorTracking) {
-                    Text("Error Tracking")
-                }.frame(width: 200)
-                Spacer()
-            }
-            .navigationBarTitle("Crossword Settings", displayMode: .large)
-            .navigationBarColor(.systemGray6)
-            .padding(30)
-        }
-    }
-    
-}
-
 struct DeletionPickerView: View {
     @ObservedObject var userSettings = UserSettings()
     

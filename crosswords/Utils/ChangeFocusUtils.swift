@@ -131,7 +131,7 @@ func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag:
 
 func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     var proposedTag = tag - Int(crossword.length)
-    while(proposedTag > 0) {
+    while(proposedTag >= 0) {
         if (crossword.symbols![proposedTag] != -1) {
             changeFocus(tag: proposedTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
             return

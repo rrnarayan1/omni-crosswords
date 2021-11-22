@@ -88,16 +88,6 @@ struct CrosswordView: View {
                             .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
                     }
                     Spacer()
-                    VStack (alignment: .center){
-                        if (self.focusedTag == -1) {
-                            Text(self.crossword.title!).multilineTextAlignment(.center)
-                            Text(self.crossword.author!).multilineTextAlignment(.center)
-                            if (self.crossword.notes! != "") {
-                                Text(self.crossword.notes!).multilineTextAlignment(.center)
-                            }
-                            Text(self.crossword.copyright!).multilineTextAlignment(.center)
-                        }
-                    }
                 }
             }
         }
@@ -135,7 +125,7 @@ struct CrosswordView: View {
                     Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
                 }
                 .sheet(isPresented: $showCrosswordSettings) {
-                    CrosswordSettingsView(errorTracking: self.$errorTracking)
+                    CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$errorTracking)
                 }
                 Button(action: shareSheet) {
                     Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
@@ -216,17 +206,57 @@ struct CrosswordGridView: View {
                             boxWidth: self.boxWidth,
                             rowNum: Int(rowNum),
                             colNum: Int(colNum),
-                            currentClue: self.currentClue, focusedTag: self.$focusedTag,
-                            isHighlighted: self.$highlighted,
-                            goingAcross: self.$goingAcross,
-                            doErrorTracking: self.$doErrorTracking,
+                            currentClue: self.currentClue,
+                            isErrorTrackingEnabled: self.doErrorTracking,
+                            focusedTag: self.$focusedTag,
+                            highlighted: self.$highlighted,
                             forceUpdate: self.$forceUpdate,
-                            isKeyboardOpen: self.$isKeyboardOpen
+                            goingAcross: self.$goingAcross
                         ).frame(width: self.boxWidth, height: self.boxWidth)
                         .id("row"+String(rowNum))
                     }
                 }
             }
+            CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate)
+                .onAppear(perform: {
+                    changeFocus(tag: 0, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                })
+                .frame(width:1, height: 1)
         }
     }
+}
+
+struct CrosswordSettingsView: View {
+    var crossword: Crossword
+    @Binding var errorTracking: Bool
+    
+    var body: some View {
+        NavigationView {
+            VStack(alignment: .leading) {
+                Toggle(isOn: $errorTracking) {
+                    Text("Error Tracking")
+                }
+                .frame(width: 200)
+                .padding(30)
+                
+                Text("Title: "+self.crossword.title!)
+                Text("Author: "+self.crossword.author!)
+                if (self.crossword.notes! != "") {
+                    Text("Notes: "+self.crossword.notes!)
+                }
+                Text(self.crossword.copyright!)
+                Spacer()
+            }
+            .navigationBarTitle("Crossword Settings", displayMode: .large)
+            .navigationBarColor(.systemGray6)
+            .padding(30)
+        }
+    }
+    
+}
+
+extension UIScreen{
+   static let screenWidth = UIScreen.main.bounds.size.width
+   static let screenHeight = UIScreen.main.bounds.size.height
+   static let screenSize = UIScreen.main.bounds.size
 }

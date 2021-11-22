@@ -12,6 +12,7 @@
 		1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */; };
 		1C1EA90F24DE765D00A67BA9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */; };
 		1C3D87E8274976BA001A7591 /* ChangeFocusUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C3D87E7274976BA001A7591 /* ChangeFocusUtils.swift */; };
+		1C3D87EA2749ACFB001A7591 /* CrosswordTextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C3D87E92749ACFB001A7591 /* CrosswordTextFieldView.swift */; };
 		1C4FF2562501D074002BBE48 /* NavigationBarModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4FF2552501D074002BBE48 /* NavigationBarModifier.swift */; };
 		1C6A26B724CA7340002F8DAD /* CrosswordCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */; };
 		1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73206724C4F44000240AF8 /* AppDelegate.swift */; };
@@ -34,6 +35,7 @@
 		1C1B32528D01C514E4C01B6F /* Pods-crosswords.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.release.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.release.xcconfig"; sourceTree = "<group>"; };
 		1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1C3D87E7274976BA001A7591 /* ChangeFocusUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeFocusUtils.swift; sourceTree = "<group>"; };
+		1C3D87E92749ACFB001A7591 /* CrosswordTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordTextFieldView.swift; sourceTree = "<group>"; };
 		1C4FF2552501D074002BBE48 /* NavigationBarModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarModifier.swift; sourceTree = "<group>"; };
 		1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordCellView.swift; sourceTree = "<group>"; };
 		1C73206424C4F44000240AF8 /* OmniCrosswords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OmniCrosswords.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +92,7 @@
 				1C73208C24C688A800240AF8 /* CrosswordView.swift */,
 				1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */,
 				1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */,
+				1C3D87E92749ACFB001A7591 /* CrosswordTextFieldView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 				1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */,
 				1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */,
 				1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */,
+				1C3D87EA2749ACFB001A7591 /* CrosswordTextFieldView.swift in Sources */,
 				1C06D8F324D28F2300B734BB /* JsonToCrossword.swift in Sources */,
 				1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */,
 			);
