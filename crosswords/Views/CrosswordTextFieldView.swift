@@ -25,6 +25,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
+    @Binding var becomeFirstResponder: Bool
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
     @ObservedObject var userSettings = UserSettings()
@@ -37,11 +38,20 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.keyboardType = UIKeyboardType.alphabet
         textField.tintColor = UIColor.clear
         textField.addToolbar()
-        textField.becomeFirstResponder()        
         return textField
     }
     
     func updateUIView(_ uiTextField: NoActionTextField, context: Context) {
+        if (!uiTextField.isFirstResponder && self.becomeFirstResponder) {
+            DispatchQueue.main.async {
+                uiTextField.becomeFirstResponder()
+            }
+        } else if (self.becomeFirstResponder == false && uiTextField.isFirstResponder) {
+            DispatchQueue.main.async {
+                uiTextField.resignFirstResponder()
+            }
+        }
+        
         let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
         uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, coordinator: context.coordinator, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
     }

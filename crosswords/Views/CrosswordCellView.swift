@@ -28,16 +28,18 @@ struct CrosswordCellView: View {
     @Binding var highlighted: Array<Int>
     @Binding var forceUpdate: Bool
     @Binding var goingAcross: Bool
+    @Binding var becomeFirstResponder: Bool
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         ZStack() {
             Color.init(self.getBackgroundColor())
             HStack(alignment: .center) {
-                Text(crossword.entry![tag])
-                    .font(.system(size: 70*boxWidth/100))
-                    .frame(alignment: .center)
-                    .foregroundColor(!self.isEditable() ? Color.init(UIColor.black) : Color.init(UIColor.label.cgColor))
+                if (self.isEditable()) {
+                    Text(crossword.entry![tag])
+                        .font(.system(size: 70*boxWidth/100))
+                        .frame(alignment: .center)
+                }
             }
             if symbol >= 1000 {
                 Circle()
@@ -68,6 +70,9 @@ struct CrosswordCellView: View {
     }
     
     func onTapCell() -> Void {
+        if (!self.becomeFirstResponder) {
+            self.becomeFirstResponder = true
+        }
         if (!self.isEditable()) {
             return
         }
