@@ -17,10 +17,11 @@ struct CrosswordView: View {
         
         // 40 is height of keyboard toolbar
         // 45 is height of navigation bar
-        // 15 is buffer
-        return 40 + 45 + statusBarHeight + self.boxWidth*CGFloat(self.crossword.height) - 15
+        // 10 is buffer
+        return 40 + 45 + statusBarHeight + self.boxWidth*CGFloat(self.crossword.height) - 10
     }
     
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var timerWrapper : TimerWrapper
     
@@ -34,6 +35,7 @@ struct CrosswordView: View {
     @State var errorTracking : Bool = false
     @State var forceUpdate = false
     @State var scrolledRow = 0
+    @State var becomeFirstResponder: Bool = false
     
     var boxWidth: CGFloat {
         let maxSize: CGFloat = 40.0
@@ -62,11 +64,10 @@ struct CrosswordView: View {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
                         let currentClue = getCurrentClue()
-                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate)
+                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                     }()
                     .onChange(of: focusedTag, perform: {newFocusedTag in
                         if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
-//                            print(self.scrolledRow)
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
                             let oneThirdsRowNumber = Int(self.crossword.height/3)
                             let middleRowNumber = Int(self.crossword.height/2)
@@ -78,7 +79,6 @@ struct CrosswordView: View {
                                 scrollreader.scrollTo("row"+String(middleRowNumber - 2), anchor: .center)
                                 self.scrolledRow = middleRowNumber - 2
                             }
-//                            print(self.scrolledRow)
                         }
                     })
                     .padding(.top, 10)
@@ -126,21 +126,36 @@ struct CrosswordView: View {
         }
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
-        .navigationBarItems(trailing:
-            HStack {
-                Button(action: {
-                    self.showCrosswordSettings.toggle()
-                }) {
-                    Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                }
-                .sheet(isPresented: $showCrosswordSettings) {
-                    CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$errorTracking)
-                }
-                Button(action: shareSheet) {
-                    Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack {
+                    Button(action: {
+                        self.showCrosswordSettings.toggle()
+                    }) {
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                    }
+                    .sheet(isPresented: $showCrosswordSettings) {
+                        CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$errorTracking)
+                    }
+                    Button(action: shareSheet) {
+                        Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                    }
                 }
             }
-        )
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    self.becomeFirstResponder = false
+                    self.presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                            .frame(alignment: .leading)
+                    }
+                }
+            }
+        }
+        .navigationBarBackButtonHidden(true)
     }
     
     func shareSheet() {
@@ -179,12 +194,7 @@ struct CrosswordView: View {
 //        print(self.componentHeights)
 //        print(keyboardHeight)
 //        print(UIScreen.screenHeight)
-        if ((UIDevice.current.systemVersion as NSString).floatValue < 15) {
-            return (self.componentHeights + keyboardHeight) > UIScreen.screenHeight
-        } else {
-            // workaround for ios15 issue https://developer.apple.com/forums/thread/688230?page=2
-            return false
-        }
+        return (self.componentHeights + keyboardHeight) > UIScreen.screenHeight
     }
 }
 
@@ -202,12 +212,12 @@ struct CrosswordGridView: View {
     var boxWidth: CGFloat
     var currentClue: String
     
-    @State var becomeFirstResponder: Bool = false
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
+    @Binding var becomeFirstResponder: Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -227,9 +237,9 @@ struct CrosswordGridView: View {
                             goingAcross: self.$goingAcross,
                             becomeFirstResponder: self.$becomeFirstResponder
                         ).frame(width: self.boxWidth, height: self.boxWidth)
-                        .id("row"+String(rowNum))
                     }
                 }
+                .id("row"+String(rowNum))
             }
             CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                 .frame(width:1, height: 1)

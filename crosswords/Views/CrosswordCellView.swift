@@ -55,7 +55,7 @@ struct CrosswordCellView: View {
         .onTapGesture {
             onTapCell()
         }
-        .border(Color.init(UIColor.label.cgColor), width: 0.25)
+        .border(.black, width: 0.25)
         .contentShape(Rectangle())
         .contextMenu {
             Button(action: {
