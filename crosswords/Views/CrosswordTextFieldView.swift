@@ -8,6 +8,7 @@
 
 import SwiftUI
 import FontAwesome_swift
+import GameKit
 
 struct CrosswordTextFieldView: UIViewRepresentable {
     var crossword: Crossword
@@ -142,12 +143,16 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
             parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
             
-            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            saveGame()
             
             if (!string.isEmpty) {
                 moveFocusToNextField(textField)
             }
             return false
+        }
+        
+        func saveGame() {
+            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
         }
         
         func moveFocusToNextField(_ textField: UITextField) {

@@ -11,6 +11,7 @@ import Combine
 import FontAwesome_swift
 import Firebase
 import FirebaseAuth
+import GameKit
 
 let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal"]
 
@@ -21,51 +22,88 @@ struct SettingsView: View {
     @State var showKeyboardShortcuts = false
     
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                Toggle(isOn: $userSettings.showSolved) {
-                    Text("Show solved puzzles in list")
-                }.frame(width: 300)
-                
-                Toggle(isOn: $userSettings.skipCompletedCells) {
-                    Text("Skip completed cells")
-                }.frame(width: 300)
-                
-                Toggle(isOn: $userSettings.defaultErrorTracking) {
-                    Text("Error tracking on by default")
-                }.frame(width: 300)
-                
-                Toggle(isOn: $userSettings.showTimer) {
-                    Text("Show timer")
-                }.frame(width: 300)
-                
-                Toggle(isOn: $userSettings.spaceTogglesDirection) {
-                    Text("Space bar toggles direction")
-                }.frame(width: 300)
-                
-                Toggle(isOn: $userSettings.enableHapticFeedback) {
-                    Text("Enable haptic feedback")
-                }.frame(width: 300)
-                
-                DeletionPickerView()
-                
-                NavigationLink(
-                    destination: SubscriptionsView(),
-                    label: {Text("Configure Puzzle Subscriptions")}
-                ).padding(.top, 20)
-                
-                NavigationLink(
-                    destination: KeyboardShortcutsView(),
-                    label: {Text("View Keyboard Shortcuts")}
-                ).padding(.top, 20)
-                
-                Spacer()
-            }
-            .navigationBarTitle("Settings", displayMode: .large)
-            .navigationViewStyle(StackNavigationViewStyle())
-            .navigationBarColor(.systemGray6)
-            .padding(30)
+        VStack(alignment: .leading) {
+            
+            TogglesSettingsView()
+            
+            DeletionPickerView()
+            
+            GameCenterLoginView()
+            
+            NavigationLink(
+                destination: SubscriptionsView(),
+                label: {Text("Configure Puzzle Subscriptions")}
+            ).padding(.top, 20)
+            
+            NavigationLink(
+                destination: KeyboardShortcutsView(),
+                label: {Text("View Keyboard Shortcuts")}
+            ).padding(.top, 20)
+            
+            Spacer()
         }
+        .navigationBarTitle("Settings")
+        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationBarColor(.systemGray6)
+        .padding(30)
+    }
+}
+
+struct TogglesSettingsView: View {
+    @ObservedObject var userSettings = UserSettings()
+
+    var body: some View {
+        Toggle(isOn: $userSettings.showSolved) {
+            Text("Show solved puzzles in list")
+        }.frame(width: 300)
+        
+        Toggle(isOn: $userSettings.skipCompletedCells) {
+            Text("Skip completed cells")
+        }.frame(width: 300)
+        
+        Toggle(isOn: $userSettings.defaultErrorTracking) {
+            Text("Error tracking on by default")
+        }.frame(width: 300)
+        
+        Toggle(isOn: $userSettings.showTimer) {
+            Text("Show timer")
+        }.frame(width: 300)
+        
+        Toggle(isOn: $userSettings.spaceTogglesDirection) {
+            Text("Space bar toggles direction")
+        }.frame(width: 300)
+        
+        Toggle(isOn: $userSettings.enableHapticFeedback) {
+            Text("Enable haptic feedback")
+        }.frame(width: 300)
+    }
+}
+
+struct GameCenterLoginView: View {
+    @ObservedObject var userSettings = UserSettings()
+    
+    func authenticateUser() {
+        let localPlayer = GKLocalPlayer.local
+        localPlayer.authenticateHandler = { vc, error in
+            guard error == nil else {
+                userSettings.shouldTryGameCenterLogin = false
+                print(error?.localizedDescription ?? "")
+                return
+            }
+            userSettings.gameCenterPlayer = localPlayer
+        }
+    }
+    
+    var body: some View {
+        Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
+            Text("Game Center Sync")
+        }
+        .onChange(of: userSettings.shouldTryGameCenterLogin, perform: { shouldTryLogin in
+            if (shouldTryLogin) {
+                authenticateUser()
+            }
+        })
+        .frame(width: 300)
     }
 }
 
@@ -216,7 +254,14 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var shouldTryGameCenterLogin: Bool {
+        didSet {
+            UserDefaults.standard.set(shouldTryGameCenterLogin, forKey: "shouldTryGameCenterLogin")
+        }
+    }
+    
     @Published var user: User?
+    @Published var gameCenterPlayer: GKLocalPlayer?
     
     init() {
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
@@ -228,5 +273,18 @@ class UserSettings: ObservableObject {
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
         self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
         self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
+        self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
+        
+        if (self.shouldTryGameCenterLogin) {
+            let localPlayer = GKLocalPlayer.local
+            GKLocalPlayer.local.authenticateHandler = { vc, error in
+                guard error == nil else {
+                    print(error?.localizedDescription ?? "")
+                    self.shouldTryGameCenterLogin = false
+                    return
+                }
+                self.gameCenterPlayer = localPlayer
+            }
+        }
     }
 }

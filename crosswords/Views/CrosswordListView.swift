@@ -15,7 +15,6 @@ import FontAwesome_swift
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @State var refreshEnabled = false
-    @State var showSettings = false
     @State var openCrossword: Crossword? = nil
     @ObservedObject var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
@@ -54,7 +53,7 @@ struct CrosswordListView: View {
                     tag: crossword,
                     selection: self.$openCrossword
                 ) {
-                    CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword, showSettings: self.showSettings)
+                    CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword)
                 }
             }.onAppear(perform: {
                 self.refreshCrosswords()
@@ -62,13 +61,10 @@ struct CrosswordListView: View {
             .navigationBarTitle("Crosswords")
             .navigationBarItems(trailing:
                 HStack {
-                    Button(action: {
-                        self.showSettings.toggle()
-                    }) {
+                    NavigationLink(
+                        destination: SettingsView()
+                    ) {
                         Image(uiImage: UIImage.fontAwesomeIcon(name: .cog, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }
-                    .sheet(isPresented: $showSettings) {
-                        SettingsView()
                     }
                     Button(action: {
                         self.refreshCrosswords()
@@ -157,7 +153,6 @@ struct CrosswordListView: View {
 struct CrosswordListItemView: View {
     var crossword: Crossword
     @State var openCrossword: Crossword?
-    @State var showSettings: Bool
     @ObservedObject var userSettings = UserSettings()
     
     var crosswordProgress: CGFloat {
@@ -170,11 +165,7 @@ struct CrosswordListItemView: View {
     }
     
     var currentTime: String {
-        if (showSettings) {
-            return " "+toTime(Int(crossword.solvedTime))
-        } else {
-            return toTime(Int(crossword.solvedTime))
-        }
+        return toTime(Int(crossword.solvedTime))
     }
 
     var body: some View {
