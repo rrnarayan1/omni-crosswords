@@ -8,6 +8,7 @@
 
 import SwiftUI
 import FontAwesome_swift
+import GameKit
 
 struct CrosswordView: View {
     var crossword: Crossword
@@ -123,6 +124,19 @@ struct CrosswordView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: Notification.Name("downCell"))) { notification in
             goToDownCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+        .onReceive(timer) { time in
+            if (self.userSettings.gameCenterPlayer != nil && self.timerWrapper.count % 10 == 0) {
+                let entryString: String = (self.crossword.entry?.joined(separator: ","))!
+                
+                self.userSettings.gameCenterPlayer!.saveGameData(
+                    entryString.data(using: .utf8)!,
+                    withName: self.crossword.id!, completionHandler: {_, error in
+                        if let error = error {
+                            print("Error saving to game center: \(error)")
+                        }
+                    })
+            }
         }
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)

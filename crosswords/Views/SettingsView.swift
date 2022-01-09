@@ -96,7 +96,7 @@ struct GameCenterLoginView: View {
     
     var body: some View {
         Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
-            Text("Game Center Sync")
+            Text("Game Center Sync (BETA) (Turn this on on all devices)")
         }
         .onChange(of: userSettings.shouldTryGameCenterLogin, perform: { shouldTryLogin in
             if (shouldTryLogin) {
@@ -113,7 +113,6 @@ struct DeletionPickerView: View {
     var body: some View {
         HStack {
             Text("Automatically delete puzzles after: ")
-                .frame(width: 200)
             Picker("", selection: $userSettings.daysToWaitBeforeDeleting) {
                 ForEach((3..<22)) { flavor in
                     Text(String(flavor)+" days").tag(String(flavor))
@@ -274,17 +273,7 @@ class UserSettings: ObservableObject {
         self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
         self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
         self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
-        
-        if (self.shouldTryGameCenterLogin) {
-            let localPlayer = GKLocalPlayer.local
-            GKLocalPlayer.local.authenticateHandler = { vc, error in
-                guard error == nil else {
-                    print(error?.localizedDescription ?? "")
-                    self.shouldTryGameCenterLogin = false
-                    return
-                }
-                self.gameCenterPlayer = localPlayer
-            }
-        }
+        self.gameCenterPlayer = GKLocalPlayer.local
+        self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

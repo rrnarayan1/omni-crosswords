@@ -11,6 +11,7 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestoreSwift
 import FontAwesome_swift
+import GameKit
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -89,6 +90,19 @@ struct CrosswordListView: View {
     }
     
     func refreshCrosswords() -> Void {
+        if (self.userSettings.shouldTryGameCenterLogin) {
+            let localPlayer = GKLocalPlayer.local
+            GKLocalPlayer.local.authenticateHandler = { vc, error in
+                guard error == nil else {
+                    print(error?.localizedDescription ?? "")
+                    self.userSettings.shouldTryGameCenterLogin = false
+                    return
+                }
+                self.userSettings.gameCenterPlayer = localPlayer
+            }
+        }
+        
+        
         self.refreshEnabled = false
         
         refreshQueue.async() {
@@ -124,6 +138,7 @@ struct CrosswordListView: View {
                     }
                 }
                 checkForDeletions()
+                syncSavedGames()
                 self.refreshEnabled = true
             }
         }
@@ -137,15 +152,62 @@ struct CrosswordListView: View {
         let lastDate = Date.init(timeInterval: timeToGoBack, since: Date())
         for crossword in self.crosswords {
             if crossword.date! < lastDate {
-                self.managedObjectContext.delete(crossword)
+                deleteGame(crossword: crossword)
             } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved {
-                self.managedObjectContext.delete(crossword)
+                deleteGame(crossword: crossword)
             }
 // Commented out - this deletes the most recent day's crossword
-//            if crossword.date! > Date.init(timeInterval: -86400, since: Date()) {
-//                self.managedObjectContext.delete(crossword)
+//            if crossword.date! > Date.init(timeInterval: -86400*2, since: Date()) {
+//                deleteGame(crossword: crossword)
 //            }
             
+        }
+    }
+    
+    func syncSavedGames() -> Void {
+        if (self.userSettings.gameCenterPlayer != nil && self.openCrossword == nil) {
+            self.userSettings.gameCenterPlayer?.fetchSavedGames(completionHandler: {(games, error) in
+                if let error = error {
+                    print("Error getting game center saved games: \(error)")
+                    return
+                } else if games == nil {
+                    return
+                }
+                for game in games! {
+                    game.loadData(completionHandler: {(gameData, error) in
+                        if let error = error {
+                            print("Error getting gameData from game center saved game: \(error)")
+                            return
+                        } else if (gameData == nil) {
+                            return
+                        }
+                        
+                        let entryString: String = String(data: gameData!, encoding: .utf8)!
+                        let savedEntry: Array<String> = entryString.components(separatedBy: ",")
+                        let savedCrossword = self.crosswords.first(where: {xw in xw.id == game.name})
+                        if (savedCrossword != nil) {
+                            savedCrossword?.entry = savedEntry
+                            if (savedEntry == savedCrossword?.solution) {
+                                savedCrossword?.solved = true
+                            } else {
+                                savedCrossword?.solved = false
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    }
+    
+    func deleteGame(crossword: Crossword) -> Void {
+        self.managedObjectContext.delete(crossword)
+        if (self.userSettings.gameCenterPlayer != nil) {
+            self.userSettings.gameCenterPlayer?.deleteSavedGames(withName: crossword.id!, completionHandler: {error in
+                if let error = error {
+                    print("Error deleting gamerop from game center saved game: \(error)")
+                    return
+                }
+            })
         }
     }
 }

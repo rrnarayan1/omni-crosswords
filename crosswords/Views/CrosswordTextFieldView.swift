@@ -97,11 +97,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             if (parent.crossword.entry![parent.focusedTag] != "") {
                 parent.crossword.entry![parent.focusedTag] = ""
                 parent.forceUpdate = !parent.forceUpdate
+                saveGame()
             } else {
                 var previousTag : Int = parent.goingAcross ? parent.focusedTag - 1 : parent.focusedTag - Int(parent.crossword.length)
                 if (previousTag >= 0 && previousTag < parent.crossword.entry!.count && parent.crossword.entry![previousTag] != ".") {
                     // move backwards
                     parent.crossword.entry![previousTag] = ""
+                    saveGame()
                     changeFocusToTag(previousTag)
                 } else {
                     // cannot move backwards, go back one clue
@@ -133,6 +135,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 didPressBackspace(textField)
             } else {
                 parent.crossword.entry![parent.focusedTag] = string.uppercased()
+                saveGame()
             }
             
             if (parent.crossword.entry == parent.crossword.solution) {
@@ -142,8 +145,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 parent.crossword.solved = false
             }
             parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
-            
-            saveGame()
             
             if (!string.isEmpty) {
                 moveFocusToNextField(textField)
