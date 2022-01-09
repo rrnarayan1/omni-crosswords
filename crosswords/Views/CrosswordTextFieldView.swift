@@ -97,11 +97,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             if (parent.crossword.entry![parent.focusedTag] != "") {
                 parent.crossword.entry![parent.focusedTag] = ""
                 parent.forceUpdate = !parent.forceUpdate
+                saveGame()
             } else {
                 var previousTag : Int = parent.goingAcross ? parent.focusedTag - 1 : parent.focusedTag - Int(parent.crossword.length)
                 if (previousTag >= 0 && previousTag < parent.crossword.entry!.count && parent.crossword.entry![previousTag] != ".") {
                     // move backwards
                     parent.crossword.entry![previousTag] = ""
+                    saveGame()
                     changeFocusToTag(previousTag)
                 } else {
                     // cannot move backwards, go back one clue
@@ -133,6 +135,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 didPressBackspace(textField)
             } else {
                 parent.crossword.entry![parent.focusedTag] = string.uppercased()
+                saveGame()
             }
             
             if (parent.crossword.entry == parent.crossword.solution) {
@@ -143,8 +146,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
             parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
             
-            saveGame()
-            
             if (!string.isEmpty) {
                 moveFocusToNextField(textField)
             }
@@ -153,6 +154,17 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         func saveGame() {
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            if (parent.userSettings.gameCenterPlayer != nil) {
+                let entryString: String = (parent.crossword.entry?.joined(separator: ","))!
+                
+                parent.userSettings.gameCenterPlayer!.saveGameData(
+                    entryString.data(using: .utf8)!,
+                    withName: parent.crossword.id!, completionHandler: {_, error in
+                        if let error = error {
+                            print("Error saving to game center: \(error)")
+                        }
+                    })
+            }
         }
         
         func moveFocusToNextField(_ textField: UITextField) {

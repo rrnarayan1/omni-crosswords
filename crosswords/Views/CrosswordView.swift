@@ -8,6 +8,7 @@
 
 import SwiftUI
 import FontAwesome_swift
+import GameKit
 
 struct CrosswordView: View {
     var crossword: Crossword
