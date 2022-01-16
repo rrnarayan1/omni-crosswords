@@ -154,6 +154,17 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         func saveGame() {
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+            if (parent.userSettings.gameCenterPlayer != nil) {
+                let entryString: String = (parent.crossword.entry?.joined(separator: ","))!
+                
+                parent.userSettings.gameCenterPlayer!.saveGameData(
+                    entryString.data(using: .utf8)!,
+                    withName: parent.crossword.id!, completionHandler: {_, error in
+                        if let error = error {
+                            print("Error saving to game center: \(error)")
+                        }
+                    })
+            }
         }
         
         func moveFocusToNextField(_ textField: UITextField) {
