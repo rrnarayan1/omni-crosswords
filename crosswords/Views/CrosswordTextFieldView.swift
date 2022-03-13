@@ -167,8 +167,9 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
         
+        // checks settings and completed squares
         func moveFocusToNextField(_ textField: UITextField) {
-            OmniCrosswords.moveFocusToNextField(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            OmniCrosswords.moveFocusToNextFieldAndCheck(currentTag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         // does not take settings / completed squares into account

@@ -26,7 +26,7 @@ struct SettingsView: View {
             
             TogglesSettingsView()
             
-            DeletionPickerView()
+            PickerViews()
             
             GameCenterLoginView()
             
@@ -107,20 +107,33 @@ struct GameCenterLoginView: View {
     }
 }
 
-struct DeletionPickerView: View {
+struct PickerViews: View {
     @ObservedObject var userSettings = UserSettings()
+    @AppStorage("selectedAppearance") var selectedAppearance = 0
     
     var body: some View {
-        HStack {
-            Text("Automatically delete puzzles after: ")
-            Picker("", selection: $userSettings.daysToWaitBeforeDeleting) {
-                ForEach((3..<22)) { flavor in
-                    Text(String(flavor)+" days").tag(String(flavor))
-                }
-                Text("Never").tag("Never")
+        VStack {
+            HStack {
+                Text("Color Scheme Override:")
+                Picker(selection: $selectedAppearance, label: Text("Color Scheme Override")) {
+                    Text("System Default").tag(0)
+                    Text("Light Mode Override").tag(1)
+                    Text("Dark Mode Override").tag(2)
+                }.onChange(of: selectedAppearance, perform: { value in
+                    ColorSchemeUtil().overrideDisplayMode()
+                })
             }
-            .frame(width: 150)
-            .clipped()
+            HStack {
+                Text("Automatically delete puzzles after: ")
+                Picker("", selection: $userSettings.daysToWaitBeforeDeleting) {
+                    ForEach((3..<22)) { flavor in
+                        Text(String(flavor)+" days").tag(String(flavor))
+                    }
+                    Text("Never (May cause issues with performance)").tag("Never")
+                }
+                .frame(width: 150)
+                .clipped()
+            }
         }
     }
 }
