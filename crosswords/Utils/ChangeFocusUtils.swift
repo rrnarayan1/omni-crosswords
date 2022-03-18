@@ -52,8 +52,8 @@ func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, g
         } else if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0) {
             // they don't want to skip completed cells, so when we're at the end of the puzzle/at a square, go to start of the next clue
             let possibleNextClueId: String = checkCluesForwards
-                ? getNextClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
-                : getPreviousClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
+                ? getNextClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
+                : getPreviousClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
             let nextTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
             changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
         } else {
