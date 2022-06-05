@@ -17,6 +17,7 @@ struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @State var refreshEnabled = false
     @State var openCrossword: Crossword? = nil
+    @State var bannerData: BannerModifier.BannerData = BannerModifier.BannerData(bannerId: 0, title: "", detail: "")
     @ObservedObject var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
     
@@ -77,6 +78,7 @@ struct CrosswordListView: View {
         }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        .banner(data: self.$bannerData)
     }
     
     func checkUser() -> Void {
@@ -114,10 +116,29 @@ struct CrosswordListView: View {
             }
             
             let db = Firestore.firestore()
-            let docRef = db.collection("crosswords").whereField("date", isGreaterThanOrEqualTo: lastDate).whereField("crossword_outlet_name", in: subscriptions)
+            let docRef = db.collection("crosswords")
+                .whereField("date", isGreaterThanOrEqualTo: lastDate)
+                .whereField("crossword_outlet_name", in: subscriptions)
             
             let crosswordIds: Array<String> = crosswords.map { (crossword) -> String in
                 crossword.id!
+            }
+            
+            let alertDocRef = db.collection("alerts")
+                .whereField("id", isGreaterThan: UserDefaults.standard.integer(forKey: "lastAlertId"))
+                .order(by: "id", descending: true)
+            
+            alertDocRef.getDocuments {(querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    if (querySnapshot!.documents.count > 0) {
+                        let document = querySnapshot!.documents[0]
+                        self.bannerData.title = document.get("title") as! String
+                        self.bannerData.detail = document.get("message") as! String
+                        self.bannerData.bannerId = document.get("id") as! Int
+                    }
+                }
             }
             
             docRef.getDocuments {(querySnapshot, error) in

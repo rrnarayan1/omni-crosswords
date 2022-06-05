@@ -272,6 +272,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var lastAlertId: Int {
+        didSet {
+            UserDefaults.standard.set(lastAlertId, forKey: "lastAlertId")
+        }
+    }
+    
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
     
@@ -286,6 +292,7 @@ class UserSettings: ObservableObject {
         self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
         self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
         self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
+        self.lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
         self.gameCenterPlayer = GKLocalPlayer.local
         self.gameCenterPlayer?.register(GameCenterListener())
     }
