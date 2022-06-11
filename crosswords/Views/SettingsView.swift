@@ -35,11 +35,6 @@ struct SettingsView: View {
                 label: {Text("Configure Puzzle Subscriptions")}
             ).padding(.top, 20)
             
-            NavigationLink(
-                destination: KeyboardShortcutsView(),
-                label: {Text("View Keyboard Shortcuts")}
-            ).padding(.top, 20)
-            
             Spacer()
         }
         .navigationBarTitle("Settings")
@@ -135,52 +130,6 @@ struct PickerViews: View {
                 .clipped()
             }
         }
-    }
-}
-
-struct KeyboardShortcutsView: View {
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Text("Go left one cell: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-            }
-            HStack {
-                Text("Go right one cell: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-            }
-            HStack {
-                Text("Go up one cell: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowUp, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-            }
-            HStack {
-                Text("Go down one cell: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowDown, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-            }
-            HStack {
-                Text("Go to next clue: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowAltCircleUp, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .plus, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 15, height: 15)))
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-                
-            }
-            HStack {
-                Text("Go to previous clue: ")
-                Spacer()
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowAltCircleUp, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .plus, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 15, height: 15)))
-                Image(uiImage:UIImage.fontAwesomeIcon(name: .arrowLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
-                
-            }
-        }
-        .navigationBarTitle("Keyboard Shortcuts", displayMode: .large)
-        .frame(width: 200)
     }
 }
 

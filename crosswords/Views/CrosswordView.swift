@@ -101,29 +101,23 @@ struct CrosswordView: View {
                 }
             }
         }
+        .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
+            .onEnded({ value in
+                if value.translation.width < 0 && self.focusedTag != -1 {
+                    // left
+                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                }
+
+                if value.translation.width > 0 && self.focusedTag != -1 {
+                    // right
+                    goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                }
+            }))
         .onAppear {
             self.errorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
             if (!self.crossword.solved) {
                 self.timerWrapper.start(Int(self.crossword.solvedTime))
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("nextClue"))) { notification in
-            goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("previousClue"))) { notification in
-            goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("rightCell"))) { notification in
-            goToRightCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("leftCell"))) { notification in
-            goToLeftCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("upCell"))) { notification in
-            goToUpCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("downCell"))) { notification in
-            goToDownCell(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
         .onReceive(timer) { time in
             if (self.userSettings.gameCenterPlayer != nil && self.timerWrapper.count % 10 == 0) {
