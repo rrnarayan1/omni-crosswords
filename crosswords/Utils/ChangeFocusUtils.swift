@@ -128,7 +128,7 @@ func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focused
 
 func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
     let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
+    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
     for i in (currentClueNum+1..<crossword.clues!.count) {
         let trialClueID: String = String(i)+directionalLetter
@@ -141,7 +141,7 @@ func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String 
 
 func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
     let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID: String = crossword.tagToCluesMap![tag][directionalLetter]!
+    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
     for i in (1..<currentClueNum).reversed() {
         let trialClueID: String = String(i)+directionalLetter
@@ -150,6 +150,14 @@ func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> Str
         }
     }
     return String(1)+directionalLetter
+}
+
+func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
+    let directionalLetter: String = goingAcross == true ? "A" : "D"
+    if (crossword.tagToCluesMap![tag].isEmpty) {
+        return ""
+    }
+    return crossword.tagToCluesMap![tag][directionalLetter]!
 }
 
 func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {

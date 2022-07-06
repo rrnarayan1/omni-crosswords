@@ -56,6 +56,10 @@ struct TogglesSettingsView: View {
             Text("Skip completed cells")
         }.frame(width: 300)
         
+//        Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
+//            Text("Loop Back Inside Uncompleted Word")
+//        }.frame(width: 300)
+        
         Toggle(isOn: $userSettings.defaultErrorTracking) {
             Text("Error tracking on by default")
         }.frame(width: 300)
@@ -227,6 +231,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var loopBackInsideUncompletedWord: Bool {
+        didSet {
+            UserDefaults.standard.set(loopBackInsideUncompletedWord, forKey: "loopBackInsideUncompletedWord")
+        }
+    }
+    
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
     
@@ -242,6 +252,7 @@ class UserSettings: ObservableObject {
         self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
         self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
         self.lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
+        self.loopBackInsideUncompletedWord = UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord")
         self.gameCenterPlayer = GKLocalPlayer.local
         self.gameCenterPlayer?.register(GameCenterListener())
     }

@@ -128,6 +128,10 @@ struct CrosswordListView: View {
                 .whereField("id", isGreaterThan: UserDefaults.standard.integer(forKey: "lastAlertId"))
                 .order(by: "id", descending: true)
             
+            
+            let overwrittenCrosswords = db.collection("crosswords")
+                .whereField("version", isGreaterThan: 0)
+            
             alertDocRef.getDocuments {(querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")
@@ -137,6 +141,30 @@ struct CrosswordListView: View {
                         self.bannerData.title = document.get("title") as! String
                         self.bannerData.detail = document.get("message") as! String
                         self.bannerData.bannerId = document.get("id") as! Int
+                    }
+                }
+            }
+            
+            overwrittenCrosswords.getDocuments {(querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        if (!crosswordIds.contains(document.documentID)) {
+                            continue
+                        }
+                        let crossword = crosswords.first(where: {
+                            $0.id == document.documentID && ($0.versionId < document.get("version") as! Int16)
+                        })
+                        if (crossword == nil) {
+                            continue
+                        }
+                        jsonToCrossword(crossword: crossword!, data: document)
+                        do {
+                            try self.managedObjectContext.save()
+                        } catch {
+                            print(error.localizedDescription)
+                        }
                     }
                 }
             }

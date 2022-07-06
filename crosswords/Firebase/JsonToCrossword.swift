@@ -29,6 +29,7 @@ func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
     crossword.solved = false
     crossword.isHidden = false
     crossword.addedTime = Date().timeIntervalSince1970
+    crossword.versionId = data.get("version") == nil ? 0 : data.get("version") as! Int16
     
     
     crossword.clueToTagsMap = [:]
