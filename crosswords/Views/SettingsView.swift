@@ -55,10 +55,17 @@ struct TogglesSettingsView: View {
         Toggle(isOn: $userSettings.skipCompletedCells) {
             Text("Skip completed cells")
         }.frame(width: 300)
+        .onChange(of: userSettings.skipCompletedCells, perform: {newSkipCompletedCells in
+            if(!newSkipCompletedCells) {
+                userSettings.loopBackInsideUncompletedWord = false
+            }
+        })
         
-//        Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
-//            Text("Loop Back Inside Uncompleted Word")
-//        }.frame(width: 300)
+        Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
+            Text("Loop Back Inside Uncompleted Word")
+        }.disabled(!userSettings.skipCompletedCells)
+            .frame(width: 300)
+            
         
         Toggle(isOn: $userSettings.defaultErrorTracking) {
             Text("Error tracking on by default")

@@ -11,12 +11,15 @@ import SwiftUI
 func moveFocusToNextFieldAndCheck(currentTag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>,
                           isHighlighted: Binding<Array<Int>>) {
     let nextTag: Int = getNextTagId(tag: currentTag, goingAcross: goingAcross, crossword: crossword)
-    moveFocusToFieldAndCheck(currentTag: currentTag, tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true)
+    moveFocusToFieldAndCheck(currentTag: currentTag, tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true, checkLoopingBack: true)
 }
 
-func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>,
-                              isHighlighted: Binding<Array<Int>>, checkCluesForwards: Bool) {
+private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, goingAcross: Bool,
+                    focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>, checkCluesForwards: Bool,
+                    checkLoopingBack: Bool) {
     let skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
+    var loopBackInsideCurrentWord = checkLoopingBack ? UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord") : false
+    let currentClueId = getClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
     
     if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != "") {
         if (skipCompletedCells) {
@@ -25,14 +28,22 @@ func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, g
             var oldTag: Int = currentTag
             for _ in (1..<crossword.entry!.count) {
                 if (possibleTag >= crossword.entry!.count ||
-                        crossword.symbols![possibleTag] == -1 ||
-                        crossword.tagToCluesMap?[possibleTag] == nil ||
-                        crossword.tagToCluesMap?[possibleTag].count == 0 ||
-                    ((possibleTag + 1) % Int(crossword.length) == 0 && !checkCluesForwards)) {
+                    crossword.symbols![possibleTag] == -1 ||
+                    crossword.tagToCluesMap?[possibleTag] == nil ||
+                    crossword.tagToCluesMap?[possibleTag].count == 0 ||
+                    ((possibleTag + 1) % Int(crossword.length) == 0 && !checkCluesForwards) ||
+                    (possibleTag % Int(crossword.length) == 0 && loopBackInsideCurrentWord)
+                ) {
                     // if we're checking the end, start checking again from the start
                     // if we're at a block, start checking the next clue
                     // if we're beyond the bounds of the puzzle, start checking next clue
                     // if we're going backwards and we've reached a clue that ends at the end of a row, go back a clue
+                    if (loopBackInsideCurrentWord) {
+                        possibleTag = crossword.clueToTagsMap![currentClueId]!.min()!
+                        loopBackInsideCurrentWord = false
+                        continue
+                    }
+                    
                     let possibleNextClueId: String = checkCluesForwards
                         ? getNextClueID(tag: oldTag, crossword: crossword, goingAcross: goingAcross)
                         : getPreviousClueID(tag: oldTag, crossword: crossword, goingAcross: goingAcross)
@@ -113,7 +124,7 @@ func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag:
     }
     let nextClueId: String = getNextClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let nextClueStartTag: Int = crossword.clueToTagsMap![nextClueId]!.min()!
-    moveFocusToFieldAndCheck(currentTag: tag, tag: nextClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true)
+    moveFocusToFieldAndCheck(currentTag: tag, tag: nextClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true, checkLoopingBack: false)
 }
 
 func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
@@ -123,7 +134,7 @@ func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focused
     }
     let prevClueId: String = getPreviousClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
     let prevClueStartTag: Int = crossword.clueToTagsMap![prevClueId]!.min()!
-    moveFocusToFieldAndCheck(currentTag: tag, tag: prevClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: false)
+    moveFocusToFieldAndCheck(currentTag: tag, tag: prevClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: false, checkLoopingBack: false)
 }
 
 func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
