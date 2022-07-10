@@ -21,7 +21,7 @@ private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Cros
     var loopBackInsideCurrentWord = checkLoopingBack ? UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord") : false
     let currentClueId = getClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
     
-    if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != "") {
+    if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != "" || tag % Int(crossword.length) == 0) {
         if (skipCompletedCells) {
             // skip to next uncompleted square
             var possibleTag: Int = tag
