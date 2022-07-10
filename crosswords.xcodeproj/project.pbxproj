@@ -26,6 +26,7 @@
 		1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207324C4F44200240AF8 /* Preview Assets.xcassets */; };
 		1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */; };
 		1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73208C24C688A800240AF8 /* CrosswordView.swift */; };
+		1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FD49828778582006D38A6 /* ActivityView.swift */; };
 		1C958ABB284C0ADC00695B9B /* BannerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C958ABA284C0ADC00695B9B /* BannerModifier.swift */; };
 		1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */; };
 		1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */; };
@@ -58,6 +59,7 @@
 		1C73207624C4F44200240AF8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1C73207824C4F44200240AF8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C73208C24C688A800240AF8 /* CrosswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordView.swift; sourceTree = "<group>"; };
+		1C7FD49828778582006D38A6 /* ActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityView.swift; sourceTree = "<group>"; };
 		1C958ABA284C0ADC00695B9B /* BannerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModifier.swift; sourceTree = "<group>"; };
 		1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Toolbar.swift"; sourceTree = "<group>"; };
 		1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightHelper.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				1C958ABA284C0ADC00695B9B /* BannerModifier.swift */,
+				1C7FD49828778582006D38A6 /* ActivityView.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -309,6 +312,7 @@
 				1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */,
 				1C73206A24C4F44000240AF8 /* SceneDelegate.swift in Sources */,
 				1C3D87E8274976BA001A7591 /* ChangeFocusUtils.swift in Sources */,
+				1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */,
 				1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */,
 				1C73206F24C4F44000240AF8 /* CrosswordListView.swift in Sources */,
 				1C1EA90F24DE765D00A67BA9 /* SettingsView.swift in Sources */,
@@ -459,7 +463,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswordsDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;
@@ -485,7 +489,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswords.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;

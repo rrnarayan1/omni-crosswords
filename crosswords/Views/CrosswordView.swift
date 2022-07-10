@@ -145,9 +145,14 @@ struct CrosswordView: View {
                     .sheet(isPresented: $showCrosswordSettings) {
                         CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$errorTracking)
                     }
-                    Button(action: shareSheet) {
+                    Button(action: {self.showShareSheet = true}) {
                         Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
                     }
+                    .sheet(isPresented: self.$showShareSheet, onDismiss: {
+                        self.showShareSheet = false
+                    }, content: {
+                        ActivityView(activityItems: shareSheet())
+                    })
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
@@ -166,7 +171,7 @@ struct CrosswordView: View {
         .navigationBarBackButtonHidden(true)
     }
     
-    func shareSheet() {
+    func shareSheet() -> [Any] {
         var shareMessage: String
         if (self.crossword.solved) {
             shareMessage = "I solved the " + self.crossword.outletName! + " crossword in "
@@ -177,8 +182,7 @@ struct CrosswordView: View {
             shareMessage += ". Download OmniCrosswords and help me out!"
         }
         let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
-        let av = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        UIApplication.shared.windows.first?.rootViewController?.present(av, animated: true, completion: nil)
+        return items
     }
     
     func resetArray(count: Int) -> Array<Bool> {
