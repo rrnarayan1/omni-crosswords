@@ -16,27 +16,26 @@ import GameKit
 let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal"]
 
 struct SettingsView: View {
-    
     @ObservedObject var userSettings = UserSettings()
     @State var showSubscriptions = false
     @State var showKeyboardShortcuts = false
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            
             TogglesSettingsView()
-            
+
             PickerViews()
-            
+
             GameCenterLoginView()
-            
+
             NavigationLink(
                 destination: SubscriptionsView(),
                 label: {Text("Configure Puzzle Subscriptions")}
             ).padding(.top, 20)
-            
+
             Spacer()
         }
+        .frame(width: 300)
         .navigationBarTitle("Settings")
         .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(.systemGray6)
@@ -50,44 +49,42 @@ struct TogglesSettingsView: View {
     var body: some View {
         Toggle(isOn: $userSettings.showSolved) {
             Text("Show solved puzzles in list")
-        }.frame(width: 300)
-        
+        }
+
         Toggle(isOn: $userSettings.skipCompletedCells) {
             Text("Skip completed cells")
-        }.frame(width: 300)
+        }
         .onChange(of: userSettings.skipCompletedCells, perform: {newSkipCompletedCells in
             if(!newSkipCompletedCells) {
                 userSettings.loopBackInsideUncompletedWord = false
             }
         })
-        
+
         Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
             Text("Loop Back Inside Uncompleted Word")
         }.disabled(!userSettings.skipCompletedCells)
-            .frame(width: 300)
-            
-        
+
         Toggle(isOn: $userSettings.defaultErrorTracking) {
             Text("Error tracking on by default")
-        }.frame(width: 300)
-        
+        }
+
         Toggle(isOn: $userSettings.showTimer) {
             Text("Show timer")
-        }.frame(width: 300)
-        
+        }
+
         Toggle(isOn: $userSettings.spaceTogglesDirection) {
             Text("Space bar toggles direction")
-        }.frame(width: 300)
-        
+        }
+
         Toggle(isOn: $userSettings.enableHapticFeedback) {
             Text("Enable haptic feedback")
-        }.frame(width: 300)
+        }
     }
 }
 
 struct GameCenterLoginView: View {
     @ObservedObject var userSettings = UserSettings()
-    
+
     func authenticateUser() {
         let localPlayer = GKLocalPlayer.local
         localPlayer.authenticateHandler = { vc, error in
@@ -99,7 +96,7 @@ struct GameCenterLoginView: View {
             userSettings.gameCenterPlayer = localPlayer
         }
     }
-    
+
     var body: some View {
         Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
             Text("Game Center Sync (BETA) (Turn this on on all devices)")
@@ -109,7 +106,6 @@ struct GameCenterLoginView: View {
                 authenticateUser()
             }
         })
-        .frame(width: 300)
     }
 }
 
@@ -121,6 +117,7 @@ struct PickerViews: View {
         VStack {
             HStack {
                 Text("Color Scheme Override:")
+                Spacer()
                 Picker(selection: $selectedAppearance, label: Text("Color Scheme Override")) {
                     Text("System Default").tag(0)
                     Text("Light Mode Override").tag(1)
@@ -129,16 +126,26 @@ struct PickerViews: View {
                     ColorSchemeUtil().overrideDisplayMode()
                 })
             }
+
             HStack {
-                Text("Automatically delete puzzles after: ")
+                Text("Automatically delete puzzles after:")
+                Spacer()
                 Picker("", selection: $userSettings.daysToWaitBeforeDeleting) {
                     ForEach((3..<22)) { flavor in
                         Text(String(flavor)+" days").tag(String(flavor))
                     }
                     Text("Never (May cause issues with performance)").tag("Never")
                 }
-                .frame(width: 150)
-                .clipped()
+            }
+
+            HStack {
+                Text("Clue Font Size:")
+                Spacer()
+                Picker("", selection: $userSettings.clueSize) {
+                    ForEach((13..<21)) { flavor in
+                        Text(String(flavor)+" pt").tag(Int(flavor))
+                    }
+                }
             }
         }
     }
@@ -244,6 +251,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var clueSize: Int {
+        didSet {
+            UserDefaults.standard.set(clueSize, forKey: "clueSize")
+        }
+    }
+    
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
     
@@ -261,6 +274,7 @@ class UserSettings: ObservableObject {
         self.lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
         self.loopBackInsideUncompletedWord = UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord")
         self.gameCenterPlayer = GKLocalPlayer.local
+        self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

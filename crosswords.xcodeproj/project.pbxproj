@@ -463,7 +463,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswordsDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;
@@ -474,7 +474,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.5.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
@@ -489,7 +489,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswords.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;
@@ -500,7 +500,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.10;
+				MARKETING_VERSION = 1.5.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;

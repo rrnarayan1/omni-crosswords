@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 import FontAwesome_swift
 
-let clueTitleFont = UIFont.systemFont(ofSize: 14)
 let toolbarHeight = 40.0
 
 extension UITextField {
@@ -27,8 +26,9 @@ extension UITextField {
         let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
         let clueTitleLabel = UITextView()
+        let clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
         clueTitleLabel.text = clueTitle
-        clueTitleLabel.font = UIFont.systemFont(ofSize: 13)
+        clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
         clueTitleLabel.textColor = UIColor.label
         clueTitleLabel.frame.size.width = UIScreen.screenWidth-150
         clueTitleLabel.backgroundColor = UIColor.clear
