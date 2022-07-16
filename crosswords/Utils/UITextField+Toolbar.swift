@@ -26,7 +26,10 @@ extension UITextField {
         let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
         let clueTitleLabel = UITextView()
-        let clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
+        var clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
+        if (clueFontSize < 13) {
+            clueFontSize = 13
+        }
         clueTitleLabel.text = clueTitle
         clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
         clueTitleLabel.textColor = UIColor.label
