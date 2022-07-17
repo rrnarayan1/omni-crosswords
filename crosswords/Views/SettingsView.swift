@@ -39,6 +39,13 @@ struct SettingsView: View {
         .navigationBarTitle("Settings")
         .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(.systemGray6)
+        .navigationBarItems(trailing:
+            HStack {
+                Link(destination: URL(string: "https://rrnarayan1.github.io/omni-crosswords/#four")!) {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
+        )
         .padding(30)
     }
 }

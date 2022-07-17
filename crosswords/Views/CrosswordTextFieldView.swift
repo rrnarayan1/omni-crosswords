@@ -159,11 +159,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 
                 parent.userSettings.gameCenterPlayer!.saveGameData(
                     entryString.data(using: .utf8)!,
-                    withName: parent.crossword.id!, completionHandler: {_, error in
+                    withName: parent.crossword.id!,
+                    completionHandler: {_, error in
                         if let error = error {
                             print("Error saving to game center: \(error)")
                         }
-                    })
+                    }
+                )
             }
         }
         

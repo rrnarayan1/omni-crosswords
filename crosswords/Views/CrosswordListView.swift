@@ -234,7 +234,7 @@ struct CrosswordListView: View {
                         let entryString: String = String(data: gameData!, encoding: .utf8)!
                         let savedEntry: Array<String> = entryString.components(separatedBy: ",")
                         let savedCrossword = self.crosswords.first(where: {xw in xw.id == game.name})
-                        if (savedCrossword != nil) {
+                        if (savedCrossword != nil && savedCrossword?.solved == false) {
                             savedCrossword?.entry = savedEntry
                             if (savedEntry == savedCrossword?.solution) {
                                 savedCrossword?.solved = true
