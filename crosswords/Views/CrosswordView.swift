@@ -31,9 +31,8 @@ struct CrosswordView: View {
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
-    @State var showCrosswordSettings = false
-    @State var showShareSheet = false
-    @State var errorTracking : Bool = false
+    @State var showShareSheet: Bool = false
+    @State var isErrorTrackingEnabled: Bool = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
     @State var forceUpdate = false
     @State var scrolledRow = 0
     @State var becomeFirstResponder: Bool = false
@@ -65,7 +64,7 @@ struct CrosswordView: View {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
                         let currentClue = getCurrentClue()
-                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, doErrorTracking: self.$errorTracking, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
+                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, doErrorTracking: self.isErrorTrackingEnabled, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                     }()
                     .onChange(of: focusedTag, perform: {newFocusedTag in
                         if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
@@ -114,7 +113,6 @@ struct CrosswordView: View {
                 }
             }))
         .onAppear {
-            self.errorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
             if (!self.crossword.solved) {
                 self.timerWrapper.start(Int(self.crossword.solvedTime))
             }
@@ -137,22 +135,25 @@ struct CrosswordView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
-                    Button(action: {
-                        self.showCrosswordSettings.toggle()
-                    }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }
-                    .sheet(isPresented: $showCrosswordSettings) {
-                        CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$errorTracking)
-                    }
-                    Button(action: {self.showShareSheet = true}) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
-                    }
-                    .sheet(isPresented: self.$showShareSheet, onDismiss: {
-                        self.showShareSheet = false
-                    }, content: {
-                        ActivityView(activityItems: shareSheet())
+                    NavigationLink(
+                        destination: CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$isErrorTrackingEnabled),
+                        label: {Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))}
+                    ).simultaneousGesture(TapGesture().onEnded{
+                        self.becomeFirstResponder = false
+                        self.focusedTag = -1
+                        self.highlighted = Array()
                     })
+
+                    if #available(iOS 15, *) {
+                        Button(action: {self.showShareSheet = true}) {
+                            Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                        }.sheet(isPresented: self.$showShareSheet,
+                            onDismiss: {self.showShareSheet = false},
+                            content: {
+                                ActivityView(activityItems: shareSheet(crossword: self.crossword))
+                            }
+                        )
+                    }
                 }
             }
             ToolbarItem(placement: .navigationBarLeading) {
@@ -169,20 +170,6 @@ struct CrosswordView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-    }
-    
-    func shareSheet() -> [Any] {
-        var shareMessage: String
-        if (self.crossword.solved) {
-            shareMessage = "I solved the " + self.crossword.outletName! + " crossword in "
-            shareMessage += String(toTime(Int(self.crossword.solvedTime)))
-            shareMessage += ". Download OmniCrosswords and try to beat my time!"
-        } else {
-            shareMessage = "I'm in the middle of solving the " + self.crossword.outletName! + " crossword"
-            shareMessage += ". Download OmniCrosswords and help me out!"
-        }
-        let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
-        return items
     }
     
     func resetArray(count: Int) -> Array<Bool> {
@@ -223,11 +210,11 @@ struct CrosswordGridView: View {
     var crossword: Crossword
     var boxWidth: CGFloat
     var currentClue: String
+    var doErrorTracking: Bool
     
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
-    @Binding var doErrorTracking: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
     
@@ -257,35 +244,6 @@ struct CrosswordGridView: View {
                 .frame(width:1, height: 1)
         }
     }
-}
-
-struct CrosswordSettingsView: View {
-    var crossword: Crossword
-    @Binding var errorTracking: Bool
-    
-    var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                Toggle(isOn: $errorTracking) {
-                    Text("Error Tracking")
-                }
-                .frame(width: 200)
-                .padding(30)
-                
-                Text("Title: "+self.crossword.title!)
-                Text("Author: "+self.crossword.author!)
-                if (self.crossword.notes! != "") {
-                    Text("Notes: "+self.crossword.notes!)
-                }
-                Text(self.crossword.copyright!)
-                Spacer()
-            }
-            .navigationBarTitle("Crossword Settings", displayMode: .large)
-            .navigationBarColor(.systemGray6)
-            .padding(30)
-        }
-    }
-    
 }
 
 extension UIScreen{

@@ -35,7 +35,7 @@ struct SettingsView: View {
 
             Spacer()
         }
-        .frame(width: 300)
+        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Settings")
         .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(.systemGray6)
@@ -122,37 +122,36 @@ struct PickerViews: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Text("Color Scheme Override:")
-                Spacer()
-                Picker(selection: $selectedAppearance, label: Text("Color Scheme Override")) {
-                    Text("System Default").tag(0)
-                    Text("Light Mode Override").tag(1)
-                    Text("Dark Mode Override").tag(2)
-                }.onChange(of: selectedAppearance, perform: { value in
-                    ColorSchemeUtil().overrideDisplayMode()
-                })
-            }
+            Picker("Color Scheme Override", selection: $selectedAppearance) {
+                Text("System Default").tag(0)
+                Text("Light Mode").tag(1)
+                Text("Dark Mode").tag(2)
+            }.onChange(of: selectedAppearance, perform: { value in
+                ColorSchemeUtil().overrideDisplayMode()
+            })
+            .pickerStyle(.segmented)
 
             HStack {
                 Text("Automatically delete puzzles after:")
                 Spacer()
-                Picker("", selection: $userSettings.daysToWaitBeforeDeleting) {
+                Picker(userSettings.daysToWaitBeforeDeleting + " days", selection: $userSettings.daysToWaitBeforeDeleting) {
                     ForEach((3..<22)) { flavor in
                         Text(String(flavor)+" days").tag(String(flavor))
                     }
                     Text("Never (May cause issues with performance)").tag("Never")
                 }
+                .pickerStyle(.menu)
             }
 
             HStack {
                 Text("Clue Font Size:")
                 Spacer()
-                Picker("", selection: $userSettings.clueSize) {
+                Picker(String(userSettings.clueSize) + " pt", selection: $userSettings.clueSize) {
                     ForEach((13..<21)) { flavor in
                         Text(String(flavor)+" pt").tag(Int(flavor))
                     }
                 }
+                .pickerStyle(.menu)
             }
         }
     }
