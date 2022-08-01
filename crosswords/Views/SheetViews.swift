@@ -13,28 +13,25 @@ struct CrosswordSettingsView: View {
     @Binding var errorTracking: Bool
 
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                Toggle(isOn: $errorTracking) {
-                    Text("Error Tracking")
-                }
-                .frame(width: 200)
-                .padding(30)
-
-                Text("Title: "+self.crossword.title!)
-                Text("Author: "+self.crossword.author!)
-                if (self.crossword.notes! != "") {
-                    Text("Notes: "+self.crossword.notes!)
-                }
-                Text(self.crossword.copyright!)
-                Spacer()
+        VStack(alignment: .leading) {
+            Toggle(isOn: $errorTracking) {
+                Text("Error Tracking")
             }
-            .frame(width: min(UIScreen.screenWidth * 0.9, 400))
-            .navigationBarTitle("Crossword Settings")
-            .navigationViewStyle(StackNavigationViewStyle())
-            .navigationBarColor(.systemGray6)
+            .frame(width: 200)
             .padding(30)
+
+            Text("Title: "+self.crossword.title!)
+            Text("Author: "+self.crossword.author!)
+            if (self.crossword.notes! != "") {
+                Text("Notes: "+self.crossword.notes!)
+            }
+            Text(self.crossword.copyright!)
+            Spacer()
         }
+        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
+        .navigationBarTitle("Crossword Settings", displayMode: .large)
+        .navigationBarColor(.systemGray6)
+        .padding(30)
     }
 }
 

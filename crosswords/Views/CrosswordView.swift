@@ -131,6 +131,7 @@ struct CrosswordView: View {
             }
         }
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+        .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
