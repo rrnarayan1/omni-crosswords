@@ -42,7 +42,7 @@ struct CrosswordListView: View {
     
     var body: some View {
         NavigationView {
-            if (userSettings.user == nil) {
+            if (userSettings.user == nil && !userSettings.useLocalMode) {
                 Image(uiImage: UIImage.fontAwesomeIcon(name: .spinner, style: .solid, textColor: .systemGray, size: CGSize.init(width: 30, height: 30)))
                 .onAppear(perform: {
                     self.checkUser()
@@ -108,6 +108,20 @@ struct CrosswordListView: View {
         self.refreshEnabled = false
         
         refreshQueue.async() {
+            if (userSettings.useLocalMode) {
+                if (crosswords.isEmpty) {
+                    let crossword = Crossword(context: self.managedObjectContext)
+                    buildSampleCrossword(crossword: crossword)
+                    do {
+                        try self.managedObjectContext.save()
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+                self.refreshEnabled = true
+                return
+            }
+
             let lastDate: Date
             if self.crosswords.count == 0 {
                 lastDate = Date.init(timeInterval: -604800, since: Date())

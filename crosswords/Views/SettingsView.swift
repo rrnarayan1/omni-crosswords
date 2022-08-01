@@ -265,14 +265,24 @@ class UserSettings: ObservableObject {
     
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
+    @Published var useLocalMode: Bool
     
     init() {
+        var useLocalMode = false
+        if let path = Bundle.main.path(forResource: "DevOverrides", ofType: "plist") {
+            // If your plist contain root as Dictionary
+            if let dic = NSDictionary(contentsOfFile: path) as? [String: Bool] {
+                useLocalMode = dic["localMode"] ?? false
+            }
+        }
+
+        self.useLocalMode = useLocalMode
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
         self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
         self.defaultErrorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
-        self.user = Auth.auth().currentUser
+        self.user = useLocalMode ? nil : Auth.auth().currentUser
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
         self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
         self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true

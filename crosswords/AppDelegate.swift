@@ -17,7 +17,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        FirebaseApp.configure()
+        var useLocalMode = false
+        if let path = Bundle.main.path(forResource: "DevOverrides", ofType: "plist") {
+            // If your plist contain root as Dictionary
+            if let dic = NSDictionary(contentsOfFile: path) as? [String: Bool] {
+                useLocalMode = dic["localMode"] ?? false
+            }
+        }
+
+        if (!useLocalMode) {
+            FirebaseApp.configure()
+        }
         return true
     }
 
