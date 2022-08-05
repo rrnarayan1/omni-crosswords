@@ -63,6 +63,7 @@ struct CrosswordCellView: View {
                 if (self.crossword.entry == self.crossword.solution) {
                     self.crossword.solved = true
                 }
+                moveFocusToNextFieldAndCheck(currentTag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
            }) {
                Text("Solve Square")
            }

@@ -129,6 +129,9 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             if (string == " ") {
                 moveFocusToNextField(textField)
                 return false
+            } else if (string == "\t") {
+                goToNextClue(textField)
+                return false
             }
             
             if (string.isEmpty) {
@@ -177,6 +180,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         // does not take settings / completed squares into account
         func changeFocusToTag(_ tag: Int) {
             changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+        }
+
+        func goToNextClue(_ textField: UITextField) {
+            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
     }
 }
