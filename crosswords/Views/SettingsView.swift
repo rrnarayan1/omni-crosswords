@@ -13,7 +13,7 @@ import Firebase
 import FirebaseAuth
 import GameKit
 
-let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal"]
+let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal", "NYT Syndicated"]
 
 struct SettingsView: View {
     @ObservedObject var userSettings = UserSettings()

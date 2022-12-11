@@ -44,7 +44,7 @@ struct CrosswordView: View {
     }
     
     var displayTitle: String {
-        let date = self.crossword.date!
+        let date = self.crossword.date ?? Date.init(timeIntervalSinceNow: TimeInterval(0))
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(abbreviation: "UTC")
         formatter.dateStyle = .short

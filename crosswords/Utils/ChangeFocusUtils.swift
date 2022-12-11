@@ -106,7 +106,7 @@ func getPreviousTagId(tag: Int, goingAcross: Bool, crossword: Crossword) -> Int 
 }
 
 func toggleDirection(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
-    if (crossword.entry![tag] == ".") {
+    if (tag < 0 || tag > crossword.entry!.count || crossword.entry![tag] == ".") {
         return
     }
     if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
@@ -165,7 +165,7 @@ func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> Str
 
 func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
     let directionalLetter: String = goingAcross == true ? "A" : "D"
-    if (crossword.tagToCluesMap![tag].isEmpty) {
+    if (tag < 0 || tag > crossword.tagToCluesMap!.count || crossword.tagToCluesMap![tag].isEmpty) {
         return ""
     }
     return crossword.tagToCluesMap![tag][directionalLetter]!
