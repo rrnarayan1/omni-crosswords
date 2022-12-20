@@ -13,12 +13,11 @@ import Firebase
 import FirebaseAuth
 import GameKit
 
-let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal", "NYT Syndicated"]
+let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal", "NYT Syndicated", "Universal", "NYT Mini"]
 
 struct SettingsView: View {
     @ObservedObject var userSettings = UserSettings()
     @State var showSubscriptions = false
-    @State var showKeyboardShortcuts = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -32,6 +31,12 @@ struct SettingsView: View {
                 destination: SubscriptionsView(),
                 label: {Text("Configure Puzzle Subscriptions")}
             ).padding(.top, 20)
+
+            Spacer()
+
+            Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
+                Text("Like Omni Crosswords? Buy me a coffee!")
+            }
 
             Spacer()
         }
@@ -263,6 +268,12 @@ class UserSettings: ObservableObject {
         }
     }
     
+    @Published var lastRefreshTime: Double {
+        didSet {
+            UserDefaults.standard.set(lastRefreshTime, forKey: "lastRefreshTime")
+        }
+    }
+
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
     @Published var useLocalMode: Bool
@@ -289,6 +300,7 @@ class UserSettings: ObservableObject {
         self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
         self.lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
         self.loopBackInsideUncompletedWord = UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord")
+        self.lastRefreshTime = UserDefaults.standard.double(forKey: "lastRefreshTime")
         self.gameCenterPlayer = GKLocalPlayer.local
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
         self.gameCenterPlayer?.register(GameCenterListener())
