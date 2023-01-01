@@ -8,18 +8,18 @@
 
 import SwiftUI
 
-func moveFocusToNextFieldAndCheck(currentTag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>,
+func moveFocusToNextFieldAndCheck(currentTag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>,
                           isHighlighted: Binding<Array<Int>>) {
-    let nextTag: Int = getNextTagId(tag: currentTag, goingAcross: goingAcross, crossword: crossword)
+    let nextTag: Int = getNextTagId(tag: currentTag, goingAcross: goingAcross.wrappedValue, crossword: crossword)
     moveFocusToFieldAndCheck(currentTag: currentTag, tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true, checkLoopingBack: true)
 }
 
-private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, goingAcross: Bool,
+private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword, goingAcross: Binding<Bool>,
                     focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>, checkCluesForwards: Bool,
                     checkLoopingBack: Bool) {
     let skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
     var loopBackInsideCurrentWord = checkLoopingBack ? UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord") : false
-    let currentClueId = getClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
+    let currentClueId = getClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross.wrappedValue)
     
     if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != "" || tag % Int(crossword.length) == 0) {
         if (skipCompletedCells) {
@@ -50,30 +50,30 @@ private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Cros
                     possibleTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
                 } else if (crossword.entry![possibleTag] == "") {
                     // if the possibleTag is empty, go there
-                    changeFocus(tag: possibleTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+                    changeFocus(tag: possibleTag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
                     return
                 } else {
                     // possibleTag's cell is full, so move to next cell
                     oldTag = possibleTag
-                    possibleTag = getNextTagId(tag: possibleTag, goingAcross: goingAcross, crossword: crossword)
+                    possibleTag = getNextTagId(tag: possibleTag, goingAcross: goingAcross.wrappedValue, crossword: crossword)
                 }
             }
             // if it reaches here, just try the cell
-            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
         } else if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0) {
             // they don't want to skip completed cells, so when we're at the end of the puzzle/at a square, go to start of the next clue
             let possibleNextClueId: String = checkCluesForwards
                 ? getNextClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
                 : getPreviousClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
             let nextTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
-            changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
         } else {
             // they don't want to skip completed cells, and we're checking a valid square, so just go to that square
-            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
         }
     } else {
         // the cell is a valid empty square
-        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
     }
 }
 
@@ -117,7 +117,7 @@ func toggleDirection(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>,
     setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, isHighlighted: isHighlighted)
 }
 
-func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
         let impactMed = UIImpactFeedbackGenerator(style: .medium)
         impactMed.impactOccurred()
@@ -127,7 +127,7 @@ func goToNextClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag:
     moveFocusToFieldAndCheck(currentTag: tag, tag: nextClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: true, checkLoopingBack: false)
 }
 
-func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     if (UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true) {
         let impactMed = UIImpactFeedbackGenerator(style: .medium)
         impactMed.impactOccurred()
@@ -137,9 +137,9 @@ func goToPreviousClue(tag: Int, crossword: Crossword, goingAcross: Bool, focused
     moveFocusToFieldAndCheck(currentTag: tag, tag: prevClueStartTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted, checkCluesForwards: false, checkLoopingBack: false)
 }
 
-func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-    let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
+func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
+    let directionalLetter: String = goingAcross.wrappedValue == true ? "A" : "D"
+    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue)
     let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
     for i in (currentClueNum+1..<crossword.clues!.count) {
         let trialClueID: String = String(i)+directionalLetter
@@ -147,12 +147,13 @@ func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String 
             return trialClueID
         }
     }
-    return String(1)+directionalLetter
+    goingAcross.wrappedValue = !goingAcross.wrappedValue
+    return String(1) + String(directionalLetter == "A" ? "D" : "A")
 }
 
-func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-    let directionalLetter: String = goingAcross == true ? "A" : "D"
-    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross)
+func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
+    let directionalLetter: String = goingAcross.wrappedValue == true ? "A" : "D"
+    let currentClueID = getClueID(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue)
     let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
     for i in (1..<currentClueNum).reversed() {
         let trialClueID: String = String(i)+directionalLetter
@@ -160,7 +161,8 @@ func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> Str
             return trialClueID
         }
     }
-    return String(1)+directionalLetter
+    goingAcross.wrappedValue = !goingAcross.wrappedValue
+    return String(1) + String(directionalLetter == "A" ? "D" : "A")
 }
 
 func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {

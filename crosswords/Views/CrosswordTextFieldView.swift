@@ -73,11 +73,11 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         @objc func goToNextClue(textField: NoActionTextField) {
-            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         @objc func goToPreviousClue(textField: NoActionTextField) {
-            OmniCrosswords.goToPreviousClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            OmniCrosswords.goToPreviousClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         @objc func hideKeyboard(textField: NoActionTextField) {
@@ -107,7 +107,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                     changeFocusToTag(previousTag)
                 } else {
                     // cannot move backwards, go back one clue
-                    let prevClueId: String = getPreviousClueID(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross)
+                    let prevClueId: String = getPreviousClueID(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross)
                     previousTag = parent.crossword.clueToTagsMap![prevClueId]!.max()!
                     changeFocusToTag(previousTag)
                 }
@@ -174,7 +174,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         // checks settings and completed squares
         func moveFocusToNextField(_ textField: UITextField) {
-            OmniCrosswords.moveFocusToNextFieldAndCheck(currentTag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            OmniCrosswords.moveFocusToNextFieldAndCheck(currentTag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         // does not take settings / completed squares into account
@@ -183,7 +183,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
 
         func goToNextClue(_ textField: UITextField) {
-            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
     }
 }

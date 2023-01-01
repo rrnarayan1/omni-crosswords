@@ -125,6 +125,7 @@ struct CrosswordListView: View {
             if (Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: "lastRefreshTime") < 1800) {
                 // we refreshed in the last 30 min, so don't call firebase
                 // still sync game center because that can be realtime
+                checkForDeletions()
                 syncSavedGames()
                 self.refreshEnabled = true
                 return
@@ -279,13 +280,20 @@ struct CrosswordListView: View {
     
     func deleteGame(crossword: Crossword) -> Void {
         self.managedObjectContext.delete(crossword)
+        
         if (self.userSettings.gameCenterPlayer != nil) {
             self.userSettings.gameCenterPlayer?.deleteSavedGames(withName: crossword.id!, completionHandler: {error in
                 if let error = error {
-                    print("Error deleting gamerop from game center saved game: \(error)")
+                    print("Error deleting game from game center saved game: \(error)")
                     return
                 }
             })
+        }
+        
+        do {
+            try self.managedObjectContext.save()
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }

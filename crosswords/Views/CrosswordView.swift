@@ -38,7 +38,7 @@ struct CrosswordView: View {
     @State var becomeFirstResponder: Bool = false
     
     var boxWidth: CGFloat {
-        let maxSize: CGFloat = 40.0
+        let maxSize: CGFloat = 60.0
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
         return min(defaultSize, maxSize)
     }
@@ -67,17 +67,19 @@ struct CrosswordView: View {
                         return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, doErrorTracking: self.isErrorTrackingEnabled, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                     }()
                     .onChange(of: focusedTag, perform: {newFocusedTag in
-                        if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
+                        let oneThirdsRowNumber = Int(self.crossword.height/3)
+                        let middleRowNumber = Int(self.crossword.height/2)
+                        let twoThirdsRowNumber = Int(self.crossword.height/3)*2
+                        if (self.keyboardHeightHelper.keyboardHeight == 0) {
+                            self.scrolledRow = middleRowNumber - 3
+                        } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
-                            let oneThirdsRowNumber = Int(self.crossword.height/3)
-                            let middleRowNumber = Int(self.crossword.height/2)
-                            let twoThirdsRowNumber = Int(self.crossword.height/3)*2
-                            if (newRowNumber > twoThirdsRowNumber && self.scrolledRow != middleRowNumber + 2) {
-                                scrollreader.scrollTo("row"+String(middleRowNumber + 2), anchor: .center)
-                                self.scrolledRow = middleRowNumber + 2
-                            } else if (newRowNumber < oneThirdsRowNumber && self.scrolledRow != middleRowNumber - 2){
-                                scrollreader.scrollTo("row"+String(middleRowNumber - 2), anchor: .center)
-                                self.scrolledRow = middleRowNumber - 2
+                            if (newRowNumber > twoThirdsRowNumber && self.scrolledRow != middleRowNumber + 3) {
+                                scrollreader.scrollTo("row"+String(middleRowNumber + 3), anchor: .center)
+                                self.scrolledRow = middleRowNumber + 3
+                            } else if (newRowNumber < oneThirdsRowNumber && self.scrolledRow != middleRowNumber - 3){
+                                scrollreader.scrollTo("row"+String(middleRowNumber - 3), anchor: .center)
+                                self.scrolledRow = middleRowNumber - 3
                             }
                         }
                     })
@@ -104,12 +106,12 @@ struct CrosswordView: View {
             .onEnded({ value in
                 if value.translation.width < 0 && self.focusedTag != -1 {
                     // left
-                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
                 }
 
                 if value.translation.width > 0 && self.focusedTag != -1 {
                     // right
-                    goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                    goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
                 }
             }))
         .onAppear {
