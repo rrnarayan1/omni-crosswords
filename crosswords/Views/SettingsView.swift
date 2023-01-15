@@ -91,6 +91,10 @@ struct TogglesSettingsView: View {
         Toggle(isOn: $userSettings.enableHapticFeedback) {
             Text("Enable haptic feedback")
         }
+        
+        Toggle(isOn: $userSettings.largePrintMode) {
+            Text("Large Print Mode (iPad)")
+        }
     }
 }
 
@@ -273,6 +277,12 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(lastRefreshTime, forKey: "lastRefreshTime")
         }
     }
+    
+    @Published var largePrintMode: Bool {
+        didSet {
+            UserDefaults.standard.set(largePrintMode, forKey: "largePrintMode")
+        }
+    }
 
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
@@ -303,6 +313,7 @@ class UserSettings: ObservableObject {
         self.lastRefreshTime = UserDefaults.standard.double(forKey: "lastRefreshTime")
         self.gameCenterPlayer = GKLocalPlayer.local
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
+        self.largePrintMode = UserDefaults.standard.bool(forKey: "largePrintMode")
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

@@ -38,7 +38,7 @@ struct CrosswordView: View {
     @State var becomeFirstResponder: Bool = false
     
     var boxWidth: CGFloat {
-        let maxSize: CGFloat = 60.0
+        let maxSize: CGFloat = userSettings.largePrintMode ? 60.0 : 40.0
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
         return min(defaultSize, maxSize)
     }

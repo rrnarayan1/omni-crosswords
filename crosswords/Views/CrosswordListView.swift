@@ -122,16 +122,17 @@ struct CrosswordListView: View {
                 return
             }
 
-            if (Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: "lastRefreshTime") < 1800) {
-                // we refreshed in the last 30 min, so don't call firebase
-                // still sync game center because that can be realtime
-                checkForDeletions()
-                syncSavedGames()
-                self.refreshEnabled = true
-                return
-            } else {
-                UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
-            }
+//            if (Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: "lastRefreshTime") < 1800) {
+//                // we refreshed in the last 30 min, so don't call firebase
+//                // still sync game center because that can be realtime
+//                checkForDeletions()
+//                syncSavedGames()
+//                self.refreshEnabled = true
+//                return
+//            } else {
+//                UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
+//            }
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
 
             let lastDate: Date
             if self.crosswords.count == 0 {
