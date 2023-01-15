@@ -29,6 +29,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var becomeFirstResponder: Bool
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
+    @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var userSettings = UserSettings()
     
     func makeUIView(context: Context) -> NoActionTextField {
@@ -78,10 +79,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         @objc func goToPreviousClue(textField: NoActionTextField) {
             OmniCrosswords.goToPreviousClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
-        }
-        
-        @objc func hideKeyboard(textField: NoActionTextField) {
-            changeFocusToTag(-1)
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -138,19 +135,24 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 didPressBackspace(textField)
             } else {
                 parent.crossword.entry![parent.focusedTag] = string.uppercased()
+                moveFocusToNextField(textField)
                 saveGame()
             }
             
             if (parent.crossword.entry == parent.crossword.solution) {
                 parent.crossword.solved = true
                 parent.timerWrapper.stop()
+                parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
+                let solvedCrossword = SolvedCrossword(context: parent.managedObjectContext)
+                solvedCrossword.date = parent.crossword.date
+                solvedCrossword.id = parent.crossword.id
+                solvedCrossword.solveTime = parent.crossword.solvedTime
+                solvedCrossword.numClues = Int32(parent.crossword.clues!.count)
+                changeFocusToTag(-1)
+                parent.becomeFirstResponder = false
+                saveGame()
             } else if (parent.crossword.solved) {
                 parent.crossword.solved = false
-            }
-            parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
-            
-            if (!string.isEmpty) {
-                moveFocusToNextField(textField)
             }
             return false
         }

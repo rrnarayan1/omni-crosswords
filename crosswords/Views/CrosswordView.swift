@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import FontAwesome_swift
 import GameKit
 
 struct CrosswordView: View {
@@ -140,7 +139,9 @@ struct CrosswordView: View {
                 HStack {
                     NavigationLink(
                         destination: CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$isErrorTrackingEnabled),
-                        label: {Image(uiImage: UIImage.fontAwesomeIcon(name: .slidersH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))}
+                        label: {Image(systemName: "slider.horizontal.3")
+                            .foregroundColor(Color(UIColor.systemBlue))
+                            .font(.system(size: 18))}
                     ).simultaneousGesture(TapGesture().onEnded{
                         self.becomeFirstResponder = false
                         self.focusedTag = -1
@@ -149,7 +150,9 @@ struct CrosswordView: View {
 
                     if #available(iOS 15, *) {
                         Button(action: {self.showShareSheet = true}) {
-                            Image(uiImage: UIImage.fontAwesomeIcon(name: .shareAlt, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundColor(Color(UIColor.systemBlue))
+                                .font(.system(size: 18))
                         }.sheet(isPresented: self.$showShareSheet,
                             onDismiss: {self.showShareSheet = false},
                             content: {

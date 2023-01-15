@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import FontAwesome_swift
 
 struct CrosswordCellView: View {
     var crossword: Crossword

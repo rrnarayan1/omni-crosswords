@@ -8,7 +8,6 @@
 
 import SwiftUI
 import Combine
-import FontAwesome_swift
 import Firebase
 import FirebaseAuth
 import GameKit
@@ -176,9 +175,12 @@ struct SubscriptionsView: View {
                     Text(allSubscriptions[i])
                     Spacer()
                     Button(action: {self.toggleSubscription(allSubscriptions[i])}) {
-                        Image(uiImage: self.hasSub(allSubscriptions[i]) ? UIImage.fontAwesomeIcon(name: .checkSquare, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)) : UIImage.fontAwesomeIcon(name: .square, style: FontAwesomeStyle.regular, textColor: UIColor.systemGray, size: CGSize(width: 30, height: 30)))
+                        Image(systemName: self.hasSub(allSubscriptions[i]) ? "checkmark.square" : "square")
+                            .foregroundColor(Color(UIColor.systemGray))
+                            .font(.system(size: 18))
                     }
                 }
+                .padding(5)
             }
         }
         .navigationBarTitle("Subscriptions", displayMode: .large)

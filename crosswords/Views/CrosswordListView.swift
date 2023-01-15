@@ -10,7 +10,6 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 import FirebaseFirestoreSwift
-import FontAwesome_swift
 import GameKit
 
 struct CrosswordListView: View {
@@ -43,7 +42,8 @@ struct CrosswordListView: View {
     var body: some View {
         NavigationView {
             if (userSettings.user == nil && !userSettings.useLocalMode) {
-                Image(uiImage: UIImage.fontAwesomeIcon(name: .spinner, style: .solid, textColor: .systemGray, size: CGSize.init(width: 30, height: 30)))
+                Image(systemName: "circle.dotted")
+                    .font(.system(size: 20))
                 .onAppear(perform: {
                     self.checkUser()
                 })
@@ -64,14 +64,23 @@ struct CrosswordListView: View {
             .navigationBarItems(trailing:
                 HStack {
                     NavigationLink(
+                        destination: StatisticsView()
+                    ) {
+                        Image(systemName: "chart.bar.xaxis")
+                            .font(.system(size: 18))
+                    }
+                    NavigationLink(
                         destination: SettingsView()
                     ) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .cog, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize.init(width: 30, height: 30)))
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 18))
                     }
                     Button(action: {
                         self.refreshCrosswords()
                     }) {
-                        Image(uiImage: UIImage.fontAwesomeIcon(name: .sync, style: FontAwesomeStyle.solid, textColor: self.refreshEnabled ? UIColor.systemBlue : UIColor.systemGray, size: CGSize.init(width: 30, height: 30)))
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 18, weight: Font.Weight.bold))
+                            .foregroundColor(self.refreshEnabled ? Color(UIColor.systemBlue) : Color(UIColor.systemGray))
                     }.disabled(!self.refreshEnabled)
                 }
             )
@@ -325,7 +334,9 @@ struct CrosswordListItemView: View {
                 if (userSettings.showTimer && crossword.solvedTime > 0) {
                     Text(currentTime).foregroundColor(Color.init(UIColor.systemGreen))
                 }
-                Image(uiImage: UIImage.fontAwesomeIcon(name: .checkCircle, style: FontAwesomeStyle.regular, textColor: UIColor.systemGreen, size: CGSize.init(width: 30, height: 30)))
+                Image(systemName: "checkmark.circle")
+                    .foregroundColor(Color(UIColor.systemGreen))
+                    .font(.system(size: 20))
             }
             else if (crosswordProgress > 0) {
                 if (userSettings.showTimer && crossword.solvedTime > 0) {
