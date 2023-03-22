@@ -147,8 +147,7 @@ func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -
             return trialClueID
         }
     }
-    goingAcross.wrappedValue = !goingAcross.wrappedValue
-    return String(1) + String(directionalLetter == "A" ? "D" : "A")
+    return String(1) + String(directionalLetter)
 }
 
 func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
@@ -161,8 +160,7 @@ func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool
             return trialClueID
         }
     }
-    goingAcross.wrappedValue = !goingAcross.wrappedValue
-    return String(1) + String(directionalLetter == "A" ? "D" : "A")
+    return String(1) + String(directionalLetter)
 }
 
 func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {

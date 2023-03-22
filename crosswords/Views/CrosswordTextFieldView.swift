@@ -87,7 +87,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         func didPressBackspace(_ textField: UITextField) {
-            if (parent.focusedTag < 0) {
+            if (parent.focusedTag < 0 || parent.crossword.solved)  {
                 return
             }
             
@@ -131,6 +131,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 return false
             }
             
+            if (parent.crossword.solved) {
+                // Don't edit a solved crossword
+                return false
+            }
+            parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
+            
             if (string.isEmpty) {
                 didPressBackspace(textField)
             } else {
@@ -142,11 +148,11 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             if (parent.crossword.entry == parent.crossword.solution) {
                 parent.crossword.solved = true
                 parent.timerWrapper.stop()
-                parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
                 let solvedCrossword = SolvedCrossword(context: parent.managedObjectContext)
                 solvedCrossword.date = parent.crossword.date
                 solvedCrossword.id = parent.crossword.id
                 solvedCrossword.solveTime = parent.crossword.solvedTime
+                solvedCrossword.outletName = parent.crossword.outletName
                 solvedCrossword.numClues = Int32(parent.crossword.clues!.count)
                 changeFocusToTag(-1)
                 parent.becomeFirstResponder = false

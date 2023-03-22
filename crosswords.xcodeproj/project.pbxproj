@@ -31,6 +31,7 @@
 		1C8AB1AF289756D1008D8841 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */; };
 		1C9424F629748177005BBFA9 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9424F529748177005BBFA9 /* StatisticsView.swift */; };
 		1C958ABB284C0ADC00695B9B /* BannerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C958ABA284C0ADC00695B9B /* BannerModifier.swift */; };
+		1CA8EA492974AA6400168E83 /* SolvedCrosswordStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8EA482974AA6400168E83 /* SolvedCrosswordStatistics.swift */; };
 		1CAF9ECC289641270075C6E1 /* SheetViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CAF9ECB289641270075C6E1 /* SheetViews.swift */; };
 		1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */; };
 		1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */; };
@@ -68,6 +69,7 @@
 		1C8AB1AC289752B7008D8841 /* DevOverrides.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = DevOverrides.plist; sourceTree = "<group>"; };
 		1C9424F529748177005BBFA9 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
 		1C958ABA284C0ADC00695B9B /* BannerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerModifier.swift; sourceTree = "<group>"; };
+		1CA8EA482974AA6400168E83 /* SolvedCrosswordStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolvedCrosswordStatistics.swift; sourceTree = "<group>"; };
 		1CAF9ECB289641270075C6E1 /* SheetViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViews.swift; sourceTree = "<group>"; };
 		1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Toolbar.swift"; sourceTree = "<group>"; };
 		1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightHelper.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				1C3D87E92749ACFB001A7591 /* CrosswordTextFieldView.swift */,
 				1CAF9ECB289641270075C6E1 /* SheetViews.swift */,
 				1C9424F529748177005BBFA9 /* StatisticsView.swift */,
+				1CA8EA482974AA6400168E83 /* SolvedCrosswordStatistics.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */,
 				1C73206F24C4F44000240AF8 /* CrosswordListView.swift in Sources */,
 				1C1EA90F24DE765D00A67BA9 /* SettingsView.swift in Sources */,
+				1CA8EA492974AA6400168E83 /* SolvedCrosswordStatistics.swift in Sources */,
 				1C6A26B724CA7340002F8DAD /* CrosswordCellView.swift in Sources */,
 				1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */,
 				1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */,
@@ -489,7 +493,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswordsDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;
@@ -500,7 +504,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.19;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
@@ -515,7 +519,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswords.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_ASSET_PATHS = "\"crosswords/Preview Content\"";
 				DEVELOPMENT_TEAM = C7CVG856AD;
@@ -526,7 +530,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.19;
+				MARKETING_VERSION = 1.6.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
