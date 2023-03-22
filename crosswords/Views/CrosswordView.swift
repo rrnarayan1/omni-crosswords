@@ -138,7 +138,7 @@ struct CrosswordView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
                     NavigationLink(
-                        destination: CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$isErrorTrackingEnabled),
+                        destination: CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$isErrorTrackingEnabled, showSolution: self.showSolution),
                         label: {Image(systemName: "slider.horizontal.3")
                             .foregroundColor(Color(UIColor.systemBlue))
                             .font(.system(size: 18))}
@@ -200,6 +200,14 @@ struct CrosswordView: View {
 //        print(keyboardHeight)
 //        print(UIScreen.screenHeight)
         return (self.componentHeights + keyboardHeight) > UIScreen.screenHeight
+    }
+    
+    func showSolution() -> Void {
+        self.crossword.entry = self.crossword.solution
+        self.crossword.solved = true
+        self.timerWrapper.stop()
+        self.forceUpdate = !self.forceUpdate
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 }
 

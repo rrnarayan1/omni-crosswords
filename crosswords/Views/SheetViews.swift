@@ -11,13 +11,23 @@ import SwiftUI
 struct CrosswordSettingsView: View {
     var crossword: Crossword
     @Binding var errorTracking: Bool
+    var showSolution: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Toggle(isOn: $errorTracking) {
-                Text("Error Tracking")
+        VStack(alignment: .center) {
+            VStack {
+                Toggle(isOn: $errorTracking) {
+                    Text("Error Tracking")
+                }
+                .frame(width: 200)
+                
+                if (!crossword.solved) {
+                    Button(action: {self.showSolution()}) {
+                        Text("Show Solution")
+                    }
+                    .frame(width: 200)
+                }
             }
-            .frame(width: 200)
             .padding(30)
 
             Text("Title: "+self.crossword.title!)
@@ -26,6 +36,7 @@ struct CrosswordSettingsView: View {
                 Text("Notes: "+self.crossword.notes!)
             }
             Text(self.crossword.copyright!)
+            
             Spacer()
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
