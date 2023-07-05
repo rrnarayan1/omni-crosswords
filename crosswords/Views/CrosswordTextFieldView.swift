@@ -39,7 +39,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.autocapitalizationType = .allCharacters
         textField.keyboardType = UIKeyboardType.alphabet
         textField.tintColor = UIColor.clear
-        textField.addToolbar()
+        textField.addToolbar(coordinator: context.coordinator, clueTitle: "", toggleImage: self.toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
         return textField
     }
     
@@ -55,7 +55,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
-        uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, coordinator: context.coordinator, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
     }
     
     func makeCoordinator() -> Coordinator {

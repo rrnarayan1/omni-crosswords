@@ -72,7 +72,7 @@ struct TogglesSettingsView: View {
         })
 
         Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
-            Text("Loop Back Inside Uncompleted Word")
+            Text("Loop back inside uncompleted word")
         }.disabled(!userSettings.skipCompletedCells)
 
         Toggle(isOn: $userSettings.defaultErrorTracking) {

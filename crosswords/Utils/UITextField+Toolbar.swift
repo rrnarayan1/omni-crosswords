@@ -22,7 +22,25 @@ extension UITextField {
         UIImage.fontAwesomeIcon(name: .chevronLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
     }
     
-    func changeToolbar(clueTitle: String, toggleImage: UIImage, coordinator: CrosswordTextFieldView.Coordinator, barColor: UIColor) {
+    func changeToolbar(clueTitle: String, toggleImage: UIImage, barColor: UIColor) {
+        let uiTextFieldToolbar = self.inputAccessoryView as! UIToolbar
+        let clueTitleLabel = uiTextFieldToolbar.items![3].customView as! UITextView
+        if (uiTextFieldToolbar.backgroundColor != barColor) {
+            uiTextFieldToolbar.backgroundColor = barColor
+        }
+        if (clueTitleLabel.text != clueTitle) {
+            uiTextFieldToolbar.items?.remove(at: 3)
+            clueTitleLabel.text = clueTitle
+            uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: 3)
+        }
+        if (uiTextFieldToolbar.items![5].image != toggleImage) {
+            uiTextFieldToolbar.items![5].image = toggleImage
+        }
+    }
+    
+    func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, toggleImage: UIImage, barColor: UIColor) {
+        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0, width: Double(UIScreen.main.bounds.size.width), height: toolbarHeight))
+        
         let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         
         let clueTitleLabel = UITextView()
@@ -30,6 +48,7 @@ extension UITextField {
         if (clueFontSize < 13) {
             clueFontSize = 13
         }
+        
         clueTitleLabel.text = clueTitle
         clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
         clueTitleLabel.textColor = UIColor.label
@@ -62,10 +81,5 @@ extension UITextField {
         (self.inputAccessoryView as! UIToolbar).setItems([leftButton, rightButton, flexible, clueTitle, flexible, toggleButton], animated: false)
         
         (self.inputAccessoryView as! UIToolbar).backgroundColor = barColor
-        
-    }
-    
-    func addToolbar() {
-        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0, width: Double(UIScreen.main.bounds.size.width), height: toolbarHeight))
     }
 }
