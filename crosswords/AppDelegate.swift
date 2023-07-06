@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 import Firebase
 import FirebaseAuth
-import FontAwesome_swift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

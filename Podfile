@@ -8,7 +8,6 @@ target 'crosswords' do
   # Pods for crosswords
   pod 'Firebase/Firestore'
   pod 'Firebase/Auth'
-  pod 'FontAwesome.swift'
   pod 'FirebaseFirestoreSwift'
 
 end

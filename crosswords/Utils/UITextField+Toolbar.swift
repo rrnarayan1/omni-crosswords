@@ -8,18 +8,17 @@
 
 import UIKit
 import SwiftUI
-import FontAwesome_swift
 
 let toolbarHeight = 40.0
 
 extension UITextField {
     
     var nextImage: UIImage {
-        UIImage.fontAwesomeIcon(name: .chevronRight, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
+        return UIImage(systemName: "chevron.right")!
     }
 
     var previousImage: UIImage {
-        UIImage.fontAwesomeIcon(name: .chevronLeft, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
+        return UIImage(systemName: "chevron.left")!
     }
     
     func changeToolbar(clueTitle: String, toggleImage: UIImage, barColor: UIColor) {

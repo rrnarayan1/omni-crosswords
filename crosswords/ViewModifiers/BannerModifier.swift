@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import FontAwesome_swift
 import SwiftUI
 
 struct BannerModifier: ViewModifier {

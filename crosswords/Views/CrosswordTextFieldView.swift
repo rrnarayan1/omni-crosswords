@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import FontAwesome_swift
 import GameKit
 
 struct CrosswordTextFieldView: UIViewRepresentable {
@@ -16,9 +15,9 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     
     var toggleImage: UIImage {
         if (self.goingAcross) {
-            return UIImage.fontAwesomeIcon(name: .arrowsAltV, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
+            return UIImage(systemName: "arrow.up.arrow.down")!
         } else {
-            return UIImage.fontAwesomeIcon(name: .arrowsAltH, style: FontAwesomeStyle.solid, textColor: UIColor.systemBlue, size: CGSize(width: 25, height: 25))
+            return UIImage(systemName: "arrow.left.arrow.right")!
         }
     }
     
