@@ -46,6 +46,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Core Data stack
 
+    private static let url: URL = {
+            let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("crosswords.sqlite")
+            return url
+        }()
+
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -68,7 +73,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                // We can't load the CoreData DB, so destroy it and re-create it
+                try! container.persistentStoreCoordinator.destroyPersistentStore(at: AppDelegate.url, ofType: "sqlite", options: nil)
+                container.loadPersistentStores(completionHandler: { (_, _) in })
             }
         })
         return container

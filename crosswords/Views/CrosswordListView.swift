@@ -214,6 +214,9 @@ struct CrosswordListView: View {
                         }
                         let crossword = Crossword(context: self.managedObjectContext)
                         jsonToCrossword(crossword: crossword, data: document)
+                        // Cause duplicate crosswords
+//                        let crossword1 = Crossword(context: self.managedObjectContext)
+//                        jsonToCrossword(crossword: crossword1, data: document)
                         do {
                             try self.managedObjectContext.save()
                         } catch {
