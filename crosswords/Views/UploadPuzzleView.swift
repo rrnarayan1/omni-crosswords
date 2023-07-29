@@ -16,17 +16,25 @@ struct UploadPuzzleView: View {
 
     @State var showFilePicker: Bool = false
     @State var showError: Bool = false
+    @State var showLoader: Bool = false
     @State var token: String = ""
 
     var body: some View {
         VStack {
-            if (self.showError) {
-                Text("Something went wrong. Try again and check the formatting of your file")
-            }
-            Button(action: {
-                self.showFilePicker.toggle()
-            }) {
-                Text("Upload .puz file")
+            if (!self.showError && self.showLoader) {
+                ProgressView("Uploading...")
+            } else {
+                if (self.showError) {
+                    Text("Something went wrong. Try again and check the formatting of your file")
+                        .foregroundColor(.red)
+                        .padding(.bottom, 20)
+                }
+                
+                Button(action: {
+                    self.showFilePicker.toggle()
+                }) {
+                    Text("Upload .puz file")
+                }
             }
         }
         .fileImporter(
@@ -35,6 +43,7 @@ struct UploadPuzzleView: View {
             allowsMultipleSelection: false
         ) { fileUrl in
             do {
+                showLoader = true
                 guard let selectedFile: URL = try fileUrl.get().first else { return }
 
                 let requestUrl = URL(string: "https://omni-crosswords-server-rtluzv2sqq-uc.a.run.app/parsePuzfile")!
@@ -42,11 +51,33 @@ struct UploadPuzzleView: View {
                 var request = URLRequest(url: requestUrl)
                 request.setValue("Bearer "+self.token, forHTTPHeaderField: "Authorization")
                 request.httpMethod = "POST"
+                
+                guard selectedFile.startAccessingSecurityScopedResource() else {
+                    showLoader = false
+                    showError = true
+                    return
+                }
 
-                let task = URLSession.shared.uploadTask(with: request, fromFile: selectedFile) { data, response, error in
+                let appCacheUrl =  FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+                let copiedSelectedFile = appCacheUrl.appendingPathComponent(selectedFile.lastPathComponent)
+
+                if let dataFromURL = NSData(contentsOf: selectedFile) {
+                    if dataFromURL.write(to: copiedSelectedFile, atomically: true) {
+                        print("file saved [\(copiedSelectedFile.path)]")
+                    } else {
+                        showLoader = false
+                        showError = true
+                        print("error saving file before uploading")
+                    }
+                }
+
+                selectedFile.stopAccessingSecurityScopedResource()
+
+                let task = URLSession.shared.uploadTask(with: request, fromFile: copiedSelectedFile) { data, response, error in
                     do {
                         if let httpResponse = response as? HTTPURLResponse {
                             if httpResponse.statusCode != 201 {
+                                showLoader = false
                                 showError = true
                                 print(httpResponse)
                                 return
@@ -59,6 +90,7 @@ struct UploadPuzzleView: View {
                                 jsonToCrossword(crossword: crossword, data: crosswordResponse)
                                 try self.managedObjectContext.save()
                             } catch {
+                                showLoader = false
                                 showError = true
                                 print(error.localizedDescription)
                             }
@@ -66,6 +98,7 @@ struct UploadPuzzleView: View {
                         }
                         return
                     } catch {
+                        showLoader = false
                         showError = true
                         print("Error info: \(error)")
                     }
