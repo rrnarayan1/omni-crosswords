@@ -70,6 +70,12 @@ struct CrosswordListView: View {
                             .font(.system(size: 18))
                     }
                     NavigationLink(
+                        destination: UploadPuzzleView()
+                    ) {
+                        Image(systemName: "arrow.up.circle")
+                            .font(.system(size: 18))
+                    }
+                    NavigationLink(
                         destination: SettingsView()
                     ) {
                         Image(systemName: "gearshape.fill")
@@ -238,9 +244,12 @@ struct CrosswordListView: View {
         let timeToGoBack: Double = Double(-1 * daysAgoToDelete * 86400)
         let lastDate = Date.init(timeInterval: timeToGoBack, since: Date())
         for crossword in self.crosswords {
+            if (crossword.date == nil) {
+                deleteGame(crossword: crossword)
+            }
             if crossword.date! < lastDate {
                 deleteGame(crossword: crossword)
-            } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved {
+            } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved && crossword.outletName! != "Custom" {
                 deleteGame(crossword: crossword)
             }
 // Commented out - this deletes the most recent day's crossword
