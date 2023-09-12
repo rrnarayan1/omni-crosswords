@@ -375,8 +375,8 @@ struct CrosswordListItemView: View {
     func getCrosswordListTitle(crossword: Crossword) -> String {
         let date = crossword.date!
         let formatter = DateFormatter()
+        formatter.dateFormat = "EE MM/dd/yy"
         formatter.timeZone = TimeZone(abbreviation: "UTC")
-        formatter.dateStyle = .short
         return crossword.outletName! + " - " + formatter.string(from: date)
     }
     
