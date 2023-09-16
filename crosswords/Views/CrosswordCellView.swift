@@ -8,34 +8,37 @@
 
 import SwiftUI
 
-struct CrosswordCellView: View {
-    var crossword: Crossword
+struct CrosswordCellView: View, Equatable {
+
+    var value: String
+    var correctValue: String
+    var symbol: Int
+    var tag: Int
+    var onTap: (Int) -> Void
+    var onLongPress: (Int) -> Void
     var boxWidth: CGFloat
-    var rowNum: Int
-    var colNum: Int
-    var currentClue: String
     var isErrorTrackingEnabled: Bool
-    var tag: Int {
-        rowNum*Int(crossword.length)+colNum
-    }
-    
-    var symbol: Int {
-        crossword.symbols![tag]
-    }
-    
-    @Binding var focusedTag: Int
-    @Binding var highlighted: Array<Int>
-    @Binding var forceUpdate: Bool
-    @Binding var goingAcross: Bool
-    @Binding var becomeFirstResponder: Bool
+    var isFocused: Bool
+    var isHighlighted: Bool
     @Environment(\.colorScheme) var colorScheme
     
+    static func == (lhs: CrosswordCellView, rhs: CrosswordCellView) -> Bool {
+        if (lhs.tag != rhs.tag) {
+            return false
+        }
+        if ((lhs.value != rhs.value) || (lhs.isFocused != rhs.isFocused) || (lhs.isHighlighted != rhs.isHighlighted)
+            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled)) {
+            return false
+        }
+        return true
+    }
+    
     var body: some View {
-        ZStack() {
-            Color.init(self.getBackgroundColor())
+        return ZStack() {
+            Color.init(getBackgroundColor())
             HStack(alignment: .center) {
-                if (self.isEditable()) {
-                    Text(crossword.entry![tag])
+                if (isEditable()) {
+                    Text(value)
                         .font(.system(size: 70*boxWidth/100))
                         .frame(alignment: .center)
                 }
@@ -47,50 +50,31 @@ struct CrosswordCellView: View {
         }
         .overlay(
             Text(symbol % 1000 > 0 ? String(symbol % 1000) : "")
-                .font(.system(size: self.boxWidth/4))
-                .padding(self.boxWidth/30),
+                .font(.system(size: boxWidth/4))
+                .padding(boxWidth/30),
             alignment: .topLeading
         )
         .onTapGesture {
-            onTapCell()
+            onTap(tag)
         }
         .border(.black, width: 0.25)
         .contentShape(Rectangle())
         .contextMenu {
             Button(action: {
-                self.crossword.entry![self.focusedTag] = self.crossword.solution![self.focusedTag]
-                if (self.crossword.entry == self.crossword.solution) {
-                    self.crossword.solved = true
-                }
-                moveFocusToNextFieldAndCheck(currentTag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                onLongPress(tag)
            }) {
                Text("Solve Square")
            }
         }
     }
     
-    func onTapCell() -> Void {
-        if (!self.becomeFirstResponder) {
-            self.becomeFirstResponder = true
-        }
-        if (!self.isEditable()) {
-            return
-        }
-        if (self.tag == self.focusedTag) {
-            toggleDirection(tag: self.tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
-        } else {
-            changeFocus(tag: self.tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
-    }
-    
     func getBackgroundColor() -> UIColor {
-        if (!self.isEditable()) {
+        if (!isEditable()) {
             return UIColor.black
-        } else if self.isErrorTrackingEnabled {
-            let entry = self.crossword.entry![self.tag]
-            if (entry != "" && entry != self.crossword.solution![self.tag]) {
-                if self.highlighted.contains(self.tag) {
-                    if (self.tag == self.focusedTag) {
+        } else if (isErrorTrackingEnabled) {
+            if (value != "" && value != correctValue) {
+                if (isHighlighted) {
+                    if (isFocused) {
                         return UIColor.systemRed.withAlphaComponent(0.6)
                     } else {
                         return UIColor.systemRed.withAlphaComponent(0.5)
@@ -101,26 +85,26 @@ struct CrosswordCellView: View {
             }
         }
         
-        if self.highlighted.contains(self.tag) {
+        if isHighlighted {
             if (colorScheme == .dark) {
-                if (self.tag == self.focusedTag) {
+                if (isFocused) {
                     return UIColor.systemBlue.withAlphaComponent(0.8)
                 } else {
                     return UIColor.systemBlue.withAlphaComponent(0.5)
                 }
             } else {
-                if (self.tag == self.focusedTag) {
+                if (isFocused) {
                     return UIColor.systemBlue.withAlphaComponent(0.6)
                 } else {
                     return UIColor.systemBlue.withAlphaComponent(0.2)
                 }
             }
         } else {
-            return self.colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
+            return colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
         }
     }
     
     func isEditable() -> Bool {
-        return self.crossword.entry![self.tag] != "."
+        return value != "."
     }
 }

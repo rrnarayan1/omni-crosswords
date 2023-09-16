@@ -233,29 +233,63 @@ struct CrosswordGridView: View {
     @Binding var becomeFirstResponder: Bool
     
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach((0...self.crossword.height-1), id: \.self) { rowNum in
+        let rows: [Int] = Array(0...Int(self.crossword.height)-1)
+        let cols: [Int] = Array(0...Int(self.crossword.length)-1)
+        return VStack(spacing: 0) {
+            ForEach(rows, id: \.self) { rowNum in
                 HStack (spacing: 0) {
-                    ForEach((0...self.crossword.length-1), id: \.self) { colNum in
-                        CrosswordCellView(
-                            crossword: self.crossword,
-                            boxWidth: self.boxWidth,
-                            rowNum: Int(rowNum),
-                            colNum: Int(colNum),
-                            currentClue: self.currentClue,
-                            isErrorTrackingEnabled: self.doErrorTracking,
-                            focusedTag: self.$focusedTag,
-                            highlighted: self.$highlighted,
-                            forceUpdate: self.$forceUpdate,
-                            goingAcross: self.$goingAcross,
-                            becomeFirstResponder: self.$becomeFirstResponder
-                        ).frame(width: self.boxWidth, height: self.boxWidth)
+                    ForEach(cols, id: \.self) { colNum in
+                        makeCellView(colNum: colNum, rowNum: rowNum)
                     }
                 }
                 .id("row"+String(rowNum))
             }
             CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                 .frame(width:1, height: 1)
+        }
+    }
+    
+    func makeCellView(colNum: Int, rowNum: Int) -> some View {
+        let tag: Int = rowNum*Int(self.crossword.length)+colNum
+        let value: String = self.crossword.entry![tag]
+        let correctValue: String = self.crossword.solution![tag]
+        let symbol: Int = self.crossword.symbols![tag]
+        return CrosswordCellView(
+            value: value,
+            correctValue: correctValue,
+            symbol: symbol,
+            tag: tag,
+            onTap: self.onTapCell,
+            onLongPress: self.solveCell,
+            boxWidth: self.boxWidth,
+            isErrorTrackingEnabled: self.doErrorTracking,
+            isFocused: self.focusedTag == tag,
+            isHighlighted: self.highlighted.contains(tag)
+        ).equatable().frame(width: self.boxWidth, height: self.boxWidth)
+    }
+    
+    func onTapCell(tag: Int) -> Void {
+        if (!self.becomeFirstResponder) {
+            self.becomeFirstResponder = true
+        }
+        if (self.crossword.entry![tag] == ".") {
+            return
+        }
+        if (tag == self.focusedTag) {
+            toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+        } else {
+            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        }
+    }
+    
+    func solveCell(tag: Int) -> Void {
+        self.crossword.entry![tag] = self.crossword.solution![tag]
+        if (self.crossword.entry == self.crossword.solution) {
+            self.crossword.solved = true
+        } else if (self.focusedTag == tag) {
+            moveFocusToNextFieldAndCheck(currentTag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+        } else {
+            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
 }
