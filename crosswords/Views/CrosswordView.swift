@@ -136,43 +136,10 @@ struct CrosswordView: View {
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack {
-                    NavigationLink(
-                        destination: CrosswordSettingsView(crossword: self.crossword, errorTracking: self.$isErrorTrackingEnabled, showSolution: self.showSolution),
-                        label: {Image(systemName: "slider.horizontal.3")
-                            .foregroundColor(Color(UIColor.systemBlue))
-                            .font(.system(size: 18))}
-                    ).simultaneousGesture(TapGesture().onEnded{
-                        self.becomeFirstResponder = false
-                        self.focusedTag = -1
-                        self.highlighted = Array()
-                    })
-
-                    if #available(iOS 15, *) {
-                        Button(action: {self.showShareSheet = true}) {
-                            Image(systemName: "square.and.arrow.up")
-                                .foregroundColor(Color(UIColor.systemBlue))
-                                .font(.system(size: 18))
-                        }.sheet(isPresented: self.$showShareSheet,
-                            onDismiss: {self.showShareSheet = false},
-                            content: {
-                                ActivityView(activityItems: shareSheet(crossword: self.crossword))
-                            }
-                        )
-                    }
-                }
+                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
             }
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    self.becomeFirstResponder = false
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                        Text("Back")
-                            .frame(alignment: .leading)
-                    }
-                }
+                CrosswordLeadingToolbarView(goBack: goBack)
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -208,6 +175,17 @@ struct CrosswordView: View {
         self.timerWrapper.stop()
         self.forceUpdate = !self.forceUpdate
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+    }
+    
+    func showSettings() -> Void {
+        self.becomeFirstResponder = false
+        self.focusedTag = -1
+        self.highlighted = Array()
+    }
+    
+    func goBack() -> Void {
+        self.becomeFirstResponder = false
+        self.presentationMode.wrappedValue.dismiss()
     }
 }
 

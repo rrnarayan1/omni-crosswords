@@ -9,7 +9,12 @@
 import SwiftUI
 
 struct CrosswordSettingsView: View {
-    var crossword: Crossword
+    let title: String
+    let author: String
+    let notes: String
+    let copyright: String
+    let isSolved: Bool
+    
     @Binding var errorTracking: Bool
     var showSolution: () -> Void
 
@@ -21,8 +26,8 @@ struct CrosswordSettingsView: View {
                 }
                 .frame(width: 200)
                 
-                if (!crossword.solved) {
-                    Button(action: {self.showSolution()}) {
+                if (!isSolved) {
+                    Button(action: {showSolution()}) {
                         Text("Show Solution")
                     }
                     .frame(width: 200)
@@ -30,12 +35,12 @@ struct CrosswordSettingsView: View {
             }
             .padding(30)
 
-            Text("Title: "+self.crossword.title!)
-            Text("Author: "+self.crossword.author!)
-            if (self.crossword.notes! != "") {
-                Text("Notes: "+self.crossword.notes!)
+            Text("Title: "+title)
+            Text("Author: "+author)
+            if (notes != "") {
+                Text("Notes: "+notes)
             }
-            Text(self.crossword.copyright!)
+            Text(copyright)
             
             Spacer()
         }
@@ -46,14 +51,13 @@ struct CrosswordSettingsView: View {
     }
 }
 
-func shareSheet(crossword: Crossword) -> [Any] {
+func shareSheet(isSolved: Bool, outletName: String) -> [Any] {
     var shareMessage: String
-    if (crossword.solved) {
-        shareMessage = "I solved the " + crossword.outletName! + " crossword in "
-        shareMessage += String(toTime(Int(crossword.solvedTime)))
-        shareMessage += ". Download OmniCrosswords and try to beat my time!"
+    if (isSolved) {
+        shareMessage = "I solved the " + outletName + " crossword"
+        shareMessage += ". Download OmniCrosswords and have fun with me!"
     } else {
-        shareMessage = "I'm in the middle of solving the " + crossword.outletName! + " crossword"
+        shareMessage = "I'm in the middle of solving the " + outletName + " crossword"
         shareMessage += ". Download OmniCrosswords and help me out!"
     }
     let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
