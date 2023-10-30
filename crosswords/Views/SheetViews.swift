@@ -14,6 +14,7 @@ struct CrosswordSettingsView: View {
     let notes: String
     let copyright: String
     let isSolved: Bool
+    let isSolutionAvailable: Bool
     
     @Binding var errorTracking: Bool
     var showSolution: () -> Void
@@ -24,13 +25,19 @@ struct CrosswordSettingsView: View {
                 Toggle(isOn: $errorTracking) {
                     Text("Error Tracking")
                 }
+                .disabled(!isSolutionAvailable)
                 .frame(width: 200)
                 
                 if (!isSolved) {
                     Button(action: {showSolution()}) {
                         Text("Show Solution")
                     }
+                    .disabled(!isSolutionAvailable)
                     .frame(width: 200)
+                }
+                
+                if (!isSolutionAvailable) {
+                    Text("Error Tracking and Show Solution are Disabled because the solution is not available")
                 }
             }
             .padding(30)

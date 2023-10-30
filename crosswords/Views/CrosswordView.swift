@@ -31,10 +31,17 @@ struct CrosswordView: View {
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
     @State var showShareSheet: Bool = false
-    @State var isErrorTrackingEnabled: Bool = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
+    @State var isErrorTrackingEnabled: Bool = false
     @State var forceUpdate = false
     @State var scrolledRow = 0
     @State var becomeFirstResponder: Bool = false
+    
+    init(crossword: Crossword) {
+        self.crossword = crossword
+        self._isErrorTrackingEnabled = State(initialValue: isSolutionAvailable(crossword: crossword)
+                                             ? userSettings.defaultErrorTracking
+                                             : false)
+    }
     
     var boxWidth: CGFloat {
         let maxSize: CGFloat = userSettings.largePrintMode ? 60.0 : 40.0
@@ -136,7 +143,7 @@ struct CrosswordView: View {
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
+                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isSolutionAvailable: isSolutionAvailable(crossword: crossword), isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
             }
             ToolbarItem(placement: .navigationBarLeading) {
                 CrosswordLeadingToolbarView(goBack: goBack)
@@ -270,6 +277,11 @@ struct CrosswordGridView: View {
             changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
+}
+
+func isSolutionAvailable(crossword: Crossword) -> Bool {
+    let solutionSet = Set(crossword.solution!)
+    return solutionSet != Set(["X","."])
 }
 
 extension UIScreen{

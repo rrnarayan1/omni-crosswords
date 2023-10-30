@@ -15,6 +15,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     let copyright: String
     let isSolved: Bool
     let outletName: String
+    let isSolutionAvailable: Bool
     
     let isErrorTrackingEnabled: Binding<Bool>
     let showSolution: () -> Void
@@ -29,7 +30,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     var body: some View {
         HStack {
             NavigationLink(
-                destination: CrosswordSettingsView(title: title, author: author, notes: notes, copyright: copyright, isSolved: isSolved, errorTracking: self.isErrorTrackingEnabled, showSolution: showSolution),
+                destination: CrosswordSettingsView(title: title, author: author, notes: notes, copyright: copyright, isSolved: isSolved, isSolutionAvailable: isSolutionAvailable, errorTracking: self.isErrorTrackingEnabled, showSolution: showSolution),
                 label: {Image(systemName: "slider.horizontal.3")
                     .foregroundColor(Color(UIColor.systemBlue))
                     .font(.system(size: 18))}

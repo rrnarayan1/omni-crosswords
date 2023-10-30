@@ -50,7 +50,7 @@ struct CrosswordListView: View {
             } else {
                 List(self.crosswords.filter { (!$0.solved || self.showSolvedPuzzles || self.openCrossword == $0) && !$0.isHidden }, id: \.id) { crossword in
                 NavigationLink(
-                    destination: CrosswordView(crossword: crossword)
+                    destination: NavigationLazyView(CrosswordView(crossword: crossword))
                         .environment(\.managedObjectContext, self.managedObjectContext),
                     tag: crossword,
                     selection: self.$openCrossword
