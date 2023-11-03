@@ -21,6 +21,10 @@ extension UITextField {
         return UIImage(systemName: "chevron.left")!
     }
     
+    var solveCellImage: UIImage {
+        return UIImage(systemName: "lifepreserver")!
+    }
+    
     func changeToolbar(clueTitle: String, toggleImage: UIImage, barColor: UIColor) {
         let uiTextFieldToolbar = self.inputAccessoryView as! UIToolbar
         let clueTitleLabel = uiTextFieldToolbar.items![3].customView as! UITextView
@@ -32,8 +36,8 @@ extension UITextField {
             clueTitleLabel.text = clueTitle
             uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: 3)
         }
-        if (uiTextFieldToolbar.items![5].image != toggleImage) {
-            uiTextFieldToolbar.items![5].image = toggleImage
+        if (uiTextFieldToolbar.items![6].image != toggleImage) {
+            uiTextFieldToolbar.items![6].image = toggleImage
         }
     }
     
@@ -72,12 +76,21 @@ extension UITextField {
         rightButton.target = coordinator
         rightButton.action = #selector(coordinator.goToNextClue)
         
+        var solveCellButton = UIBarButtonItem()
+        if (coordinator.isSolutionAvailable(textField: self as! NoActionTextField)) {
+            solveCellButton.image = solveCellImage
+            solveCellButton.target = coordinator
+            solveCellButton.action = #selector(coordinator.solveCell)
+        } else {
+            solveCellButton = flexible
+        }
+
         let toggleButton = UIBarButtonItem()
         toggleButton.image = toggleImage
         toggleButton.target = coordinator
         toggleButton.action = #selector(coordinator.pressToggleButton)
         
-        (self.inputAccessoryView as! UIToolbar).setItems([leftButton, rightButton, flexible, clueTitle, flexible, toggleButton], animated: false)
+        (self.inputAccessoryView as! UIToolbar).setItems([leftButton, rightButton, flexible, clueTitle, flexible, solveCellButton, toggleButton], animated: false)
         
         (self.inputAccessoryView as! UIToolbar).backgroundColor = barColor
     }

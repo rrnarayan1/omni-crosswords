@@ -20,6 +20,7 @@ struct CrosswordCellView: View, Equatable {
     var isErrorTrackingEnabled: Bool
     var isFocused: Bool
     var isHighlighted: Bool
+    var isSolutionAvailable: Bool
     @Environment(\.colorScheme) var colorScheme
     
     static func == (lhs: CrosswordCellView, rhs: CrosswordCellView) -> Bool {
@@ -59,13 +60,15 @@ struct CrosswordCellView: View, Equatable {
         }
         .border(.black, width: 0.25)
         .contentShape(Rectangle())
-        .contextMenu {
-            Button(action: {
-                onLongPress(tag)
-           }) {
-               Text("Solve Square")
-           }
-        }
+//        .contextMenu {
+//            if (isSolutionAvailable) {
+//                Button(action: {
+//                    onLongPress(tag)
+//                }) {
+//                    Text("Solve Square")
+//                }
+//            }
+//        }
     }
     
     func getBackgroundColor() -> UIColor {

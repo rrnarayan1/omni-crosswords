@@ -239,6 +239,7 @@ struct CrosswordGridView: View {
         let value: String = self.crossword.entry![tag]
         let correctValue: String = self.crossword.solution![tag]
         let symbol: Int = self.crossword.symbols![tag]
+        let isSolutionAvailable: Bool = isSolutionAvailable(crossword: self.crossword)
         return CrosswordCellView(
             value: value,
             correctValue: correctValue,
@@ -249,7 +250,8 @@ struct CrosswordGridView: View {
             boxWidth: self.boxWidth,
             isErrorTrackingEnabled: self.doErrorTracking,
             isFocused: self.focusedTag == tag,
-            isHighlighted: self.highlighted.contains(tag)
+            isHighlighted: self.highlighted.contains(tag),
+            isSolutionAvailable: isSolutionAvailable
         ).equatable().frame(width: self.boxWidth, height: self.boxWidth)
     }
     
@@ -268,14 +270,18 @@ struct CrosswordGridView: View {
     }
     
     func solveCell(tag: Int) -> Void {
-        self.crossword.entry![tag] = self.crossword.solution![tag]
-        if (self.crossword.entry == self.crossword.solution) {
-            self.crossword.solved = true
-        } else if (self.focusedTag == tag) {
-            moveFocusToNextFieldAndCheck(currentTag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        } else {
-            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
-        }
+        OmniCrosswords.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+    }
+}
+
+func solveCell(tag: Int, crossword: Crossword, focusedTag: Binding<Int>, goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) -> Void {
+    crossword.entry![tag] = crossword.solution![tag]
+    if (crossword.entry == crossword.solution) {
+        crossword.solved = true
+    } else if (focusedTag.wrappedValue == tag) {
+        moveFocusToNextFieldAndCheck(currentTag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+    } else {
+        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
     }
 }
 
