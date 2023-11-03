@@ -23,7 +23,7 @@ struct CrosswordView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.managedObjectContext) var managedObjectContext
-    @EnvironmentObject var timerWrapper : TimerWrapper
+    //@EnvironmentObject var timerWrapper : TimerWrapper
     
     @ObservedObject var userSettings = UserSettings()
     @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
@@ -60,7 +60,6 @@ struct CrosswordView: View {
         }
         return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     let showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
     
     @ViewBuilder
@@ -91,8 +90,9 @@ struct CrosswordView: View {
                     })
                     .padding(.top, 10)
                     if (showTimer) {
-                        Text(self.crossword.solved ?  String(toTime(Int(self.crossword.solvedTime))) :  String(toTime(self.timerWrapper.count)))
-                            .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
+                        TimerView(
+                            isSolved: self.crossword.solved,
+                            solvedTime: Int(self.crossword.solvedTime))
                     }
                     Spacer()
                     if (self.focusedTag == -1) {
@@ -120,24 +120,19 @@ struct CrosswordView: View {
                     goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
                 }
             }))
-        .onAppear {
-            if (!self.crossword.solved) {
-                self.timerWrapper.start(Int(self.crossword.solvedTime))
-            }
-        }
-        .onReceive(timer) { time in
-            if (self.userSettings.gameCenterPlayer != nil && self.timerWrapper.count % 10 == 0) {
-                let entryString: String = (self.crossword.entry?.joined(separator: ","))!
-                
-                self.userSettings.gameCenterPlayer!.saveGameData(
-                    entryString.data(using: .utf8)!,
-                    withName: self.crossword.id!, completionHandler: {_, error in
-                        if let error = error {
-                            print("Error saving to game center: \(error)")
-                        }
-                    })
-            }
-        }
+//        .onReceive(timer) { time in
+//            if (self.userSettings.gameCenterPlayer != nil && self.timerWrapper.count % 10 == 0) {
+//                let entryString: String = (self.crossword.entry?.joined(separator: ","))!
+//                
+//                self.userSettings.gameCenterPlayer!.saveGameData(
+//                    entryString.data(using: .utf8)!,
+//                    withName: self.crossword.id!, completionHandler: {_, error in
+//                        if let error = error {
+//                            print("Error saving to game center: \(error)")
+//                        }
+//                    })
+//            }
+//        }
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
@@ -179,7 +174,7 @@ struct CrosswordView: View {
     func showSolution() -> Void {
         self.crossword.entry = self.crossword.solution
         self.crossword.solved = true
-        self.timerWrapper.stop()
+        //self.timerWrapper.stop()
         self.forceUpdate = !self.forceUpdate
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
@@ -194,15 +189,6 @@ struct CrosswordView: View {
         self.becomeFirstResponder = false
         self.presentationMode.wrappedValue.dismiss()
     }
-}
-
-func toTime(_ currentTimeInSeconds: Int) -> String {
-    let timeInSeconds = currentTimeInSeconds
-    let numMin = timeInSeconds / 60
-    let numSec = timeInSeconds % 60
-    
-    let secString: String = numSec < 10 ? "0"+String(numSec) : String(numSec)
-    return String(numMin) + ":" + secString
 }
 
 struct CrosswordGridView: View {

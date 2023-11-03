@@ -38,6 +38,7 @@
 		1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBED35227BE10750051E83C /* ColorSchemeUtil.swift */; };
 		F2F0F5CD7F500DF4DF5A91F7 /* Pods_crosswords.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B6DE19B540BFDC6C1EDA77 /* Pods_crosswords.framework */; };
 		F30E047E2AEF81DE009D5716 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30E047D2AEF81DE009D5716 /* NavigationLazyView.swift */; };
+		F33211B52AF4B81500018651 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33211B42AF4B81500018651 /* TimerView.swift */; };
 		F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
@@ -82,6 +83,7 @@
 		62B6DE19B540BFDC6C1EDA77 /* Pods_crosswords.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_crosswords.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B6455B5E02575C7DAACDC10 /* Pods-crosswords.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.release.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.release.xcconfig"; sourceTree = "<group>"; };
 		F30E047D2AEF81DE009D5716 /* NavigationLazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLazyView.swift; sourceTree = "<group>"; };
+		F33211B42AF4B81500018651 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordToolbarViews.swift; sourceTree = "<group>"; };
 		F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPuzzleView.swift; sourceTree = "<group>"; };
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */,
 				F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */,
 				F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */,
+				F33211B42AF4B81500018651 /* TimerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -357,6 +360,7 @@
 				1C3D87E8274976BA001A7591 /* ChangeFocusUtils.swift in Sources */,
 				1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */,
 				F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */,
+				F33211B52AF4B81500018651 /* TimerView.swift in Sources */,
 				1CAF9ECC289641270075C6E1 /* SheetViews.swift in Sources */,
 				1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */,
 				F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */,
