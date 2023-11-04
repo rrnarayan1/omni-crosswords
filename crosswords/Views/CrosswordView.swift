@@ -120,19 +120,6 @@ struct CrosswordView: View {
                     goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
                 }
             }))
-//        .onReceive(timer) { time in
-//            if (self.userSettings.gameCenterPlayer != nil && self.timerWrapper.count % 10 == 0) {
-//                let entryString: String = (self.crossword.entry?.joined(separator: ","))!
-//                
-//                self.userSettings.gameCenterPlayer!.saveGameData(
-//                    entryString.data(using: .utf8)!,
-//                    withName: self.crossword.id!, completionHandler: {_, error in
-//                        if let error = error {
-//                            print("Error saving to game center: \(error)")
-//                        }
-//                    })
-//            }
-//        }
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
@@ -174,7 +161,6 @@ struct CrosswordView: View {
     func showSolution() -> Void {
         self.crossword.entry = self.crossword.solution
         self.crossword.solved = true
-        //self.timerWrapper.stop()
         self.forceUpdate = !self.forceUpdate
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
@@ -258,22 +244,6 @@ struct CrosswordGridView: View {
     func solveCell(tag: Int) -> Void {
         OmniCrosswords.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
     }
-}
-
-func solveCell(tag: Int, crossword: Crossword, focusedTag: Binding<Int>, goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) -> Void {
-    crossword.entry![tag] = crossword.solution![tag]
-    if (crossword.entry == crossword.solution) {
-        crossword.solved = true
-    } else if (focusedTag.wrappedValue == tag) {
-        moveFocusToNextFieldAndCheck(currentTag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
-    } else {
-        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
-    }
-}
-
-func isSolutionAvailable(crossword: Crossword) -> Bool {
-    let solutionSet = Set(crossword.solution!)
-    return solutionSet != Set(["X","."])
 }
 
 extension UIScreen{

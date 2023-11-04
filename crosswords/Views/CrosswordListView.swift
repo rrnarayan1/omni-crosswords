@@ -138,16 +138,6 @@ struct CrosswordListView: View {
                 return
             }
 
-//            if (Date().timeIntervalSince1970 - UserDefaults.standard.double(forKey: "lastRefreshTime") < 1800) {
-//                // we refreshed in the last 30 min, so don't call firebase
-//                // still sync game center because that can be realtime
-//                checkForDeletions()
-//                syncSavedGames()
-//                self.refreshEnabled = true
-//                return
-//            } else {
-//                UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
-//            }
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
 
             let lastDate: Date
@@ -280,11 +270,14 @@ struct CrosswordListView: View {
                         }
                         
                         let entryString: String = String(data: gameData!, encoding: .utf8)!
-                        let savedEntry: Array<String> = entryString.components(separatedBy: ",")
+                        let gcEntry: Array<String> = entryString.components(separatedBy: ",")
                         let savedCrossword = self.crosswords.first(where: {xw in xw.id == game.name})
-                        if (savedCrossword != nil && savedCrossword?.solved == false) {
-                            savedCrossword?.entry = savedEntry
-                            if (savedEntry == savedCrossword?.solution) {
+                        if (savedCrossword != nil && savedCrossword?.solved == false &&
+                            getFilledCellsCount((savedCrossword?.entry)!) < getFilledCellsCount(gcEntry)) {
+                            // overwrite if: current crossword is not already solved and
+                            // if progress would increase on the crossword
+                            savedCrossword?.entry = gcEntry
+                            if (gcEntry == savedCrossword?.solution) {
                                 savedCrossword?.solved = true
                             } else {
                                 savedCrossword?.solved = false

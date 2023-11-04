@@ -58,13 +58,13 @@ struct CrosswordListItemView: View, Equatable {
                         .opacity(0.3)
                         .foregroundColor(Color(UIColor.systemOrange))
                         .rotationEffect(Angle(degrees: 270.0))
-                        .frame(width: 30, height: 30)
+                        .frame(width: 23, height: 23)
                     Circle()
                         .trim(from: 0.0, to: crosswordProgress)
                         .stroke(style: StrokeStyle(lineWidth: 5.0, lineCap: .round, lineJoin: .round))
                         .foregroundColor(Color(UIColor.systemOrange))
                         .rotationEffect(Angle(degrees: 270.0))
-                        .frame(width: 30, height: 30)
+                        .frame(width: 23, height: 23)
                 }
             }
         }
@@ -82,10 +82,8 @@ struct CrosswordListItemView: View, Equatable {
         let emptySquares = (crossword.symbols?.filter({ (symbol) -> Bool in
             symbol != -1
         }).count)
-        let filledSquares = crossword.entry?.filter({ (entry) -> Bool in
-            entry != "." && !entry.isEmpty
-        }).count
-        let retval = CGFloat(filledSquares!)/CGFloat(emptySquares!)
+        let filledSquares = getFilledCellsCount(crossword.entry!)
+        let retval = CGFloat(filledSquares)/CGFloat(emptySquares!)
         return retval
     }
 }

@@ -13,12 +13,17 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     var crossword: Crossword
     var currentClue: String
     
+    let downArrowImage = UIImage(systemName: "arrow.up.arrow.down")!.imageWith(newSize: CGSize(width: 18.0, height: 18.0))
+    let acrossArrowImage = UIImage(systemName: "arrow.left.arrow.right")!.imageWith(newSize: CGSize(width: 18.0, height: 18.0))
+    
     var toggleImage: UIImage {
+        var image: UIImage
         if (self.goingAcross) {
-            return UIImage(systemName: "arrow.up.arrow.down")!
+            image = downArrowImage
         } else {
-            return UIImage(systemName: "arrow.left.arrow.right")!
+            image = acrossArrowImage
         }
+        return image
     }
     
     @Binding var focusedTag: Int
