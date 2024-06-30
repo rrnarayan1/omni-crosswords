@@ -44,7 +44,9 @@ struct CrosswordCellView: View, Equatable {
                         .frame(alignment: .center)
                 }
             }
-            if symbol >= 1000 {
+            if symbol >= 10000 {
+                Color.gray
+            } else if symbol >= 1000 {
                 Circle()
                     .stroke(lineWidth: 0.5)
             }
