@@ -41,7 +41,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .allCharacters
-        textField.keyboardType = UIKeyboardType.alphabet
+        textField.keyboardType = userSettings.useEmailAddressKeyboard ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
+        textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
         textField.addToolbar(coordinator: context.coordinator, clueTitle: "", toggleImage: self.toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
         return textField
