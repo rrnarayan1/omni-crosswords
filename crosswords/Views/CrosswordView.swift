@@ -237,7 +237,7 @@ struct CrosswordGridView: View {
         if (tag == self.focusedTag) {
             toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
         } else {
-            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
     

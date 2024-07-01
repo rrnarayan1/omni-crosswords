@@ -27,6 +27,6 @@ func solveCell(tag: Int, crossword: Crossword, focusedTag: Binding<Int>, goingAc
     } else if (focusedTag.wrappedValue == tag) {
         moveFocusToNextFieldAndCheck(currentTag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
     } else {
-        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
     }
 }

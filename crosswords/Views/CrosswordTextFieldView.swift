@@ -199,7 +199,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         // does not take settings / completed squares into account
         func changeFocusToTag(_ tag: Int) {
-            changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
 
         func goToNextClue(_ textField: UITextField) {
