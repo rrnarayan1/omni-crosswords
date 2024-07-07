@@ -22,7 +22,6 @@ struct TimerView: View {
             text = Text(toTime(self.timerWrapper.count))
         }
         return text
-            .frame(width: UIScreen.screenWidth-10, height: 10, alignment: .trailing)
             .onAppear(perform: {
                 if (!self.isSolved) {
                     self.timerWrapper.start(Int(self.solvedTime ?? 0))

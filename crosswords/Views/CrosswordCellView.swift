@@ -28,7 +28,7 @@ struct CrosswordCellView: View, Equatable {
             return false
         }
         if ((lhs.value != rhs.value) || (lhs.isFocused != rhs.isFocused) || (lhs.isHighlighted != rhs.isHighlighted)
-            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled)) {
+            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled) || (lhs.boxWidth != rhs.boxWidth)) {
             return false
         }
         return true
