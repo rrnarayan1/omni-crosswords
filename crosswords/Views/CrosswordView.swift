@@ -96,7 +96,7 @@ struct CrosswordView: View {
                     })
                     .padding(.top, 10)
                 }
-            }.frame(width: UIScreen.screenWidth, height: self.initialBoxWidth*CGFloat(self.crossword.height)+10)
+            }.frame(width: UIScreen.screenWidth)
             HStack {
                 // zoom is not fully ready yet
 //                Button(action: {self.zoom()}) {
