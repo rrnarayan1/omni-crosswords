@@ -80,7 +80,7 @@ struct CrosswordView: View {
                             self.scrolledRow = middleRowNumber - 3
                         } else if (self.isZoomed) {
 //                            let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
-//                            scrollreader.scrollTo("row"+String(newRowNumber))
+                            scrollreader.scrollTo("cell"+String(newFocusedTag))
 //                            self.scrolledRow = newRowNumber
                             return
                         } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
@@ -98,10 +98,11 @@ struct CrosswordView: View {
                 }
             }.frame(width: UIScreen.screenWidth)
             HStack {
-                // zoom is not fully ready yet
-//                Button(action: {self.zoom()}) {
-//                    Image(systemName: self.isZoomed ? "minus.magnifyingglass" : "plus.magnifyingglass")
-//                }
+                if (focusedTag != -1) {
+                    Button(action: {self.zoom()}) {
+                        Image(systemName: self.isZoomed ? "minus.magnifyingglass" : "plus.magnifyingglass")
+                    }
+                }
                 Spacer()
                 if (showTimer) {
                     TimerView(
@@ -154,7 +155,7 @@ struct CrosswordView: View {
     }
     
     func zoom() -> Void {
-        self.boxWidth = self.isZoomed ? getInitialBoxWidth() : 80.0
+        self.boxWidth = self.isZoomed ? getInitialBoxWidth() : 75.0
         self.isZoomed = !self.isZoomed
     }
 
@@ -244,7 +245,7 @@ struct CrosswordGridView: View {
             isFocused: self.focusedTag == tag,
             isHighlighted: self.highlighted.contains(tag),
             isSolutionAvailable: isSolutionAvailable
-        ).equatable().frame(width: self.boxWidth, height: self.boxWidth)
+        ).equatable().frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
     }
     
     func onTapCell(tag: Int) -> Void {
