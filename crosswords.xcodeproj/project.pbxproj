@@ -28,7 +28,6 @@
 		1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C73208C24C688A800240AF8 /* CrosswordView.swift */; };
 		1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FD49828778582006D38A6 /* ActivityView.swift */; };
 		1C8AB1AD289752B7008D8841 /* DevOverrides.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1C8AB1AC289752B7008D8841 /* DevOverrides.plist */; };
-		1C8AB1AF289756D1008D8841 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */; };
 		1C9424F629748177005BBFA9 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9424F529748177005BBFA9 /* StatisticsView.swift */; };
 		1C958ABB284C0ADC00695B9B /* BannerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C958ABA284C0ADC00695B9B /* BannerModifier.swift */; };
 		1CA8EA492974AA6400168E83 /* SolvedCrosswordStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA8EA482974AA6400168E83 /* SolvedCrosswordStatistics.swift */; };
@@ -299,7 +298,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C8AB1AF289756D1008D8841 /* GoogleService-Info.plist in Resources */,
 				1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */,
 				1C8AB1AD289752B7008D8841 /* DevOverrides.plist in Resources */,
 				1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */,
