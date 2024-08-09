@@ -31,7 +31,7 @@ extension UITextField {
         if (uiTextFieldToolbar.backgroundColor != barColor) {
             uiTextFieldToolbar.backgroundColor = barColor
         }
-        if (clueTitleLabel.text != clueTitle) {
+        if (clueTitleLabel.text.trimmingCharacters(in: .whitespaces) != clueTitle.trimmingCharacters(in: .whitespaces)) {
             uiTextFieldToolbar.items?.remove(at: 3)
             clueTitleLabel.text = clueTitle
             uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: 3)

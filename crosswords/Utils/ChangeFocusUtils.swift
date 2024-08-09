@@ -50,7 +50,7 @@ private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Cros
                     possibleTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
                 } else if (crossword.entry![possibleTag] == "") {
                     // if the possibleTag is empty, go there
-                    changeFocus(tag: possibleTag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+                    changeFocus(tag: possibleTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
                     return
                 } else {
                     // possibleTag's cell is full, so move to next cell
@@ -59,25 +59,25 @@ private func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Cros
                 }
             }
             // if it reaches here, just try the cell
-            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
         } else if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil || crossword.tagToCluesMap?[tag].count == 0) {
             // they don't want to skip completed cells, so when we're at the end of the puzzle/at a square, go to start of the next clue
             let possibleNextClueId: String = checkCluesForwards
                 ? getNextClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
                 : getPreviousClueID(tag: currentTag, crossword: crossword, goingAcross: goingAcross)
             let nextTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
-            changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: nextTag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
         } else {
             // they don't want to skip completed cells, and we're checking a valid square, so just go to that square
-            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
         }
     } else {
         // the cell is a valid empty square
-        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, focusedTag: focusedTag, isHighlighted: isHighlighted)
+        changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
     }
 }
 
-func changeFocus(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>,
+func changeFocus(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>,
                       isHighlighted: Binding<Array<Int>>) {
     if (tag < 0 || tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil
         || crossword.tagToCluesMap?[tag].count == 0) {
@@ -86,7 +86,10 @@ func changeFocus(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: 
         return
     }
     focusedTag.wrappedValue = tag
-    setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross, isHighlighted: isHighlighted)
+    if (crossword.tagToCluesMap?[tag][goingAcross.wrappedValue ? "A" : "D"] == nil) {
+        goingAcross.wrappedValue = !goingAcross.wrappedValue // if we're going across and across clue doesn't exist, switch to going down
+    }
+    setHighlighting(tag: tag, crossword: crossword, goingAcross: goingAcross.wrappedValue, isHighlighted: isHighlighted)
 }
 
 func getNextTagId(tag: Int, goingAcross: Bool, crossword: Crossword) -> Int {
@@ -148,7 +151,13 @@ func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -
         }
     }
     goingAcross.wrappedValue = !goingAcross.wrappedValue
-    return String(1) + String(directionalLetter == "A" ? "D" : "A")
+    for i in (1..<crossword.clues!.count) {
+        let trialClueID: String = String(i)+String(directionalLetter == "A" ? "D" : "A")
+        if crossword.clues?[trialClueID] != nil {
+            return trialClueID
+        }
+    }
+    return "1A" // should never get here
 }
 
 func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
@@ -173,7 +182,7 @@ func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
     return crossword.tagToCluesMap![tag][directionalLetter]!
 }
 
-func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     for i in (tag+1..<crossword.symbols!.count) {
         if (crossword.symbols![i] != -1) {
             changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
@@ -182,7 +191,7 @@ func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag
     }
 }
 
-func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     for i in (0..<tag).reversed() {
         if (crossword.symbols![i] != -1) {
             changeFocus(tag: i, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
@@ -191,7 +200,7 @@ func goToLeftCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag:
     }
 }
 
-func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     var proposedTag = tag - Int(crossword.length)
     while(proposedTag >= 0) {
         if (crossword.symbols![proposedTag] != -1) {
@@ -202,7 +211,7 @@ func goToUpCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: B
     }
 }
 
-func goToDownCell(tag: Int, crossword: Crossword, goingAcross: Bool, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
+func goToDownCell(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     var proposedTag = tag + Int(crossword.length)
     while(proposedTag < crossword.symbols!.count) {
         if (crossword.symbols![proposedTag] != -1) {

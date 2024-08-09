@@ -210,11 +210,11 @@ struct CrosswordListView: View {
                             continue
                         }
                         let crossword = Crossword(context: self.managedObjectContext)
-                        jsonToCrossword(crossword: crossword, data: document)
                         // Cause duplicate crosswords
 //                        let crossword1 = Crossword(context: self.managedObjectContext)
 //                        jsonToCrossword(crossword: crossword1, data: document)
                         do {
+                            jsonToCrossword(crossword: crossword, data: document)
                             try self.managedObjectContext.save()
                         } catch {
                             print(error.localizedDescription)

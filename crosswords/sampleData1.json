@@ -1,0 +1,179 @@
+{
+    "id": "nytm-2024-02-14",
+    "notes": "",
+    "clues": {
+        "1D": "Noble gas below krypton on the periodic table",
+        "2D": "Black-and-white cookies",
+        "3A": "Symbol of Valentine's Day",
+        "3D": "Very attractive",
+        "4D": "Symbol that crosses through 3-Across, on Valentine's Day",
+        "5D": "End zone scores: Abbr.",
+        "6A": "When a right turn might be prohibited",
+        "7A": "Spanish bulls",
+        "8A": "Negative R.S.V.P.s"
+    },
+    "crossword_outlet_name": "Mini",
+    "symbols": [
+        -1,
+        1001,
+        -1,
+        1002,
+        -1,
+        3,
+        0,
+        4,
+        0,
+        5,
+        6,
+        0,
+        0,
+        0,
+        0,
+        7,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        8,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+    ],
+    "tag_to_clue_map": [
+        {},
+        {
+            "D": "1D"
+        },
+        {},
+        {
+            "D": "2D"
+        },
+        {},
+        {
+            "A": "3A",
+            "D": "3D"
+        },
+        {
+            "A": "3A",
+            "D": "1D"
+        },
+        {
+            "A": "3A",
+            "D": "4D"
+        },
+        {
+            "A": "3A",
+            "D": "2D"
+        },
+        {
+            "A": "3A",
+            "D": "5D"
+        },
+        {
+            "A": "6A",
+            "D": "3D"
+        },
+        {
+            "A": "6A",
+            "D": "1D"
+        },
+        {
+            "A": "6A",
+            "D": "4D"
+        },
+        {
+            "A": "6A",
+            "D": "2D"
+        },
+        {
+            "A": "6A",
+            "D": "5D"
+        },
+        {
+            "A": "7A",
+            "D": "3D"
+        },
+        {
+            "A": "7A",
+            "D": "1D"
+        },
+        {
+            "A": "7A",
+            "D": "4D"
+        },
+        {
+            "A": "7A",
+            "D": "2D"
+        },
+        {
+            "A": "7A",
+            "D": "5D"
+        },
+        {},
+        {
+            "A": "8A",
+            "D": "1D"
+        },
+        {
+            "A": "8A",
+            "D": "4D"
+        },
+        {
+            "A": "8A",
+            "D": "2D"
+        },
+        {},
+        {},
+        {},
+        {
+            "D": "4D"
+        },
+        {},
+        {}
+    ],
+    "title": "Valentine's",
+    "author": "By Author",
+    "height": 6,
+    "date": 1659250800,
+    "solution": [
+        ".",
+        "X",
+        ".",
+        "O",
+        ".",
+        "H",
+        "E",
+        "A",
+        "R",
+        "T",
+        "O",
+        "N",
+        "R",
+        "E",
+        "D",
+        "T",
+        "O",
+        "R",
+        "O",
+        "S",
+        ".",
+        "N",
+        "O",
+        "S",
+        ".",
+        ".",
+        ".",
+        "W",
+        ".",
+        "."
+    ],
+    "copyright": "",
+    "width": 5
+}
+
