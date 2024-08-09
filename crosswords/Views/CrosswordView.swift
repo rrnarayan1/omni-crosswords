@@ -11,14 +11,18 @@ import GameKit
 
 struct CrosswordView: View {
     var crossword: Crossword
+
+    // height of components. does not include keyboard height
     var componentHeights: CGFloat {
         let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         
         // 40 is height of keyboard toolbar
         // 45 is height of navigation bar
-        // 10 is buffer
-        return 40 + 45 + statusBarHeight + self.boxWidth*CGFloat(self.crossword.height) - 10
+        return 40 + 45 + statusBarHeight + self.initialBoxWidth*CGFloat(self.crossword.height) - 10
+    }
+    var initialBoxWidth: CGFloat {
+        getInitialBoxWidth()
     }
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -35,18 +39,15 @@ struct CrosswordView: View {
     @State var forceUpdate = false
     @State var scrolledRow = 0
     @State var becomeFirstResponder: Bool = false
+    @State var boxWidth: CGFloat = 0.0
+    @State var isZoomed: Bool = false
     
     init(crossword: Crossword) {
         self.crossword = crossword
         self._isErrorTrackingEnabled = State(initialValue: isSolutionAvailable(crossword: crossword)
                                              ? userSettings.defaultErrorTracking
                                              : false)
-    }
-    
-    var boxWidth: CGFloat {
-        let maxSize: CGFloat = userSettings.largePrintMode ? 60.0 : 40.0
-        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
-        return min(defaultSize, maxSize)
+        self._boxWidth = State(initialValue: initialBoxWidth)
     }
     
     var displayTitle: String {
@@ -65,7 +66,7 @@ struct CrosswordView: View {
     @ViewBuilder
     var body: some View {
         VStack{
-            ScrollView {
+            ScrollView([.horizontal, .vertical]) {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
                         let currentClue = getCurrentClue()
@@ -77,6 +78,11 @@ struct CrosswordView: View {
                         let twoThirdsRowNumber = Int(self.crossword.height/3)*2
                         if (self.keyboardHeightHelper.keyboardHeight == 0) {
                             self.scrolledRow = middleRowNumber - 3
+                        } else if (self.isZoomed) {
+//                            let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
+                            scrollreader.scrollTo("cell"+String(newFocusedTag))
+//                            self.scrolledRow = newRowNumber
+                            return
                         } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
                             if (newRowNumber > twoThirdsRowNumber && self.scrolledRow != middleRowNumber + 3) {
@@ -89,22 +95,30 @@ struct CrosswordView: View {
                         }
                     })
                     .padding(.top, 10)
-                    if (showTimer) {
-                        TimerView(
-                            isSolved: self.crossword.solved,
-                            solvedTime: Int(self.crossword.solvedTime))
+                }
+            }.frame(width: UIScreen.screenWidth)
+            HStack {
+                if (focusedTag != -1) {
+                    Button(action: {self.zoom()}) {
+                        Image(systemName: self.isZoomed ? "minus.magnifyingglass" : "plus.magnifyingglass")
                     }
-                    Spacer()
-                    if (self.focusedTag == -1) {
-                        VStack (alignment: .center){
-                            Text(self.crossword.title!).multilineTextAlignment(.center)
-                            Text(self.crossword.author!).multilineTextAlignment(.center)
-                            if (self.crossword.notes! != "") {
-                                Text(self.crossword.notes!).multilineTextAlignment(.center)
-                            }
-                            Text(self.crossword.copyright!).multilineTextAlignment(.center)
-                        }
+                }
+                Spacer()
+                if (showTimer) {
+                    TimerView(
+                        isSolved: self.crossword.solved,
+                        solvedTime: Int(self.crossword.solvedTime))
+                }
+            }.frame(width: self.initialBoxWidth*CGFloat(self.crossword.length), height: 10)
+            Spacer()
+            if (self.focusedTag == -1) {
+                VStack (alignment: .center){
+                    Text(self.crossword.title!).multilineTextAlignment(.center)
+                    Text(self.crossword.author!).multilineTextAlignment(.center)
+                    if (self.crossword.notes! != "") {
+                        Text(self.crossword.notes!).multilineTextAlignment(.center)
                     }
+                    Text(self.crossword.copyright!).multilineTextAlignment(.center)
                 }
             }
         }
@@ -134,10 +148,17 @@ struct CrosswordView: View {
         .navigationBarBackButtonHidden(true)
     }
     
-    func resetArray(count: Int) -> Array<Bool> {
-        return Array(repeating: false, count: count)
+    func getInitialBoxWidth() -> CGFloat {
+        let maxSize: CGFloat = userSettings.largePrintMode ? 60.0 : 40.0
+        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
+        return min(defaultSize, maxSize)
     }
     
+    func zoom() -> Void {
+        self.boxWidth = self.isZoomed ? getInitialBoxWidth() : 75.0
+        self.isZoomed = !self.isZoomed
+    }
+
     func getCurrentClue() -> String {
         if (self.focusedTag < 0 || self.crossword.tagToCluesMap?[self.focusedTag] == nil) {
             return ""
@@ -224,7 +245,7 @@ struct CrosswordGridView: View {
             isFocused: self.focusedTag == tag,
             isHighlighted: self.highlighted.contains(tag),
             isSolutionAvailable: isSolutionAvailable
-        ).equatable().frame(width: self.boxWidth, height: self.boxWidth)
+        ).equatable().frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
     }
     
     func onTapCell(tag: Int) -> Void {
@@ -237,7 +258,7 @@ struct CrosswordGridView: View {
         if (tag == self.focusedTag) {
             toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
         } else {
-            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
     

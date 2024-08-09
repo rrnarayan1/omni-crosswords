@@ -36,6 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 .environmentObject(TimerWrapper()))
             self.window = window
             window.makeKeyAndVisible()
+            ColorSchemeUtil().overrideDisplayMode()
         }
     }
 

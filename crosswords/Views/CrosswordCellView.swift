@@ -28,7 +28,7 @@ struct CrosswordCellView: View, Equatable {
             return false
         }
         if ((lhs.value != rhs.value) || (lhs.isFocused != rhs.isFocused) || (lhs.isHighlighted != rhs.isHighlighted)
-            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled)) {
+            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled) || (lhs.boxWidth != rhs.boxWidth)) {
             return false
         }
         return true
@@ -78,7 +78,7 @@ struct CrosswordCellView: View, Equatable {
             if (value != "" && value != correctValue) {
                 if (isHighlighted) {
                     if (isFocused) {
-                        return UIColor.systemRed.withAlphaComponent(0.7)
+                        return UIColor.systemRed.withAlphaComponent(0.6)
                     } else {
                         return UIColor.systemRed.withAlphaComponent(0.5)
                     }

@@ -41,7 +41,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .allCharacters
-        textField.keyboardType = UIKeyboardType.alphabet
+        textField.keyboardType = userSettings.useEmailAddressKeyboard ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
+        textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
         textField.addToolbar(coordinator: context.coordinator, clueTitle: "", toggleImage: self.toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
         return textField
@@ -199,7 +200,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         // does not take settings / completed squares into account
         func changeFocusToTag(_ tag: Int) {
-            changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
+            changeFocus(tag: tag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
 
         func goToNextClue(_ textField: UITextField) {

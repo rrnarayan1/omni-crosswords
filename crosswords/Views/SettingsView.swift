@@ -94,6 +94,10 @@ struct TogglesSettingsView: View {
         Toggle(isOn: $userSettings.largePrintMode) {
             Text("Large Print Mode (iPad)")
         }
+        
+        Toggle(isOn: $userSettings.useEmailAddressKeyboard) {
+            Text("Use Alternate Keyboard Type")
+        }
     }
 }
 
@@ -285,6 +289,12 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(largePrintMode, forKey: "largePrintMode")
         }
     }
+    
+    @Published var useEmailAddressKeyboard: Bool {
+        didSet {
+            UserDefaults.standard.set(useEmailAddressKeyboard, forKey: "useEmailAddressKeyboard")
+        }
+    }
 
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
@@ -316,6 +326,7 @@ class UserSettings: ObservableObject {
         self.gameCenterPlayer = GKLocalPlayer.local
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
         self.largePrintMode = UserDefaults.standard.bool(forKey: "largePrintMode")
+        self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

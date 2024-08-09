@@ -43,6 +43,7 @@
 		F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
+		F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */ = {isa = PBXBuildFile; fileRef = F3B806CB2C3270B00087DE82 /* sampleData1.json */; };
 		F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */; };
 /* End PBXBuildFile section */
 
@@ -90,6 +91,7 @@
 		F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordToolbarViews.swift; sourceTree = "<group>"; };
 		F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPuzzleView.swift; sourceTree = "<group>"; };
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
+		F3B806CB2C3270B00087DE82 /* sampleData1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sampleData1.json; sourceTree = "<group>"; };
 		F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -176,6 +178,7 @@
 		1C73206624C4F44000240AF8 /* crosswords */ = {
 			isa = PBXGroup;
 			children = (
+				F3B806CB2C3270B00087DE82 /* sampleData1.json */,
 				1C30E3A7289736FC00189562 /* sampleData.json */,
 				1C30E3A6289736CE00189562 /* Data */,
 				1C59BF4F277E99A00076F371 /* crosswords.entitlements */,
@@ -302,6 +305,7 @@
 				1C8AB1AD289752B7008D8841 /* DevOverrides.plist in Resources */,
 				1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */,
 				1C73207124C4F44200240AF8 /* Assets.xcassets in Resources */,
+				F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */,
 				1C30E3A8289736FC00189562 /* sampleData.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -536,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.5;
+				MARKETING_VERSION = 1.7.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
@@ -563,7 +567,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.7.5;
+				MARKETING_VERSION = 1.7.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
