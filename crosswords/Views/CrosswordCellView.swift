@@ -44,7 +44,7 @@ struct CrosswordCellView: View, Equatable {
                         .frame(alignment: .center)
                 }
             }
-            if symbol >= 1000 {
+            if symbol >= 1000 && symbol < 10000 {
                 Circle()
                     .stroke(lineWidth: 0.5)
             }
@@ -102,6 +102,8 @@ struct CrosswordCellView: View, Equatable {
                     return UIColor.systemBlue.withAlphaComponent(0.2)
                 }
             }
+        } else if symbol >= 10000 {
+            return UIColor.gray
         } else {
             return colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
         }
