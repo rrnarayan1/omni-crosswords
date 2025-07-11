@@ -45,7 +45,7 @@ extension UITextField {
             uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: clueTitleIndex)
         }
         
-        var toggle =
+        let toggle =
             switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
             case 1:
                 uiTextFieldToolbar.items![4]
@@ -54,7 +54,6 @@ extension UITextField {
             default:
                 uiTextFieldToolbar.items![6]
             }
-        
         
         if (toggle.image != toggleImage) {
             toggle.image = toggleImage
