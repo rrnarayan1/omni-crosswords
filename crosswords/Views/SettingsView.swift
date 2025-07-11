@@ -142,7 +142,18 @@ struct PickerViews: View {
                 ColorSchemeUtil().overrideDisplayMode()
             })
             .pickerStyle(.segmented)
-
+            
+            HStack {
+                Text("Clue cycle control placement:")
+                Spacer()
+                Picker("Keyboard Toolbar Style", selection: $userSettings.clueCyclePlacement) {
+                    Text("Left").tag(0)
+                    Text("Split").tag(1)
+                    Text("Right").tag(2)
+                }
+                .pickerStyle(.menu)
+            }
+            
             HStack {
                 Text("Automatically delete puzzles after:")
                 Spacer()
@@ -295,6 +306,12 @@ class UserSettings: ObservableObject {
             UserDefaults.standard.set(useEmailAddressKeyboard, forKey: "useEmailAddressKeyboard")
         }
     }
+    
+    @Published var clueCyclePlacement: Int {
+        didSet {
+            UserDefaults.standard.set(clueCyclePlacement, forKey: "clueCyclePlacement")
+        }
+    }
 
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
@@ -327,6 +344,7 @@ class UserSettings: ObservableObject {
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
         self.largePrintMode = UserDefaults.standard.bool(forKey: "largePrintMode")
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
+        self.clueCyclePlacement = UserDefaults.standard.object(forKey: "clueCyclePlacement") as? Int ?? 0
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }
