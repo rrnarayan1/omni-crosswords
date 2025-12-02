@@ -127,7 +127,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         func textField(_ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
+            // invalid entry
             if (parent.focusedTag < 0 || string == ".") {
+                return false
+            }
+            // probably used swipe to type, which we don't want to support
+            if (string.count > 1) {
                 return false
             }
             
