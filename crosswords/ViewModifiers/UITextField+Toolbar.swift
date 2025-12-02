@@ -35,7 +35,16 @@ extension UITextField {
 
         let clueTitleIndex = 3
         let clueTitleLabel = uiTextFieldToolbar.items![clueTitleIndex].customView as! UITextView
-        
+        let toggleButtonIndex =
+            switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
+                case 1:
+                    4
+                case 2:
+                    0
+                default:
+                    6
+            }
+
         if (uiTextFieldToolbar.backgroundColor != barColor) {
             uiTextFieldToolbar.backgroundColor = barColor
         }
@@ -45,16 +54,7 @@ extension UITextField {
             uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: clueTitleIndex)
         }
         
-        let toggle =
-            switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
-            case 1:
-                uiTextFieldToolbar.items![4]
-            case 2:
-                uiTextFieldToolbar.items![0]
-            default:
-                uiTextFieldToolbar.items![6]
-            }
-        
+        let toggle = uiTextFieldToolbar.items![toggleButtonIndex]
         if (toggle.image != toggleImage) {
             toggle.image = toggleImage
         }
@@ -72,12 +72,16 @@ extension UITextField {
         clueTitleLabel.text = clueTitle
         clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
         clueTitleLabel.textColor = UIColor.label
-        clueTitleLabel.frame.size.width = UIScreen.screenWidth-150
         clueTitleLabel.backgroundColor = UIColor.clear
         clueTitleLabel.isEditable = false
         clueTitleLabel.textAlignment = NSTextAlignment.center
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
+        
+        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: UIScreen.screenWidth-150)
+        let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: toolbarHeight)
+
+        clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
         
         var configuredToolbarItems: [UIBarButtonItem] {
             

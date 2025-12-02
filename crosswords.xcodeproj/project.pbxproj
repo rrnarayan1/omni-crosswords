@@ -36,12 +36,14 @@
 		1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */; };
 		1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */; };
 		1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBED35227BE10750051E83C /* ColorSchemeUtil.swift */; };
-		F2F0F5CD7F500DF4DF5A91F7 /* Pods_crosswords.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B6DE19B540BFDC6C1EDA77 /* Pods_crosswords.framework */; };
 		F30E047E2AEF81DE009D5716 /* NavigationLazyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30E047D2AEF81DE009D5716 /* NavigationLazyView.swift */; };
 		F32FD9502AF6125100CC90E1 /* CrosswordUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */; };
 		F32FD9522AF61AE500CC90E1 /* UIImage+Size.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32FD9512AF61AE500CC90E1 /* UIImage+Size.swift */; };
 		F33211B52AF4B81500018651 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33211B42AF4B81500018651 /* TimerView.swift */; };
 		F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */; };
+		F34252272ED81603006D090D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F34252262ED81603006D090D /* FirebaseAuth */; };
+		F34252292ED81603006D090D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F34252282ED81603006D090D /* FirebaseCore */; };
+		F342522B2ED81603006D090D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F342522A2ED81603006D090D /* FirebaseFirestore */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
 		F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */ = {isa = PBXBuildFile; fileRef = F3B806CB2C3270B00087DE82 /* sampleData1.json */; };
@@ -49,7 +51,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		064283F6CE817802EE2698BE /* Pods-crosswords.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.debug.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.debug.xcconfig"; sourceTree = "<group>"; };
 		1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonToCrossword.swift; sourceTree = "<group>"; };
 		1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBuilder.swift; sourceTree = "<group>"; };
@@ -83,8 +84,6 @@
 		1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Toolbar.swift"; sourceTree = "<group>"; };
 		1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightHelper.swift; sourceTree = "<group>"; };
 		1CBED35227BE10750051E83C /* ColorSchemeUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorSchemeUtil.swift; sourceTree = "<group>"; };
-		62B6DE19B540BFDC6C1EDA77 /* Pods_crosswords.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_crosswords.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B6455B5E02575C7DAACDC10 /* Pods-crosswords.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-crosswords.release.xcconfig"; path = "Target Support Files/Pods-crosswords/Pods-crosswords.release.xcconfig"; sourceTree = "<group>"; };
 		F30E047D2AEF81DE009D5716 /* NavigationLazyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLazyView.swift; sourceTree = "<group>"; };
 		F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordUtils.swift; sourceTree = "<group>"; };
 		F32FD9512AF61AE500CC90E1 /* UIImage+Size.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Size.swift"; sourceTree = "<group>"; };
@@ -102,8 +101,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C59BF4E277E98A80076F371 /* CloudKit.framework in Frameworks */,
+				F34252272ED81603006D090D /* FirebaseAuth in Frameworks */,
+				F34252292ED81603006D090D /* FirebaseCore in Frameworks */,
+				F342522B2ED81603006D090D /* FirebaseFirestore in Frameworks */,
 				1C59BF4B277BA4CE0076F371 /* GameKit.framework in Frameworks */,
-				F2F0F5CD7F500DF4DF5A91F7 /* Pods_crosswords.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,7 +164,6 @@
 			children = (
 				1C73206624C4F44000240AF8 /* crosswords */,
 				1C73206524C4F44000240AF8 /* Products */,
-				55C1F8DEE41D38B1C9084B2F /* Pods */,
 				CAD8A5F0AF0C67205CC6CDC2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -222,21 +222,11 @@
 			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
-		55C1F8DEE41D38B1C9084B2F /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				064283F6CE817802EE2698BE /* Pods-crosswords.debug.xcconfig */,
-				9B6455B5E02575C7DAACDC10 /* Pods-crosswords.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		CAD8A5F0AF0C67205CC6CDC2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				1C59BF4D277E98A80076F371 /* CloudKit.framework */,
 				1C59BF4A277BA4CE0076F371 /* GameKit.framework */,
-				62B6DE19B540BFDC6C1EDA77 /* Pods_crosswords.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -248,11 +238,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1C73207B24C4F44200240AF8 /* Build configuration list for PBXNativeTarget "crosswords" */;
 			buildPhases = (
-				822EABB59D2295F0C3B56222 /* [CP] Check Pods Manifest.lock */,
 				1C73206024C4F44000240AF8 /* Sources */,
 				1C73206124C4F44000240AF8 /* Frameworks */,
 				1C73206224C4F44000240AF8 /* Resources */,
-				5DA3D80E562FC12DC98BA45E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -271,7 +259,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Rohan Narayan";
 				TargetAttributes = {
 					1C73206324C4F44000240AF8 = {
@@ -288,6 +276,9 @@
 				Base,
 			);
 			mainGroup = 1C73205B24C4F44000240AF8;
+			packageReferences = (
+				F34252252ED81603006D090D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 1C73206524C4F44000240AF8 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -313,48 +304,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		5DA3D80E562FC12DC98BA45E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-crosswords/Pods-crosswords-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		822EABB59D2295F0C3B56222 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-crosswords-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1C73206024C4F44000240AF8 /* Sources */ = {
@@ -433,7 +382,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -444,6 +393,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -494,7 +444,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -505,6 +455,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -525,7 +476,6 @@
 		};
 		1C73207C24C4F44200240AF8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 064283F6CE817802EE2698BE /* Pods-crosswords.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswordsDebug.entitlements;
@@ -537,7 +487,7 @@
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = crosswords/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -552,7 +502,6 @@
 		};
 		1C73207D24C4F44200240AF8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B6455B5E02575C7DAACDC10 /* Pods-crosswords.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = crosswords/crosswords.entitlements;
@@ -564,7 +513,7 @@
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = crosswords/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.word-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -599,6 +548,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F34252252ED81603006D090D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F34252262ED81603006D090D /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F34252252ED81603006D090D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F34252282ED81603006D090D /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F34252252ED81603006D090D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		F342522A2ED81603006D090D /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F34252252ED81603006D090D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		1C73206B24C4F44000240AF8 /* crosswords.xcdatamodeld */ = {

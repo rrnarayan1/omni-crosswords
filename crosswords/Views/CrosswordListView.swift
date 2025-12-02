@@ -7,9 +7,9 @@
 //
 
 import SwiftUI
-import Firebase
+import FirebaseCore
 import FirebaseAuth
-import FirebaseFirestoreSwift
+import FirebaseFirestore
 import GameKit
 
 struct CrosswordListView: View {
@@ -142,8 +142,10 @@ struct CrosswordListView: View {
 
             let lastDate: Date
             if self.crosswords.count == 0 {
+                // pull for the last 7 days
                 lastDate = Date.init(timeInterval: -604800, since: Date())
             } else {
+                // crosswords are sorted by date desc, so pull the first one
                 lastDate = self.crosswords[0].date!
             }
             
@@ -152,14 +154,15 @@ struct CrosswordListView: View {
                 .whereField("date", isGreaterThanOrEqualTo: lastDate)
                 .whereField("crossword_outlet_name", in: subscriptions)
             
+            
+            let lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
+            let alertDocRef = db.collection("alerts")
+                .whereField("id", isGreaterThan: lastAlertId)
+                .order(by: "id", descending: true)
+            
             let crosswordIds: Array<String> = crosswords.map { (crossword) -> String in
                 crossword.id!
             }
-            
-            let alertDocRef = db.collection("alerts")
-                .whereField("id", isGreaterThan: UserDefaults.standard.integer(forKey: "lastAlertId"))
-                .order(by: "id", descending: true)
-            
             
             let overwrittenCrosswords = db.collection("crosswords")
                 .whereField("version", isGreaterThan: 0)

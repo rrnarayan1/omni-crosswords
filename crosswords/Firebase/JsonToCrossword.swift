@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import Firebase
-import FirebaseFirestoreSwift
+import FirebaseCore
+import FirebaseFirestore
 
 func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
     crossword.length = data.get("width") as! Int16

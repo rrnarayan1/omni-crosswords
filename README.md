@@ -4,7 +4,7 @@ Omni Crosswords is an iOS app that fetches crosswords from Firebase Cloud Firest
 ## Development
 Omni Crosswords uses SwiftUI. 
 
-Use XCode to open the .xcworkspace file. There are two options to enable a successful build.
+Use XCode to open the .xcodeproj file. There are two options to enable a successful build.
 
 ### Firebase
 Set up Firebase Cloud Firestore, and add the `GoogleService-Info.plist` file to the root directory. Make sure anonymous authentication is enabled.

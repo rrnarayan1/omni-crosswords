@@ -58,7 +58,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 uiTextField.resignFirstResponder()
             }
         }
-        
+
         let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
         uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
     }
@@ -170,9 +170,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 changeFocusToTag(-1)
                 parent.becomeFirstResponder = false
                 saveGame()
-            } else if (parent.crossword.solved) {
-                parent.crossword.solved = false
             }
+
             return false
         }
         

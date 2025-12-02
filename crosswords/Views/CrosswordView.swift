@@ -96,7 +96,9 @@ struct CrosswordView: View {
                     })
                     .padding(.top, 10)
                 }
-            }.frame(width: UIScreen.screenWidth)
+            }//.background(.random)
+            .frame(width: UIScreen.screenWidth)
+
             HStack {
                 if (focusedTag != -1) {
                     Button(action: {self.zoom()}) {
@@ -271,4 +273,15 @@ extension UIScreen{
    static let screenWidth = UIScreen.main.bounds.size.width
    static let screenHeight = UIScreen.main.bounds.size.height
    static let screenSize = UIScreen.main.bounds.size
+}
+
+
+extension ShapeStyle where Self == Color {
+    static var random: Color {
+        Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
 }
