@@ -8,28 +8,12 @@
 
 import SwiftUI
 
-struct CrosswordListItemView: View, Equatable {
+struct CrosswordListItemView: View {
     var crossword: Crossword
-    @State var openCrossword: Crossword?
     @ObservedObject var userSettings = UserSettings()
     
-    static func == (lhs: CrosswordListItemView, rhs: CrosswordListItemView) -> Bool {
-        if (lhs.crossword.id! != rhs.crossword.id!) {
-            return false
-        }
-        if (lhs.openCrossword?.id! != rhs.openCrossword?.id!) {
-            return false
-        }
-        return true
-    }
-    
     var crosswordProgress: CGFloat {
-        if (openCrossword != nil && crossword.id == openCrossword!.id) {
-            return getCrosswordProgress(crossword: openCrossword!)
-        } else {
-            return getCrosswordProgress(crossword: crossword)
-        }
-        
+        return getCrosswordProgress(crossword: crossword)
     }
     
     var currentTime: String {

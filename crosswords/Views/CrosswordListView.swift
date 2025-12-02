@@ -15,8 +15,8 @@ import GameKit
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @State var refreshEnabled = false
-    @State var openCrossword: Crossword? = nil
-    @State var bannerData: BannerModifier.BannerData = BannerModifier.BannerData(bannerId: 0, title: "", detail: "")
+    @State var bannerData: BannerModifier.BannerData =
+        BannerModifier.BannerData(bannerId: 0, title: "", detail: "")
     @ObservedObject var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
     
@@ -40,60 +40,66 @@ struct CrosswordListView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             if (userSettings.user == nil && !userSettings.useLocalMode) {
                 Image(systemName: "circle.dotted")
                     .font(.system(size: 20))
-                .onAppear(perform: {
-                    self.checkUser()
-                })
+                    .onAppear(perform: {
+                        self.checkUser()
+                    })
             } else {
-                List(self.crosswords.filter { (!$0.solved || self.showSolvedPuzzles || self.openCrossword == $0) && !$0.isHidden }, id: \.id) { crossword in
-                NavigationLink(
-                    destination: NavigationLazyView(CrosswordView(crossword: crossword))
-                        .environment(\.managedObjectContext, self.managedObjectContext),
-                    tag: crossword,
-                    selection: self.$openCrossword
-                ) {
-                    CrosswordListItemView(crossword: crossword, openCrossword: self.openCrossword)
-                        .equatable()
+                let filteredCrosswords = self.crosswords.filter {
+                    (!$0.solved || self.showSolvedPuzzles) && !$0.isHidden
                 }
-            }.onAppear(perform: {
-                self.refreshCrosswords()
-            })
-            .navigationBarTitle("Crosswords")
-            .navigationBarItems(trailing:
-                HStack {
-                    NavigationLink(
-                        destination: StatisticsView()
-                    ) {
-                        Image(systemName: "chart.bar.xaxis")
-                            .font(.system(size: 18))
+                List(filteredCrosswords, id: \.id) { crossword in
+                    NavigationLink {
+                        NavigationLazyView(CrosswordView(crossword: crossword))
+                            .environment(\.managedObjectContext, self.managedObjectContext)
+                    } label: {
+                        CrosswordListItemView(
+                            crossword: crossword,
+                        )
                     }
-                    NavigationLink(
-                        destination: UploadPuzzleView()
-                    ) {
-                        Image(systemName: "arrow.up.circle")
-                            .font(.system(size: 18))
-                    }
-                    NavigationLink(
-                        destination: SettingsView()
-                    ) {
-                        Image(systemName: "gearshape.fill")
-                            .font(.system(size: 18))
-                    }
-                    Button(action: {
-                        self.refreshCrosswords()
-                    }) {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                            .font(.system(size: 18, weight: Font.Weight.bold))
-                            .foregroundColor(self.refreshEnabled ? Color(UIColor.systemBlue) : Color(UIColor.systemGray))
-                    }.disabled(!self.refreshEnabled)
                 }
-            )
+                .refreshable {
+                    self.refreshCrosswords()
+                 }
+                .onAppear(perform: {
+                    self.refreshCrosswords()
+                })
+                .navigationBarTitle("Crosswords")
+                .navigationBarItems(trailing:
+                    HStack {
+                        NavigationLink(
+                            destination: StatisticsView()
+                        ) {
+                            Image(systemName: "chart.bar.xaxis")
+                                .font(.system(size: 18))
+                        }
+                        NavigationLink(
+                            destination: UploadPuzzleView()
+                        ) {
+                            Image(systemName: "arrow.up.circle")
+                                .font(.system(size: 18))
+                        }
+                        NavigationLink(
+                            destination: SettingsView()
+                        ) {
+                            Image(systemName: "gearshape.fill")
+                                .font(.system(size: 18))
+                        }
+                        Button(action: {
+                            self.refreshCrosswords()
+                        }) {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.system(size: 18, weight: Font.Weight.bold))
+                                .foregroundColor(self.refreshEnabled ? Color(UIColor.systemBlue) : Color(UIColor.systemGray))
+                        }.disabled(!self.refreshEnabled)
+                    }
+                )
+            }
+            
         }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
         .banner(data: self.$bannerData)
     }
     
@@ -255,7 +261,7 @@ struct CrosswordListView: View {
     }
     
     func syncSavedGames() -> Void {
-        if (self.userSettings.gameCenterPlayer != nil && self.openCrossword == nil) {
+        if (self.userSettings.shouldTryGameCenterLogin && self.userSettings.gameCenterPlayer != nil) {
             self.userSettings.gameCenterPlayer?.fetchSavedGames(completionHandler: {(games, error) in
                 if let error = error {
                     print("Error getting game center saved games: \(error)")

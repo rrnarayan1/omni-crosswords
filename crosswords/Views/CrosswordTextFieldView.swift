@@ -182,7 +182,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         func saveGame() {
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-            if (parent.userSettings.gameCenterPlayer != nil) {
+            if (parent.userSettings.shouldTryGameCenterLogin && parent.userSettings.gameCenterPlayer != nil) {
                 let entryString: String = (parent.crossword.entry?.joined(separator: ","))!
                 
                 parent.userSettings.gameCenterPlayer!.saveGameData(
