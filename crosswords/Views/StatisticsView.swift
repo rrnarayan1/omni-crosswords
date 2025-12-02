@@ -73,7 +73,6 @@ struct StatisticsView: View {
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Statistics")
-        .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(.systemGray6)
         .padding(30)
     }

@@ -41,7 +41,6 @@ struct SettingsView: View {
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Settings")
-        .navigationViewStyle(StackNavigationViewStyle())
         .navigationBarColor(.systemGray6)
         .navigationBarItems(trailing:
             HStack {

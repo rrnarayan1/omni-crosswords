@@ -22,7 +22,8 @@ class ColorSchemeUtil {
         } else {
             userInterfaceStyle = .unspecified
         }
-    
-        UIApplication.shared.windows.first?.overrideUserInterfaceStyle = userInterfaceStyle
+        
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        windowScene?.windows.first?.overrideUserInterfaceStyle = userInterfaceStyle
     }
 }
