@@ -215,9 +215,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
 
 class NoActionTextField: UITextField {
     override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        OperationQueue.main.addOperation {
-            UIMenuController.shared.hideMenu()
-        }
         return false
     }
     

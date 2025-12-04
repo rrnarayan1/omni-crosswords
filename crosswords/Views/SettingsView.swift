@@ -64,11 +64,12 @@ struct TogglesSettingsView: View {
         Toggle(isOn: $userSettings.skipCompletedCells) {
             Text("Skip completed cells")
         }
-        .onChange(of: userSettings.skipCompletedCells, perform: {newSkipCompletedCells in
-            if(!newSkipCompletedCells) {
+        .onChange(of: userSettings.skipCompletedCells) {_, newSkipCompletedCells in
+            // if they don't want to skip completed cells anymore, looping back must be set to false
+            if (!newSkipCompletedCells) {
                 userSettings.loopBackInsideUncompletedWord = false
             }
-        })
+        }
 
         Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
             Text("Loop back inside uncompleted word")
@@ -119,11 +120,11 @@ struct GameCenterLoginView: View {
         Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
             Text("Game Center Sync (BETA) (Turn this on on all devices)")
         }
-        .onChange(of: userSettings.shouldTryGameCenterLogin, perform: { shouldTryLogin in
+        .onChange(of: userSettings.shouldTryGameCenterLogin) { _, shouldTryLogin in
             if (shouldTryLogin) {
                 authenticateUser()
             }
-        })
+        }
     }
 }
 
@@ -137,9 +138,9 @@ struct PickerViews: View {
                 Text("System Default").tag(0)
                 Text("Light Mode").tag(1)
                 Text("Dark Mode").tag(2)
-            }.onChange(of: selectedAppearance, perform: { value in
+            }.onChange(of: selectedAppearance) {
                 ColorSchemeUtil().overrideDisplayMode()
-            })
+            }
             .pickerStyle(.segmented)
             
             HStack {

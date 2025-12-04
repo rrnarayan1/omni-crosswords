@@ -14,7 +14,8 @@ struct CrosswordView: View {
 
     // height of components. does not include keyboard height
     var componentHeights: CGFloat {
-        let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let window = windowScene?.windows.filter {$0.isKeyWindow}.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         
         // 40 is height of keyboard toolbar
@@ -72,7 +73,7 @@ struct CrosswordView: View {
                         let currentClue = getCurrentClue()
                         return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, doErrorTracking: self.isErrorTrackingEnabled, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
                     }()
-                    .onChange(of: focusedTag, perform: {newFocusedTag in
+                    .onChange(of: focusedTag) {_, newFocusedTag in
                         let oneThirdsRowNumber = Int(self.crossword.height/3)
                         let middleRowNumber = Int(self.crossword.height/2)
                         let twoThirdsRowNumber = Int(self.crossword.height/3)*2
@@ -93,7 +94,7 @@ struct CrosswordView: View {
                                 self.scrolledRow = middleRowNumber - 3
                             }
                         }
-                    })
+                    }
                     .padding(.top, 10)
                 }
             }//.background(.random)
