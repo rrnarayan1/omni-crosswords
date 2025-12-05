@@ -40,8 +40,7 @@ struct CrosswordSettingsView: View {
                     Text("Error Tracking and Show Solution are Disabled because the solution is not available")
                 }
             }
-            .padding(30)
-
+            .padding([.bottom], 30)
             Text("Title: "+title)
             Text("Author: "+author)
             if (notes != "") {
@@ -52,9 +51,8 @@ struct CrosswordSettingsView: View {
             Spacer()
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
-        .navigationBarTitle("Crossword Settings", displayMode: .large)
-        .navigationBarColor(.systemGray6)
-        .padding(30)
+        .navigationBarTitle("Crossword Settings")
+        .padding([.top], 15)
     }
 }
 

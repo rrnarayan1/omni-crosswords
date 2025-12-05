@@ -12,7 +12,7 @@ import Firebase
 import FirebaseAuth
 import GameKit
 
-let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Wall Street Journal", "NYT Syndicated", "Universal", "NYT Mini"]
+let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Vox", "NYT Syndicated", "Universal", "NYT Mini"]
 
 struct SettingsView: View {
     @ObservedObject var userSettings = UserSettings()
@@ -41,7 +41,6 @@ struct SettingsView: View {
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Settings")
-        .navigationBarColor(.systemGray6)
         .navigationBarItems(trailing:
             HStack {
                 Link(destination: URL(string: "https://rrnarayan1.github.io/omni-crosswords/#four")!) {
