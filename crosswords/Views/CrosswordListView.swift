@@ -98,7 +98,6 @@ struct CrosswordListView: View {
                     }
                 )
             }
-            
         }
         .banner(data: self.$bannerData)
     }

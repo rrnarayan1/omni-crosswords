@@ -31,8 +31,8 @@ struct BannerModifier: ViewModifier {
                     }
                     Spacer()
                     Button(action: closeBanner) {
-                        Text("X")
-                            .font(.system(size: 20, design: .monospaced))
+                        Image(systemName: "xmark.circle")
+                            .font(.system(size: 18))
                     }
                     
                 }

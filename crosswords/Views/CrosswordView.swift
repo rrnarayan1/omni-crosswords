@@ -35,7 +35,6 @@ struct CrosswordView: View {
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
     @State var goingAcross: Bool = true
-    @State var showShareSheet: Bool = false
     @State var isErrorTrackingEnabled: Bool = false
     @State var forceUpdate = false
     @State var scrolledRow = 0

@@ -27,6 +27,19 @@ struct CrosswordTrailingToolbarView: View, Equatable {
         return true
     }
     
+    func shareSheet(isSolved: Bool, outletName: String) -> [Any] {
+        var shareMessage: String
+        if (isSolved) {
+            shareMessage = "I solved the " + outletName + " crossword"
+            shareMessage += ". Download OmniCrosswords and have fun with me!"
+        } else {
+            shareMessage = "I'm in the middle of solving the " + outletName + " crossword"
+            shareMessage += ". Download OmniCrosswords and help me out!"
+        }
+        let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
+        return items
+    }
+
     var body: some View {
         HStack {
             NavigationLink(
