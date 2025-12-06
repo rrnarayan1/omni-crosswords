@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C06D8F324D28F2300B734BB /* JsonToCrossword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */; };
 		1C08D87E24CB62ED006AF7A0 /* DataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */; };
 		1C1EA90F24DE765D00A67BA9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */; };
 		1C30E3A8289736FC00189562 /* sampleData.json in Resources */ = {isa = PBXBuildFile; fileRef = 1C30E3A7289736FC00189562 /* sampleData.json */; };
@@ -46,13 +45,13 @@
 		F342522B2ED81603006D090D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F342522A2ED81603006D090D /* FirebaseFirestore */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
+		F38D69BD2EE4D10A001E6096 /* JsonToCrossword.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* JsonToCrossword.swift */; };
 		F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */ = {isa = PBXBuildFile; fileRef = F3B806CB2C3270B00087DE82 /* sampleData1.json */; };
 		F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonToCrossword.swift; sourceTree = "<group>"; };
 		1C08D87D24CB62ED006AF7A0 /* DataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBuilder.swift; sourceTree = "<group>"; };
 		1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		1C30E3A7289736FC00189562 /* sampleData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sampleData.json; sourceTree = "<group>"; };
@@ -91,6 +90,7 @@
 		F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordToolbarViews.swift; sourceTree = "<group>"; };
 		F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPuzzleView.swift; sourceTree = "<group>"; };
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
+		F38D69BC2EE4D10A001E6096 /* JsonToCrossword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonToCrossword.swift; sourceTree = "<group>"; };
 		F3B806CB2C3270B00087DE82 /* sampleData1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sampleData1.json; sourceTree = "<group>"; };
 		F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,14 +111,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C06D8F124D28F0700B734BB /* Firebase */ = {
-			isa = PBXGroup;
-			children = (
-				1C06D8F224D28F2300B734BB /* JsonToCrossword.swift */,
-			);
-			path = Firebase;
-			sourceTree = "<group>";
-		};
 		1C30E3A6289736CE00189562 /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +123,7 @@
 		1C4FF2542501D061002BBE48 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				F38D69BC2EE4D10A001E6096 /* JsonToCrossword.swift */,
 				1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */,
 				1C3D87E7274976BA001A7591 /* ChangeFocusUtils.swift */,
 				1C59BF50278B6E3A0076F371 /* GameCenterListener.swift */,
@@ -185,7 +178,6 @@
 				1C59BF4F277E99A00076F371 /* crosswords.entitlements */,
 				1C59BF4C277E97960076F371 /* crosswordsDebug.entitlements */,
 				1C4FF2542501D061002BBE48 /* Utils */,
-				1C06D8F124D28F0700B734BB /* Firebase */,
 				1C6A26B524CA7311002F8DAD /* Views */,
 				1C958AB7284C09FE00695B9B /* ViewModifiers */,
 				1C73206724C4F44000240AF8 /* AppDelegate.swift */,
@@ -317,6 +309,7 @@
 				1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */,
 				1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */,
 				1C73206A24C4F44000240AF8 /* SceneDelegate.swift in Sources */,
+				F38D69BD2EE4D10A001E6096 /* JsonToCrossword.swift in Sources */,
 				1C3D87E8274976BA001A7591 /* ChangeFocusUtils.swift in Sources */,
 				1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */,
 				F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */,
@@ -335,7 +328,6 @@
 				1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */,
 				1C3D87EA2749ACFB001A7591 /* CrosswordTextFieldView.swift in Sources */,
 				1C59BF51278B6E3B0076F371 /* GameCenterListener.swift in Sources */,
-				1C06D8F324D28F2300B734BB /* JsonToCrossword.swift in Sources */,
 				F32FD9522AF61AE500CC90E1 /* UIImage+Size.swift in Sources */,
 				1C958ABB284C0ADC00695B9B /* BannerModifier.swift in Sources */,
 				1C73208D24C688A800240AF8 /* CrosswordView.swift in Sources */,

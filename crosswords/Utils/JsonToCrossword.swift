@@ -35,7 +35,7 @@ func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
     crossword.clueToTagsMap = [:]
     for tag in 0..<tagToCluesList!.count {
         for dir in ["A", "D"] {
-            if (tagToCluesList![tag].count > 0 ) {
+            if (tagToCluesList![tag].count > 0) {
                 let clue = tagToCluesList![tag][dir]
                 if let nnClue = clue {
                     if crossword.clueToTagsMap?[nnClue] == nil {
@@ -79,12 +79,14 @@ func jsonToCrossword(crossword: Crossword, data: CrosswordResponse) -> Void {
     crossword.clueToTagsMap = [:]
     for tag in 0..<tagToCluesList.count {
         for dir in ["A", "D"] {
-            if (tagToCluesList[tag].count > 0 ) {
-                let clue = tagToCluesList[tag][dir]!
-                if crossword.clueToTagsMap?[clue] == nil {
-                    crossword.clueToTagsMap?[clue] = []
+            if (tagToCluesList[tag].count > 0) {
+                let clue = tagToCluesList[tag][dir]
+                if let nnClue = clue {
+                    if crossword.clueToTagsMap?[nnClue] == nil {
+                        crossword.clueToTagsMap?[nnClue] = []
+                    }
+                    crossword.clueToTagsMap?[nnClue]!.append(tag)
                 }
-                crossword.clueToTagsMap?[clue]!.append(tag)
             }
         }
     }
