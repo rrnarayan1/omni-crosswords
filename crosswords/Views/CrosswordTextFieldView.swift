@@ -31,6 +31,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
+    @Binding var isRebusMode: Bool
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -59,8 +60,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
 
-        let currentClueForce = self.forceUpdate ? currentClue : currentClue + " "
-        uiTextField.changeToolbar(clueTitle: currentClueForce, toggleImage: toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        uiTextField.changeToolbar(clueTitle: currentClue, toggleImage: toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -79,14 +79,17 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         @objc func goToNextClue(textField: NoActionTextField) {
+            parent.isRebusMode = false
             OmniCrosswords.goToNextClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         @objc func goToPreviousClue(textField: NoActionTextField) {
+            parent.isRebusMode = false
             OmniCrosswords.goToPreviousClue(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, focusedTag: parent.$focusedTag, isHighlighted: parent.$highlighted)
         }
         
         @objc func solveCell(textField: NoActionTextField) {
+            parent.isRebusMode = false
             OmniCrosswords.solveCell(tag: parent.focusedTag, crossword: parent.crossword, focusedTag: parent.$focusedTag, goingAcross: parent.$goingAcross, isHighlighted: parent.$highlighted)
         }
         
@@ -95,6 +98,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            parent.isRebusMode = false
             moveFocusToNextField(textField)
             return true
         }
@@ -109,9 +113,11 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 parent.forceUpdate = !parent.forceUpdate
                 saveGame()
             } else {
+                // no matter what, we're moving cells, so exit rebus mode
+                parent.isRebusMode = false
                 var previousTag : Int = parent.goingAcross ? parent.focusedTag - 1 : parent.focusedTag - Int(parent.crossword.length)
                 if (previousTag >= 0 && previousTag < parent.crossword.entry!.count && parent.crossword.entry![previousTag] != ".") {
-                    // move backwards
+                    // our current cell is empty and the previous one is valid, so wipe that out and go there
                     parent.crossword.entry![previousTag] = ""
                     saveGame()
                     changeFocusToTag(previousTag)
@@ -128,38 +134,44 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         shouldChangeCharactersIn range: NSRange,
         replacementString string: String) -> Bool {
             // invalid entry
-            if (parent.focusedTag < 0 || string == ".") {
-                return false
-            }
-            // probably used swipe to type, which we don't want to support
-            if (string.count > 1) {
+            // string count > 1 means they probably used swipe to type, which we don't want to support
+            if (parent.focusedTag < 0 || string == "." || string.count > 1) {
                 return false
             }
             
-            if (string == " " && parent.userSettings.spaceTogglesDirection) {
-                toggleDirection(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, isHighlighted: parent.$highlighted)
+            // Don't edit a solved crossword
+            if (parent.crossword.solved) {
                 return false
             }
             
             if (string == " ") {
-                moveFocusToNextField(textField)
+                if (parent.userSettings.spaceTogglesDirection) {
+                    toggleDirection(tag: parent.focusedTag, crossword: parent.crossword, goingAcross: parent.$goingAcross, isHighlighted: parent.$highlighted)
+                } else {
+                    parent.isRebusMode = false
+                    moveFocusToNextField(textField)
+                }
                 return false
             } else if (string == "\t") {
+                // used for tab
+                parent.isRebusMode = false
                 goToNextClue(textField)
                 return false
             }
             
-            if (parent.crossword.solved) {
-                // Don't edit a solved crossword
-                return false
-            }
             parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
             
             if (string.isEmpty) {
                 didPressBackspace(textField)
             } else {
-                parent.crossword.entry![parent.focusedTag] = string.uppercased()
-                moveFocusToNextField(textField)
+                // it's a valid letter entered, put update the crossword
+                if (parent.isRebusMode) {
+                    parent.forceUpdate = !parent.forceUpdate
+                    parent.crossword.entry![parent.focusedTag].append(string.uppercased())
+                } else {
+                    parent.crossword.entry![parent.focusedTag] = string.uppercased()
+                    moveFocusToNextField(textField)
+                }
                 saveGame()
             }
             

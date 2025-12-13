@@ -47,7 +47,7 @@ struct UploadPuzzleView: View {
                 guard let selectedFile: URL = try fileUrl.get().first else { return }
 
                 let requestUrl = URL(string: "https://omni-crosswords-server-rtluzv2sqq-uc.a.run.app/parsePuzfile")!
-                //let requestUrl = URL(string: "http://192.168.86.111:8080/parsePuzfile")!
+                //let requestUrl = URL(string: "http://localhost:8080/parsePuzfile")!
                 var request = URLRequest(url: requestUrl)
                 request.setValue("Bearer "+self.token, forHTTPHeaderField: "Authorization")
                 request.httpMethod = "POST"

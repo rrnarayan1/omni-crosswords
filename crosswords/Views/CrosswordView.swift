@@ -41,6 +41,7 @@ struct CrosswordView: View {
     @State var becomeFirstResponder: Bool = false
     @State var boxWidth: CGFloat = 0.0
     @State var isZoomed: Bool = false
+    @State var isRebusMode: Bool = false
     
     init(crossword: Crossword) {
         self.crossword = crossword
@@ -70,7 +71,15 @@ struct CrosswordView: View {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
                         let currentClue = getCurrentClue()
-                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth, currentClue: currentClue, doErrorTracking: self.isErrorTrackingEnabled, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
+                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
+                                                 currentClue: currentClue,
+                                                 doErrorTracking: self.isErrorTrackingEnabled,
+                                                 focusedTag: self.$focusedTag,
+                                                 highlighted: self.$highlighted,
+                                                 goingAcross: self.$goingAcross,
+                                                 forceUpdate: self.$forceUpdate,
+                                                 becomeFirstResponder: self.$becomeFirstResponder,
+                                                 isRebusMode: self.$isRebusMode)
                     }()
                     .onChange(of: focusedTag) {_, newFocusedTag in
                         let oneThirdsRowNumber = Int(self.crossword.height/3)
@@ -103,6 +112,9 @@ struct CrosswordView: View {
                 if (focusedTag != -1) {
                     Button(action: {self.zoom()}) {
                         Image(systemName: self.isZoomed ? "minus.magnifyingglass" : "plus.magnifyingglass")
+                    }
+                    Button(action: {self.isRebusMode.toggle()}) {
+                        Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
                     }
                 }
                 Spacer()
@@ -210,6 +222,7 @@ struct CrosswordGridView: View {
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
+    @Binding var isRebusMode: Bool
     
     var body: some View {
         let rows: [Int] = Array(0...Int(self.crossword.height)-1)
@@ -223,7 +236,11 @@ struct CrosswordGridView: View {
                 }
                 .id("row"+String(rowNum))
             }
-            CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue, focusedTag: self.$focusedTag, highlighted: self.$highlighted, goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate, becomeFirstResponder: self.$becomeFirstResponder)
+            CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue,
+                                   focusedTag: self.$focusedTag, highlighted: self.$highlighted,
+                                   goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate,
+                                   becomeFirstResponder: self.$becomeFirstResponder,
+                                   isRebusMode: self.$isRebusMode)
                 .frame(width:1, height: 1)
         }
     }
@@ -233,7 +250,6 @@ struct CrosswordGridView: View {
         let value: String = self.crossword.entry![tag]
         let correctValue: String = self.crossword.solution![tag]
         let symbol: Int = self.crossword.symbols![tag]
-        let isSolutionAvailable: Bool = isSolutionAvailable(crossword: self.crossword)
         return CrosswordCellView(
             value: value,
             correctValue: correctValue,
@@ -245,7 +261,6 @@ struct CrosswordGridView: View {
             isErrorTrackingEnabled: self.doErrorTracking,
             isFocused: self.focusedTag == tag,
             isHighlighted: self.highlighted.contains(tag),
-            isSolutionAvailable: isSolutionAvailable
         ).equatable().frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
     }
     
@@ -259,6 +274,7 @@ struct CrosswordGridView: View {
         if (tag == self.focusedTag) {
             toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
         } else {
+            self.isRebusMode = false
             changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
