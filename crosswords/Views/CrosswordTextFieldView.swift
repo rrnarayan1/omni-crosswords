@@ -13,19 +13,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     var crossword: Crossword
     var currentClue: String
     
-    let downArrowImage = UIImage(systemName: "arrow.up.arrow.down")!.imageWith(newSize: CGSize(width: 18.0, height: 18.0))
-    let acrossArrowImage = UIImage(systemName: "arrow.left.arrow.right")!.imageWith(newSize: CGSize(width: 18.0, height: 18.0))
-    
-    var toggleImage: UIImage {
-        var image: UIImage
-        if (self.goingAcross) {
-            image = downArrowImage
-        } else {
-            image = acrossArrowImage
-        }
-        return image
-    }
-    
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
@@ -45,7 +32,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.keyboardType = userSettings.useEmailAddressKeyboard ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
         textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
-        textField.addToolbar(coordinator: context.coordinator, clueTitle: "", toggleImage: self.toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        textField.addToolbar(coordinator: context.coordinator, clueTitle: "", barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
         return textField
     }
     
@@ -60,7 +47,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
 
-        uiTextField.changeToolbar(clueTitle: currentClue, toggleImage: toggleImage, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        uiTextField.changeToolbar(clueTitle: currentClue, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
     }
     
     func makeCoordinator() -> Coordinator {

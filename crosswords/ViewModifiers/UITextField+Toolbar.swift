@@ -25,25 +25,23 @@ extension UITextField {
         return UIImage(systemName: "lifepreserver")!
     }
     
+    var toggleImage: UIImage {
+        return UIImage(systemName: "arrow.2.squarepath")!
+    }
     
-    func changeToolbar(clueTitle: String, toggleImage: UIImage, barColor: UIColor) {
+    func changeToolbar(clueTitle: String, barColor: UIColor) {
         
         guard let uiTextFieldToolbar = self.inputAccessoryView as? UIToolbar else {
             print("inputAccessoryView is nil or not a UIToolbar")
             return
         }
-
-        let clueTitleIndex = 3
+        var clueTitleIndex: Int
+        if #available(iOS 26.0, *) {
+            clueTitleIndex = 2
+        } else {
+            clueTitleIndex = 3
+        }
         let clueTitleLabel = uiTextFieldToolbar.items![clueTitleIndex].customView as! UITextView
-        let toggleButtonIndex =
-            switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
-                case 1:
-                    4
-                case 2:
-                    0
-                default:
-                    6
-            }
 
         if (uiTextFieldToolbar.backgroundColor != barColor) {
             uiTextFieldToolbar.backgroundColor = barColor
@@ -51,17 +49,15 @@ extension UITextField {
         if (clueTitleLabel.text.trimmingCharacters(in: .whitespaces) != clueTitle.trimmingCharacters(in: .whitespaces)) {
             uiTextFieldToolbar.items?.remove(at: clueTitleIndex)
             clueTitleLabel.text = clueTitle
-            uiTextFieldToolbar.items?.insert(UIBarButtonItem.init(customView: clueTitleLabel), at: clueTitleIndex)
-        }
-        
-        let toggle = uiTextFieldToolbar.items![toggleButtonIndex]
-        if (toggle.image != toggleImage) {
-            toggle.image = toggleImage
+            uiTextFieldToolbar.items?.insert(
+                UIBarButtonItem.init(customView: clueTitleLabel).hideSharedBackgroundIfAvailable(),
+                at: clueTitleIndex
+            )
         }
     }
     
-    func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, toggleImage: UIImage, barColor: UIColor) {
-        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0, width: Double(UIScreen.main.bounds.size.width), height: toolbarHeight))
+    func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, barColor: UIColor) {
+        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0, width: Double(UIScreen.screenWidth), height: toolbarHeight))
                 
         let clueTitleLabel = UITextView()
         var clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
@@ -78,7 +74,7 @@ extension UITextField {
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
         
-        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: UIScreen.screenWidth-150)
+        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: UIScreen.screenWidth-170)
         let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: toolbarHeight)
 
         clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
@@ -86,46 +82,132 @@ extension UITextField {
         var configuredToolbarItems: [UIBarButtonItem] {
             
             let clueTitle = UIBarButtonItem(customView: clueTitleLabel)
+                .hideSharedBackgroundIfAvailable()
             
             let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
                                            target: nil,
                                            action: nil)
 
-            let leftButton = UIBarButtonItem(image: previousImage,
-                                             style: .plain,
-                                             target: coordinator,
-                                             action: #selector(coordinator.goToPreviousClue))
+            let previousButton = UIButton.systemButton(with: previousImage,
+                                                   target: coordinator,
+                                                   action: #selector(coordinator.goToPreviousClue))
             
-            let rightButton = UIBarButtonItem(image: nextImage,
-                                              style: .plain,
-                                              target: coordinator,
-                                              action: #selector(coordinator.goToNextClue))
+            let nextButton = UIButton.systemButton(with: nextImage,
+                                                   target: coordinator,
+                                                   action: #selector(coordinator.goToNextClue))
 
-            let toggleButton = UIBarButtonItem(image: toggleImage,
-                                               style: .plain,
-                                               target: coordinator,
-                                               action: #selector(coordinator.pressToggleButton))
+            let toggleButton = UIButton.systemButton(with: toggleImage,
+                                                     target: coordinator,
+                                                     action: #selector(coordinator.pressToggleButton))
 
-            let solveCellButton: UIBarButtonItem = {
-                if coordinator.isSolutionAvailable(textField: self as! NoActionTextField) {
-                    return UIBarButtonItem(image: solveCellImage, style: .plain, target: coordinator, action: #selector(coordinator.solveCell))
-                } else {
-                    return flexible
+            var solveCellButton = UIButton.systemButton(with: solveCellImage,
+                                                        target: coordinator,
+                                                        action: #selector(coordinator.solveCell))
+            let emptyButton = UIButton()
+            
+            if (!coordinator.isSolutionAvailable(textField: self as! NoActionTextField)) {
+                solveCellButton = emptyButton
+            }
+
+            if #available(iOS 26.0, *) {
+                var leftContainerButton: UIBarButtonItem
+                var rightContainerButton: UIBarButtonItem
+
+                switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
+                case 1: // split
+                    leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
+                                                                      secondButton: solveCellButton,
+                                                                      firstButtonWidth: 20,
+                                                                      secondButtonWidth: 20)
+                    rightContainerButton = createCustomButtonGroup(firstButton: toggleButton,
+                                                                       secondButton: nextButton,
+                                                                       firstButtonWidth: 20,
+                                                                       secondButtonWidth: 20)
+                case 2: // right
+                    leftContainerButton = createCustomButtonGroup(firstButton: toggleButton,
+                                                                      secondButton: solveCellButton,
+                                                                      firstButtonWidth: 20,
+                                                                      secondButtonWidth: 20)
+                    rightContainerButton = createCustomButtonGroup(firstButton: previousButton,
+                                                                       secondButton: nextButton,
+                                                                       firstButtonWidth: 20,
+                                                                       secondButtonWidth: 20)
+                default: // left
+                    leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
+                                                                      secondButton: nextButton,
+                                                                      firstButtonWidth: 20,
+                                                                      secondButtonWidth: 20)
+                    rightContainerButton = createCustomButtonGroup(firstButton: solveCellButton,
+                                                                       secondButton: toggleButton,
+                                                                       firstButtonWidth: 20,
+                                                                       secondButtonWidth: 20)
                 }
-            }()
-            
-            switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
-            case 1:
-                return [leftButton, flexible, solveCellButton, clueTitle, toggleButton, flexible, rightButton]
-            case 2:
-                return [toggleButton, solveCellButton, flexible, clueTitle, flexible, leftButton, rightButton]
-            default:
-                return [leftButton, rightButton, flexible, clueTitle, flexible, solveCellButton, toggleButton]
+
+                return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
+            } else {
+                // for some reason in < iOS 18 the container groups don't work
+                switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
+                case 1: // split
+                    return [UIBarButtonItem(customView: previousButton), flexible,
+                            UIBarButtonItem(customView: solveCellButton), clueTitle,
+                            UIBarButtonItem(customView: toggleButton), flexible,
+                            UIBarButtonItem(customView: nextButton)]
+                case 2: // right
+                    return [UIBarButtonItem(customView: toggleButton),
+                            UIBarButtonItem(customView: solveCellButton), flexible, clueTitle, flexible,
+                            UIBarButtonItem(customView: previousButton),
+                            UIBarButtonItem(customView: nextButton)]
+                default: // left
+                    return [UIBarButtonItem(customView: previousButton),
+                            UIBarButtonItem(customView: nextButton), flexible, clueTitle, flexible,
+                            UIBarButtonItem(customView: solveCellButton),
+                            UIBarButtonItem(customView: toggleButton)]
+                }
             }
         }
-        
+
         (self.inputAccessoryView as! UIToolbar).setItems(configuredToolbarItems, animated: false)
-        
+
         (self.inputAccessoryView as! UIToolbar).backgroundColor = barColor
+    }
+
+    func createCustomButtonGroup(firstButton: UIButton, secondButton: UIButton, firstButtonWidth: CGFloat,
+                                 secondButtonWidth: CGFloat) -> UIBarButtonItem {
+        let containerWidth = firstButtonWidth+secondButtonWidth+10
+        let containerView = UIView(frame: CGRectMake(0, 0, containerWidth, toolbarHeight))
+        containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
+        firstButton.translatesAutoresizingMaskIntoConstraints = false
+        secondButton.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(firstButton)
+        containerView.addSubview(secondButton)
+
+        NSLayoutConstraint.activate([
+            firstButton.widthAnchor.constraint(equalToConstant: firstButtonWidth),
+            firstButton.heightAnchor.constraint(equalToConstant: firstButtonWidth),
+            firstButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            firstButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
+                                                constant: 0)
+        ])
+        NSLayoutConstraint.activate([
+            secondButton.widthAnchor.constraint(equalToConstant: secondButtonWidth),
+            secondButton.heightAnchor.constraint(equalToConstant: secondButtonWidth),
+            secondButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            secondButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
+                                                constant: containerWidth/2)
+        ])
+        return UIBarButtonItem(customView: containerView)
+            .hideSharedBackgroundIfAvailable()
+    }
+}
+
+extension UIBarButtonItem {
+
+    func hideSharedBackgroundIfAvailable() -> some UIBarButtonItem {
+        if #available(iOS 26.0, *) {
+            self.hidesSharedBackground = true
+            return self
+        } else {
+            return self
+        }
     }
 }

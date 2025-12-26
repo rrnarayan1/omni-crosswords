@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+let crosswordToolbarButtonSize = 16.0
+
 struct CrosswordTrailingToolbarView: View, Equatable {
     let title: String
     let author: String
@@ -44,25 +46,25 @@ struct CrosswordTrailingToolbarView: View, Equatable {
         HStack {
             NavigationLink(
                 destination: CrosswordSettingsView(title: title, author: author, notes: notes, copyright: copyright, isSolved: isSolved, isSolutionAvailable: isSolutionAvailable, errorTracking: self.isErrorTrackingEnabled, showSolution: showSolution),
-                label: {Image(systemName: "slider.horizontal.3")
-                    .foregroundColor(Color(UIColor.systemBlue))
-                    .font(.system(size: 18))}
+                label: {
+                    Image(systemName: "slider.horizontal.3")
+                        .foregroundColor(Color(UIColor.systemBlue))
+                }
             ).simultaneousGesture(TapGesture().onEnded{
                 showSettings()
             })
+            .font(.system(size: crosswordToolbarButtonSize))
 
-            if #available(iOS 15, *) {
-                Button(action: {self.showShareSheet = true}) {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundColor(Color(UIColor.systemBlue))
-                        .font(.system(size: 18))
-                }.sheet(isPresented: self.$showShareSheet,
-                    onDismiss: {self.showShareSheet = false},
-                    content: {
-                    ActivityView(activityItems: shareSheet(isSolved: isSolved, outletName: outletName))
-                    }
-                )
-            }
+            Button(action: {self.showShareSheet = true}) {
+                Image(systemName: "square.and.arrow.up")
+                    .foregroundColor(Color(UIColor.systemBlue))
+            }.sheet(isPresented: self.$showShareSheet,
+                onDismiss: {self.showShareSheet = false},
+                content: {
+                ActivityView(activityItems: shareSheet(isSolved: isSolved, outletName: outletName))
+                }
+            )
+            .font(.system(size: crosswordToolbarButtonSize))
         }
     }
 }
@@ -79,11 +81,19 @@ struct CrosswordLeadingToolbarView: View, Equatable {
         Button(action: {
             goBack()
         }) {
-            HStack {
-                Image(systemName: "chevron.left")
-                Text("Back")
-                    .frame(alignment: .leading)
-            }
+            Image(systemName: "chevron.left")
+        }.padding(0).font(.system(size: crosswordToolbarButtonSize))
+    }
+}
+
+extension ToolbarContent {
+
+    @ToolbarContentBuilder
+    func hideSharedBackgroundIfAvailable() -> some ToolbarContent {
+        if #available(iOS 26.0, *) {
+            sharedBackgroundVisibility(.hidden)
+        } else {
+            self
         }
     }
 }

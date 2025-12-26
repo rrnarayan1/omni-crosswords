@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import GameKit
 
 struct CrosswordView: View {
     var crossword: Crossword
@@ -37,7 +36,6 @@ struct CrosswordView: View {
     @State var goingAcross: Bool = true
     @State var isErrorTrackingEnabled: Bool = false
     @State var forceUpdate = false
-    @State var scrolledRow = 0
     @State var becomeFirstResponder: Bool = false
     @State var boxWidth: CGFloat = 0.0
     @State var isZoomed: Bool = false
@@ -82,30 +80,25 @@ struct CrosswordView: View {
                                                  isRebusMode: self.$isRebusMode)
                     }()
                     .onChange(of: focusedTag) {_, newFocusedTag in
-                        let oneThirdsRowNumber = Int(self.crossword.height/3)
-                        let middleRowNumber = Int(self.crossword.height/2)
-                        let twoThirdsRowNumber = Int(self.crossword.height/3)*2
-                        if (self.keyboardHeightHelper.keyboardHeight == 0) {
-                            self.scrolledRow = middleRowNumber - 3
-                        } else if (self.isZoomed) {
-//                            let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
+                        if (self.isZoomed) {
                             scrollreader.scrollTo("cell"+String(newFocusedTag))
-//                            self.scrolledRow = newRowNumber
                             return
                         } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
+                            let oneThirdsRowNumber = Int(self.crossword.height/3)
+                            let middleRowNumber = Int(self.crossword.height/2)
+                            let twoThirdsRowNumber = Int(self.crossword.height/3)*2
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
-                            if (newRowNumber > twoThirdsRowNumber && self.scrolledRow != middleRowNumber + 3) {
+                            if (newRowNumber > twoThirdsRowNumber) {
                                 scrollreader.scrollTo("row"+String(middleRowNumber + 3), anchor: .center)
-                                self.scrolledRow = middleRowNumber + 3
-                            } else if (newRowNumber < oneThirdsRowNumber && self.scrolledRow != middleRowNumber - 3){
+                            } else if (newRowNumber < oneThirdsRowNumber){
                                 scrollreader.scrollTo("row"+String(middleRowNumber - 3), anchor: .center)
-                                self.scrolledRow = middleRowNumber - 3
                             }
                         }
                     }
                     .padding(.top, 10)
                 }
             }//.background(.random)
+            .scrollDisabled(!self.isZoomed)
             .frame(width: UIScreen.screenWidth)
 
             HStack {
@@ -153,10 +146,10 @@ struct CrosswordView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isSolutionAvailable: isSolutionAvailable(crossword: crossword), isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
-            }
+            }.hideSharedBackgroundIfAvailable()
             ToolbarItem(placement: .navigationBarLeading) {
                 CrosswordLeadingToolbarView(goBack: goBack)
-            }
+            }.hideSharedBackgroundIfAvailable()
         }
         .navigationBarBackButtonHidden(true)
     }
