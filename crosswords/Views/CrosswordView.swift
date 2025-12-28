@@ -98,7 +98,7 @@ struct CrosswordView: View {
                     .padding(.top, 10)
                 }
             }//.background(.random)
-            .scrollDisabled(!self.isZoomed)
+            //.scrollDisabled(!self.isZoomed)
             .frame(width: UIScreen.screenWidth)
 
             HStack {
