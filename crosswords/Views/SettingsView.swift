@@ -90,12 +90,60 @@ struct TogglesSettingsView: View {
             Text("Enable haptic feedback")
         }
         
-        Toggle(isOn: $userSettings.largePrintMode) {
-            Text("Large Print Mode (iPad)")
-        }
-        
         Toggle(isOn: $userSettings.useEmailAddressKeyboard) {
             Text("Use Alternate Keyboard Type")
+        }
+    }
+}
+
+struct PickerViews: View {
+    @ObservedObject var userSettings = UserSettings()
+    @AppStorage("selectedAppearance") var selectedAppearance = 0
+    
+    var body: some View {
+        VStack {
+            Picker("Color Scheme Override", selection: $selectedAppearance) {
+                Text("System Default").tag(0)
+                Text("Light Mode").tag(1)
+                Text("Dark Mode").tag(2)
+            }.onChange(of: selectedAppearance) {
+                ColorSchemeUtil().overrideDisplayMode()
+            }
+            .pickerStyle(.segmented)
+            
+            HStack {
+                Text("Clue cycle control placement")
+                Spacer()
+                Picker("Keyboard Toolbar Style", selection: $userSettings.clueCyclePlacement) {
+                    Text("Left").tag(0)
+                    Text("Split").tag(1)
+                    Text("Right").tag(2)
+                }
+                .pickerStyle(.menu)
+            }
+            
+            HStack {
+                Text("Auto-delete puzzles after")
+                Spacer()
+                Picker(userSettings.daysToWaitBeforeDeleting + " days", selection: $userSettings.daysToWaitBeforeDeleting) {
+                    ForEach((3..<22)) { i in
+                        Text(String(i)+" days").tag(String(i))
+                    }
+                    Text("Never (May cause issues with performance)").tag("Never")
+                }
+                .pickerStyle(.menu)
+            }
+
+            HStack {
+                Text("Clue Font Size")
+                Spacer()
+                Picker(String(userSettings.clueSize) + " pt", selection: $userSettings.clueSize) {
+                    ForEach((13..<21)) { flavor in
+                        Text(String(flavor)+" pt").tag(Int(flavor))
+                    }
+                }
+                .pickerStyle(.menu)
+            }
         }
     }
 }
@@ -117,63 +165,11 @@ struct GameCenterLoginView: View {
 
     var body: some View {
         Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
-            Text("Game Center Sync (BETA) (Turn this on on all devices)")
+            Text("Game Center Sync (BETA) (Enable this on all devices)")
         }
         .onChange(of: userSettings.shouldTryGameCenterLogin) { _, shouldTryLogin in
             if (shouldTryLogin) {
                 authenticateUser()
-            }
-        }
-    }
-}
-
-struct PickerViews: View {
-    @ObservedObject var userSettings = UserSettings()
-    @AppStorage("selectedAppearance") var selectedAppearance = 0
-    
-    var body: some View {
-        VStack {
-            Picker("Color Scheme Override", selection: $selectedAppearance) {
-                Text("System Default").tag(0)
-                Text("Light Mode").tag(1)
-                Text("Dark Mode").tag(2)
-            }.onChange(of: selectedAppearance) {
-                ColorSchemeUtil().overrideDisplayMode()
-            }
-            .pickerStyle(.segmented)
-            
-            HStack {
-                Text("Clue cycle control placement:")
-                Spacer()
-                Picker("Keyboard Toolbar Style", selection: $userSettings.clueCyclePlacement) {
-                    Text("Left").tag(0)
-                    Text("Split").tag(1)
-                    Text("Right").tag(2)
-                }
-                .pickerStyle(.menu)
-            }
-            
-            HStack {
-                Text("Automatically delete puzzles after:")
-                Spacer()
-                Picker(userSettings.daysToWaitBeforeDeleting + " days", selection: $userSettings.daysToWaitBeforeDeleting) {
-                    ForEach((3..<22)) { flavor in
-                        Text(String(flavor)+" days").tag(String(flavor))
-                    }
-                    Text("Never (May cause issues with performance)").tag("Never")
-                }
-                .pickerStyle(.menu)
-            }
-
-            HStack {
-                Text("Clue Font Size:")
-                Spacer()
-                Picker(String(userSettings.clueSize) + " pt", selection: $userSettings.clueSize) {
-                    ForEach((13..<21)) { flavor in
-                        Text(String(flavor)+" pt").tag(Int(flavor))
-                    }
-                }
-                .pickerStyle(.menu)
             }
         }
     }
@@ -294,12 +290,6 @@ class UserSettings: ObservableObject {
         }
     }
     
-    @Published var largePrintMode: Bool {
-        didSet {
-            UserDefaults.standard.set(largePrintMode, forKey: "largePrintMode")
-        }
-    }
-    
     @Published var useEmailAddressKeyboard: Bool {
         didSet {
             UserDefaults.standard.set(useEmailAddressKeyboard, forKey: "useEmailAddressKeyboard")
@@ -328,22 +318,22 @@ class UserSettings: ObservableObject {
         self.useLocalMode = useLocalMode
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
         self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
-        self.defaultErrorTracking = UserDefaults.standard.object(forKey: "defaultErrorTracking") as? Bool ?? false
+        self.defaultErrorTracking = UserDefaults.standard.bool(forKey: "defaultErrorTracking")
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
-        self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
+        self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions")
+            as? Array<String> ?? allSubscriptions
         self.user = useLocalMode ? nil : Auth.auth().currentUser
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
-        self.spaceTogglesDirection = UserDefaults.standard.object(forKey: "spaceTogglesDirection") as? Bool ?? false
-        self.enableHapticFeedback = UserDefaults.standard.object(forKey: "enableHapticFeedback") as? Bool ?? true
+        self.spaceTogglesDirection = UserDefaults.standard.bool(forKey: "spaceTogglesDirection")
+        self.enableHapticFeedback = UserDefaults.standard.bool(forKey: "enableHapticFeedback")
         self.shouldTryGameCenterLogin = UserDefaults.standard.bool(forKey: "shouldTryGameCenterLogin")
         self.lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
         self.loopBackInsideUncompletedWord = UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord")
         self.lastRefreshTime = UserDefaults.standard.double(forKey: "lastRefreshTime")
         self.gameCenterPlayer = GKLocalPlayer.local
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
-        self.largePrintMode = UserDefaults.standard.bool(forKey: "largePrintMode")
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
-        self.clueCyclePlacement = UserDefaults.standard.object(forKey: "clueCyclePlacement") as? Int ?? 0
+        self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

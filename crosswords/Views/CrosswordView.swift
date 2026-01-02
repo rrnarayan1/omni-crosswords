@@ -155,9 +155,9 @@ struct CrosswordView: View {
     }
     
     func getInitialBoxWidth() -> CGFloat {
-        let maxSize: CGFloat = userSettings.largePrintMode ? 60.0 : 40.0
+        let maxInitialSize: CGFloat = 40.0
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
-        return min(defaultSize, maxSize)
+        return min(defaultSize, maxInitialSize)
     }
     
     func zoom() -> Void {
