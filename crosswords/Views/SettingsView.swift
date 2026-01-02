@@ -19,31 +19,33 @@ struct SettingsView: View {
     @State var showSubscriptions = false
 
     var body: some View {
-        VStack(alignment: .leading) {
-            TogglesSettingsView()
+        ScrollView {
+            VStack(alignment: .leading) {
+                TogglesSettingsView()
 
-            PickerViews()
+                PickerViews()
 
-            GameCenterLoginView()
+                GameCenterLoginView()
 
-            NavigationLink(
-                destination: SubscriptionsView(),
-                label: {Text("Configure Puzzle Subscriptions")}
-            ).padding(.top, 20)
+                NavigationLink(
+                    destination: SubscriptionsView(),
+                    label: {Text("Configure Puzzle Subscriptions")}
+                ).padding(.top, 20)
 
-            Spacer()
+                Spacer()
 
-            Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
-                Text("Like Omni Crosswords? Buy me a coffee!")
+                Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
+                    Text("Like Omni Crosswords? Buy me a coffee!")
+                }
+
+                Spacer()
             }
-
-            Spacer()
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Settings")
         .navigationBarItems(trailing:
             HStack {
-                Link(destination: URL(string: "https://rrnarayan1.github.io/omni-crosswords/#four")!) {
+                Link(destination: URL(string: "https://omnicrosswords.app")!) {
                     Image(systemName: "questionmark.circle")
                 }
             }
