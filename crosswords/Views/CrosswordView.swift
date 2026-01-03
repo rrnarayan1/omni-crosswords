@@ -26,8 +26,6 @@ struct CrosswordView: View {
     }
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @Environment(\.managedObjectContext) var managedObjectContext
-    //@EnvironmentObject var timerWrapper : TimerWrapper
     
     @ObservedObject var userSettings = UserSettings()
     @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
@@ -60,7 +58,6 @@ struct CrosswordView: View {
         }
         return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
-    let showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
     
     @ViewBuilder
     var body: some View {
@@ -84,21 +81,13 @@ struct CrosswordView: View {
                             scrollreader.scrollTo("cell"+String(newFocusedTag))
                             return
                         } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
-                            let oneThirdsRowNumber = Int(self.crossword.height/3)
-                            let middleRowNumber = Int(self.crossword.height/2)
-                            let twoThirdsRowNumber = Int(self.crossword.height/3)*2
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
-                            if (newRowNumber > twoThirdsRowNumber) {
-                                scrollreader.scrollTo("row"+String(middleRowNumber + 3), anchor: .center)
-                            } else if (newRowNumber < oneThirdsRowNumber){
-                                scrollreader.scrollTo("row"+String(middleRowNumber - 3), anchor: .center)
-                            }
+                            scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
                         }
                     }
                     .padding(.top, 10)
                 }
             }//.background(.random)
-            //.scrollDisabled(!self.isZoomed)
             .frame(width: UIScreen.screenWidth)
 
             HStack {
@@ -111,13 +100,15 @@ struct CrosswordView: View {
                     }
                 }
                 Spacer()
-                if (showTimer) {
+                if (userSettings.showTimer) {
                     TimerView(
                         isSolved: self.crossword.solved,
                         solvedTime: Int(self.crossword.solvedTime))
                 }
             }.frame(width: self.initialBoxWidth*CGFloat(self.crossword.length), height: 10)
+
             Spacer()
+
             if (self.focusedTag == -1) {
                 VStack (alignment: .center){
                     Text(self.crossword.title!).multilineTextAlignment(.center)
@@ -151,6 +142,7 @@ struct CrosswordView: View {
                 CrosswordLeadingToolbarView(goBack: goBack)
             }.hideSharedBackgroundIfAvailable()
         }
+        // custom back button added in leading toolbar view
         .navigationBarBackButtonHidden(true)
     }
     
@@ -161,8 +153,11 @@ struct CrosswordView: View {
     }
     
     func zoom() -> Void {
-        self.boxWidth = self.isZoomed ? getInitialBoxWidth() : 75.0
-        self.isZoomed = !self.isZoomed
+        self.isZoomed.toggle()
+        let initialWidth = self.getInitialBoxWidth()
+        self.boxWidth = self.isZoomed
+            ? initialWidth * CGFloat(userSettings.zoomMagnificationLevel)
+            : initialWidth
     }
 
     func getCurrentClue() -> String {
@@ -181,8 +176,9 @@ struct CrosswordView: View {
     func shouldScroll(_ keyboardHeight: CGFloat) -> Bool {
 //        print(self.componentHeights)
 //        print(keyboardHeight)
-//        print(UIScreen.screenHeight)
-        return (self.componentHeights + keyboardHeight) > UIScreen.screenHeight
+//        print(UIScreen.main.bounds.size.height)
+//        print("")
+        return (self.componentHeights + keyboardHeight) > UIScreen.main.bounds.size.height
     }
     
     func showSolution() -> Void {
@@ -277,10 +273,9 @@ struct CrosswordGridView: View {
     }
 }
 
-extension UIScreen{
-   static let screenWidth = UIScreen.main.bounds.size.width
-   static let screenHeight = UIScreen.main.bounds.size.height
-   static let screenSize = UIScreen.main.bounds.size
+extension UIScreen {
+    static let screenHeight =  UIScreen.main.bounds.size.height
+    static let screenWidth = UIScreen.main.bounds.size.width
 }
 
 

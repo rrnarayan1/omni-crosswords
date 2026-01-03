@@ -28,7 +28,7 @@ struct SolvedCrosswordStatistics: View {
         graphStat = graphStatEnum
     }
     let maxHeight = 200.0
-    let colWidth = (UIScreen.screenWidth - 100)/7
+    let colWidth = (UIScreen.main.bounds.size.width - 100)/7
     
     var body: some View {
         VStack(alignment: .center) {

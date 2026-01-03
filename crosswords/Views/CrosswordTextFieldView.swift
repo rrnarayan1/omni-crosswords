@@ -19,7 +19,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var isRebusMode: Bool
-    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var timerWrapper : TimerWrapper
     @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var userSettings = UserSettings()
@@ -29,7 +28,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .allCharacters
-        textField.keyboardType = userSettings.useEmailAddressKeyboard ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
+        textField.keyboardType = userSettings.useEmailAddressKeyboard
+            ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
         textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
         textField.addToolbar(coordinator: context.coordinator, clueTitle: "", barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
@@ -41,7 +41,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             DispatchQueue.main.async {
                 uiTextField.becomeFirstResponder()
             }
-        } else if (self.becomeFirstResponder == false && uiTextField.isFirstResponder) {
+        } else if (uiTextField.isFirstResponder && !self.becomeFirstResponder ) {
             DispatchQueue.main.async {
                 uiTextField.resignFirstResponder()
             }

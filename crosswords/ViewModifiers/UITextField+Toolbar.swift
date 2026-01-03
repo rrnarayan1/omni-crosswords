@@ -57,7 +57,9 @@ extension UITextField {
     }
     
     func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, barColor: UIColor) {
-        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0, width: Double(UIScreen.screenWidth), height: toolbarHeight))
+        self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0,
+                                                          width: Double(UIScreen.main.bounds.size.width),
+                                                          height: toolbarHeight))
                 
         let clueTitleLabel = UITextView()
         var clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
@@ -74,8 +76,12 @@ extension UITextField {
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
         
-        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: UIScreen.screenWidth-170)
-        let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: toolbarHeight)
+        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal,
+                                                 toItem: nil, attribute: .notAnAttribute, multiplier: 1.0,
+                                                 constant: UIScreen.main.bounds.size.width-170)
+        let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal,
+                                                  toItem: nil, attribute: .notAnAttribute, multiplier: 1.0,
+                                                  constant: toolbarHeight)
 
         clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
         

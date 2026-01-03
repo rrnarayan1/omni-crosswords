@@ -93,7 +93,7 @@ struct TogglesSettingsView: View {
         }
         
         Toggle(isOn: $userSettings.useEmailAddressKeyboard) {
-            Text("Use Alternate Keyboard Type")
+            Text("Use alternate keyboard type")
         }
     }
 }
@@ -104,7 +104,7 @@ struct PickerViews: View {
     
     var body: some View {
         VStack {
-            Picker("Color Scheme Override", selection: $selectedAppearance) {
+            Picker("Color scheme override", selection: $selectedAppearance) {
                 Text("System Default").tag(0)
                 Text("Light Mode").tag(1)
                 Text("Dark Mode").tag(2)
@@ -137,12 +137,24 @@ struct PickerViews: View {
             }
 
             HStack {
-                Text("Clue Font Size")
+                Text("Clue font size")
                 Spacer()
                 Picker(String(userSettings.clueSize) + " pt", selection: $userSettings.clueSize) {
                     ForEach((13..<21)) { flavor in
                         Text(String(flavor)+" pt").tag(Int(flavor))
                     }
+                }
+                .pickerStyle(.menu)
+            }
+
+            HStack {
+                Text("Zoom magnification level")
+                Spacer()
+                Picker("Zoom magnification level", selection: $userSettings.zoomMagnificationLevel) {
+                    Text("1.25x").tag(Float(1.25))
+                    Text("1.5x").tag(Float(1.5))
+                    Text("2x").tag(Float(2.0))
+                    Text("2.5x").tag(Float(2.5))
                 }
                 .pickerStyle(.menu)
             }
@@ -304,6 +316,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var zoomMagnificationLevel: Float {
+        didSet {
+            UserDefaults.standard.set(zoomMagnificationLevel, forKey: "zoomMagnificationLevel")
+        }
+    }
+
     @Published var user: User?
     @Published var gameCenterPlayer: GKLocalPlayer?
     @Published var useLocalMode: Bool
@@ -336,6 +354,8 @@ class UserSettings: ObservableObject {
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
         self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
+        self.zoomMagnificationLevel = UserDefaults.standard.object(forKey: "zoomMagnificationLevel")
+            as? Float ?? 2.0
         self.gameCenterPlayer?.register(GameCenterListener())
     }
 }
