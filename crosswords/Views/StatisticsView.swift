@@ -65,7 +65,7 @@ struct StatisticsView: View {
             Spacer()
             
             Text("This feature is in Beta - please reach out with suggestions.")
-            Link(destination: URL(string: "https://rrnarayan1.github.io/omni-crosswords/#four")!) {
+            Link(destination: URL(string: "https://omnicrosswords.app")!) {
                 Text("Contact Me!")
             }
             
