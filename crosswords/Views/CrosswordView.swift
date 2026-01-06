@@ -84,6 +84,7 @@ struct CrosswordView: View {
                             let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
                             scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
                         }
+                        //print(crossword.id!)
                     }
                     .padding(.top, 10)
                 }

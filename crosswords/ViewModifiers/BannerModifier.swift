@@ -12,25 +12,31 @@ import SwiftUI
 struct BannerModifier: ViewModifier {
     
     struct BannerData {
-        var bannerId:Int
-        var title:String
-        var detail:String
+        var bannerId: Int
+        var title: String
+        var detail: String
+
+        init() {
+            self.bannerId = 0
+            self.title = ""
+            self.detail = ""
+        }
     }
     
-    @Binding var data:BannerData
+    @Binding var data: BannerData
     @ObservedObject var userSettings = UserSettings()
     
     func body(content: Content) -> some View {
         VStack {
-            if data.title != "" {
+            if (self.data.title != "") {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(data.title)
+                        Text(self.data.title)
                             .bold()
-                        Text(data.detail)
+                        Text(self.data.detail)
                     }
                     Spacer()
-                    Button(action: closeBanner) {
+                    Button(action: self.closeBanner) {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 18))
                     }
@@ -46,8 +52,8 @@ struct BannerModifier: ViewModifier {
     }
     
     func closeBanner() {
-        data.title = ""
-        userSettings.lastAlertId = data.bannerId
+        self.data.title = ""
+        self.userSettings.lastAlertId = self.data.bannerId
     }
 }
 

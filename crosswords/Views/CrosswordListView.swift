@@ -14,9 +14,12 @@ import GameKit
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
+
     @State var refreshEnabled = false
-    @State var bannerData: BannerModifier.BannerData =
-        BannerModifier.BannerData(bannerId: 0, title: "", detail: "")
+    @State var bannerData: BannerModifier.BannerData = BannerModifier.BannerData()
+    @State var openedFileUrl: URL? = nil
+    @State var uploadPageActive = false
+
     @ObservedObject var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
     
@@ -38,7 +41,15 @@ struct CrosswordListView: View {
             return Int(days)!
         }
     }
-    
+
+    init() {
+    }
+
+    init(openedFileUrl: URL?) {
+        self._openedFileUrl = State(initialValue: openedFileUrl)
+        self._uploadPageActive = State(initialValue: openedFileUrl != nil)
+    }
+
     var body: some View {
         NavigationStack {
             if (userSettings.user == nil && !userSettings.useLocalMode) {
@@ -65,6 +76,11 @@ struct CrosswordListView: View {
                     self.refreshCrosswords()
                  }
                 .onAppear(perform: {
+                    // when a file is opened and then the upload page is closed, we don't need
+                    // to keep the reference to the originally opened file
+                    if (!self.uploadPageActive && self.openedFileUrl != nil) {
+                        self.openedFileUrl = nil
+                    }
                     self.refreshCrosswords()
                 })
                 .navigationBarTitle("Crosswords")
@@ -76,9 +92,9 @@ struct CrosswordListView: View {
                             Image(systemName: "chart.bar.xaxis")
                                 .font(.system(size: 18))
                         }
-                        NavigationLink(
-                            destination: UploadPuzzleView()
-                        ) {
+                        Button {
+                            self.uploadPageActive = true
+                        } label: {
                             Image(systemName: "arrow.up.circle")
                                 .font(.system(size: 18))
                         }
@@ -97,11 +113,14 @@ struct CrosswordListView: View {
                         }.disabled(!self.refreshEnabled)
                     }
                 )
+                .navigationDestination(isPresented: self.$uploadPageActive) {
+                    UploadPuzzleView(openedFileUrl: self.openedFileUrl)
+                }
             }
         }
         .banner(data: self.$bannerData)
     }
-    
+
     func checkUser() -> Void {
         if (Auth.auth().currentUser == nil) {
             Auth.auth().signInAnonymously {(authResult, error) in
@@ -199,7 +218,7 @@ struct CrosswordListView: View {
                         if (crossword == nil) {
                             continue
                         }
-                        jsonToCrossword(crossword: crossword!, data: document)
+                        DataUtils.jsonToCrossword(crossword: crossword!, data: document)
                         do {
                             try self.managedObjectContext.save()
                         } catch {
@@ -222,7 +241,7 @@ struct CrosswordListView: View {
 //                        let crossword1 = Crossword(context: self.managedObjectContext)
 //                        jsonToCrossword(crossword: crossword1, data: document)
                         do {
-                            jsonToCrossword(crossword: crossword, data: document)
+                            DataUtils.jsonToCrossword(crossword: crossword, data: document)
                             try self.managedObjectContext.save()
                         } catch {
                             print(error.localizedDescription)
@@ -246,12 +265,16 @@ struct CrosswordListView: View {
             if (crossword.date == nil) {
                 deleteGame(crossword: crossword)
             }
+            // deletes old crosswords
             if crossword.date! < lastDate {
                 deleteGame(crossword: crossword)
-            } else if !self.subscriptions.contains(crossword.outletName!) && !crossword.solved && crossword.outletName! != "Custom" {
+            }
+            // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
+            else if (!self.subscriptions.contains(crossword.outletName!) && !crossword.solved &&
+                        !(crossword.outletName! == "Custom" || crossword.isCustomUpload)) {
                 deleteGame(crossword: crossword)
             }
-// Commented out - this deletes the most recent day's crossword
+            // Commented out - this deletes the most recent day's crossword
 //            if crossword.date! > Date.init(timeInterval: -86400*2, since: Date()) {
 //                deleteGame(crossword: crossword)
 //            }
