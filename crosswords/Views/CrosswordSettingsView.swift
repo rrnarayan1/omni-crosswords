@@ -32,6 +32,8 @@ struct CrosswordSettingsView: View {
                     Button(action: {showSolution()}) {
                         Text("Show Solution")
                     }
+                    .padding()
+                    .buttonStyle(.bordered)
                     .disabled(!isSolutionAvailable)
                     .frame(width: 200)
                 }

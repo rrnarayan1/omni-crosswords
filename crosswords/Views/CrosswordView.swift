@@ -197,7 +197,9 @@ struct CrosswordView: View {
     
     func goBack() -> Void {
         self.becomeFirstResponder = false
-        self.presentationMode.wrappedValue.dismiss()
+        DispatchQueue.main.async {
+            self.presentationMode.wrappedValue.dismiss()
+        }
     }
 }
 

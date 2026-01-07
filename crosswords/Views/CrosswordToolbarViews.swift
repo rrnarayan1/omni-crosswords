@@ -23,7 +23,8 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     let showSolution: () -> Void
     let showSettings: () -> Void
     @State var showShareSheet: Bool = false
-    
+    @State var showCrosswordSettings: Bool = false
+
     static func == (lhs: CrosswordTrailingToolbarView, rhs: CrosswordTrailingToolbarView) -> Bool {
         // no need to refresh this view
         return true
@@ -44,25 +45,33 @@ struct CrosswordTrailingToolbarView: View, Equatable {
 
     var body: some View {
         HStack {
-            NavigationLink(
-                destination: CrosswordSettingsView(title: title, author: author, notes: notes, copyright: copyright, isSolved: isSolved, isSolutionAvailable: isSolutionAvailable, errorTracking: self.isErrorTrackingEnabled, showSolution: showSolution),
-                label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .foregroundColor(Color(UIColor.systemBlue))
-                }
-            ).simultaneousGesture(TapGesture().onEnded{
+            Button {
                 showSettings()
-            })
+                DispatchQueue.main.async {
+                    self.showCrosswordSettings = true
+                }
+
+            } label: {
+                Image(systemName: "slider.horizontal.3")
+            }
+            .navigationDestination(isPresented: self.$showCrosswordSettings) {
+                CrosswordSettingsView(title: title, author: author, notes: notes,
+                                      copyright: copyright, isSolved: isSolved,
+                                      isSolutionAvailable: isSolutionAvailable,
+                                      errorTracking: self.isErrorTrackingEnabled,
+                                      showSolution: showSolution)
+            }
             .font(.system(size: crosswordToolbarButtonSize))
 
-            Button(action: {self.showShareSheet = true}) {
+            Button {
+                self.showShareSheet = true
+            } label: {
                 Image(systemName: "square.and.arrow.up")
-                    .foregroundColor(Color(UIColor.systemBlue))
-            }.sheet(isPresented: self.$showShareSheet,
-                onDismiss: {self.showShareSheet = false},
-                content: {
-                ActivityView(activityItems: shareSheet(isSolved: isSolved, outletName: outletName))
-                }
+            }
+            .sheet(isPresented: self.$showShareSheet,
+                   onDismiss: {self.showShareSheet = false},
+                   content: {ActivityView(activityItems:
+                                            shareSheet(isSolved: isSolved, outletName: outletName))}
             )
             .font(.system(size: crosswordToolbarButtonSize))
         }

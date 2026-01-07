@@ -49,7 +49,7 @@ struct UploadPuzzleView: View {
                     }
 
                     HStack {
-                        Button("Clear") {
+                        Button("Cancel") {
                             self.openedFileUrl = nil
                         }
                         .padding()
@@ -65,7 +65,7 @@ struct UploadPuzzleView: View {
                 }
             }
         }
-        .frame(width: min(UIScreen.screenWidth*0.9, 400))
+        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .fileImporter(
             isPresented: $showFilePicker,
             allowedContentTypes: [.data],

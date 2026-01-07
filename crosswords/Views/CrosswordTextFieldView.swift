@@ -41,7 +41,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             DispatchQueue.main.async {
                 uiTextField.becomeFirstResponder()
             }
-        } else if (uiTextField.isFirstResponder && !self.becomeFirstResponder ) {
+        } else if (uiTextField.isFirstResponder && !self.becomeFirstResponder) {
             DispatchQueue.main.async {
                 uiTextField.resignFirstResponder()
             }

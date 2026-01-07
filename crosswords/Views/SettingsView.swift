@@ -12,7 +12,8 @@ import Firebase
 import FirebaseAuth
 import GameKit
 
-let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today", "Vox", "NYT Syndicated", "Universal", "NYT Mini", "Crossword Club"]
+let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today",
+                                       "Vox", "NYT Syndicated", "Universal", "NYT Mini", "Crossword Club"]
 
 struct SettingsView: View {
     @ObservedObject var userSettings = UserSettings()
@@ -27,21 +28,19 @@ struct SettingsView: View {
 
                 GameCenterLoginView()
 
-                NavigationLink(
-                    destination: SubscriptionsView(),
-                    label: {Text("Configure Puzzle Subscriptions")}
-                ).padding(.top, 20)
+                VStack(alignment: .leading) {
+                    NavigationLink(
+                        destination: SubscriptionsView(),
+                        label: {Text("Configure Puzzle Subscriptions")}
+                    )
 
-                Spacer()
-
-                Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
-                    Text("Like Omni Crosswords? Buy me a coffee!")
-                }
-
-                Spacer()
+                    Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
+                        Text("Like Omni Crosswords? Buy me a coffee!")
+                    }
+                }.padding(20)
             }
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
+        .frame(width: min(UIScreen.screenWidth * 0.9, 450))
         .navigationBarTitle("Settings")
         .navigationBarItems(trailing:
             HStack {
@@ -50,7 +49,6 @@ struct SettingsView: View {
                 }
             }
         )
-        .padding(30)
     }
 }
 
@@ -116,7 +114,7 @@ struct PickerViews: View {
             HStack {
                 Text("Clue cycle control placement")
                 Spacer()
-                Picker("Keyboard Toolbar Style", selection: $userSettings.clueCyclePlacement) {
+                Picker("Clue cycle control placement", selection: $userSettings.clueCyclePlacement) {
                     Text("Left").tag(0)
                     Text("Split").tag(1)
                     Text("Right").tag(2)
@@ -127,7 +125,7 @@ struct PickerViews: View {
             HStack {
                 Text("Auto-delete puzzles after")
                 Spacer()
-                Picker(userSettings.daysToWaitBeforeDeleting + " days", selection: $userSettings.daysToWaitBeforeDeleting) {
+                Picker("Auto-delete puzzles after", selection: $userSettings.daysToWaitBeforeDeleting) {
                     ForEach((3..<22)) { i in
                         Text(String(i)+" days").tag(String(i))
                     }
@@ -139,7 +137,7 @@ struct PickerViews: View {
             HStack {
                 Text("Clue font size")
                 Spacer()
-                Picker(String(userSettings.clueSize) + " pt", selection: $userSettings.clueSize) {
+                Picker("Clue font size", selection: $userSettings.clueSize) {
                     ForEach((13..<21)) { flavor in
                         Text(String(flavor)+" pt").tag(Int(flavor))
                     }

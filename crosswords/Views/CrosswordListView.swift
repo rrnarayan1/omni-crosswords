@@ -149,10 +149,12 @@ struct CrosswordListView: View {
                 self.userSettings.gameCenterPlayer = localPlayer
             }
         }
-        
-        
         self.refreshEnabled = false
-        
+
+        if (self.userSettings.user == nil) {
+            checkUser()
+        }
+
         refreshQueue.async() {
             if (userSettings.useLocalMode) {
                 if (crosswords.isEmpty) {

@@ -179,7 +179,7 @@ extension UITextField {
 
     func createCustomButtonGroup(firstButton: UIButton, secondButton: UIButton, firstButtonWidth: CGFloat,
                                  secondButtonWidth: CGFloat) -> UIBarButtonItem {
-        let containerWidth = firstButtonWidth+secondButtonWidth+10
+        let containerWidth = firstButtonWidth+secondButtonWidth+15
         let containerView = UIView(frame: CGRectMake(0, 0, containerWidth, toolbarHeight))
         containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
         firstButton.translatesAutoresizingMaskIntoConstraints = false
