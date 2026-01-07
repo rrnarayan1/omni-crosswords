@@ -70,6 +70,12 @@ struct CrosswordListView: View {
                         CrosswordListItemView(
                             crossword: crossword,
                         )
+                    }.swipeActions {
+                        Button("Delete", systemImage: "trash.fill") {
+                            crossword.isHidden = true
+                        }
+                        .labelStyle(.iconOnly)
+                        .tint(.red)
                     }
                 }
                 .refreshable {
