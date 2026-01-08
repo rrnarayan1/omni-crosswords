@@ -39,7 +39,7 @@ extension UITextField {
         if #available(iOS 26.0, *) {
             clueTitleIndex = 2
         } else {
-            clueTitleIndex = 3
+            clueTitleIndex = 4
         }
         let clueTitleLabel = uiTextFieldToolbar.items![clueTitleIndex].customView as! UITextView
 
@@ -60,9 +60,8 @@ extension UITextField {
         self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0,
                                                           width: Double(UIScreen.main.bounds.size.width),
                                                           height: toolbarHeight))
-                
         let clueTitleLabel = UITextView()
-        var clueFontSize = UserDefaults.standard.integer(forKey: "clueSize")
+        var clueFontSize = coordinator.parent.userSettings.clueSize
         if (clueFontSize < 13) {
             clueFontSize = 13
         }
@@ -93,11 +92,15 @@ extension UITextField {
             let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
                                            target: nil,
                                            action: nil)
+            let fixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
+                                           target: nil,
+                                           action: nil)
+            fixed.width = 5
 
             let previousButton = UIButton.systemButton(with: previousImage,
                                                    target: coordinator,
                                                    action: #selector(coordinator.goToPreviousClue))
-            
+
             let nextButton = UIButton.systemButton(with: nextImage,
                                                    target: coordinator,
                                                    action: #selector(coordinator.goToNextClue))
@@ -119,7 +122,7 @@ extension UITextField {
                 var leftContainerButton: UIBarButtonItem
                 var rightContainerButton: UIBarButtonItem
 
-                switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
+                switch coordinator.parent.userSettings.clueCyclePlacement {
                 case 1: // split
                     leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
                                                                       secondButton: solveCellButton,
@@ -152,21 +155,21 @@ extension UITextField {
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
             } else {
                 // for some reason in < iOS 18 the container groups don't work
-                switch UserDefaults.standard.integer(forKey: "clueCyclePlacement") {
+                switch coordinator.parent.userSettings.clueCyclePlacement {
                 case 1: // split
                     return [UIBarButtonItem(customView: previousButton), flexible,
-                            UIBarButtonItem(customView: solveCellButton), clueTitle,
+                            UIBarButtonItem(customView: solveCellButton), fixed, clueTitle,
                             UIBarButtonItem(customView: toggleButton), flexible,
                             UIBarButtonItem(customView: nextButton)]
                 case 2: // right
-                    return [UIBarButtonItem(customView: toggleButton),
+                    return [UIBarButtonItem(customView: toggleButton), fixed,
                             UIBarButtonItem(customView: solveCellButton), flexible, clueTitle, flexible,
-                            UIBarButtonItem(customView: previousButton),
+                            UIBarButtonItem(customView: previousButton), fixed,
                             UIBarButtonItem(customView: nextButton)]
                 default: // left
-                    return [UIBarButtonItem(customView: previousButton),
+                    return [UIBarButtonItem(customView: previousButton), fixed,
                             UIBarButtonItem(customView: nextButton), flexible, clueTitle, flexible,
-                            UIBarButtonItem(customView: solveCellButton),
+                            UIBarButtonItem(customView: solveCellButton), fixed,
                             UIBarButtonItem(customView: toggleButton)]
                 }
             }
