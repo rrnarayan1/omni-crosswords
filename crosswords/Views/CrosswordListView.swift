@@ -23,8 +23,15 @@ struct CrosswordListView: View {
     @ObservedObject var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
     
-    @FetchRequest(entity: Crossword.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Crossword.date, ascending: false)])
+    @FetchRequest(entity: Crossword.entity(),
+                  sortDescriptors: [NSSortDescriptor(keyPath: \Crossword.date, ascending: false)],
+                  predicate: NSPredicate(format: "isHidden == false"))
     var crosswords: FetchedResults<Crossword>
+
+    @FetchRequest(entity: Crossword.entity(), sortDescriptors: [],
+                  predicate: NSPredicate(format: "isHidden == true"))
+    var hiddenCrosswords: FetchedResults<Crossword>
+
     var showSolvedPuzzles: Bool {
         UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
     }
@@ -42,10 +49,7 @@ struct CrosswordListView: View {
         }
     }
 
-    init() {
-    }
-
-    init(openedFileUrl: URL?) {
+    init(openedFileUrl: URL? = nil) {
         self._openedFileUrl = State(initialValue: openedFileUrl)
         self._uploadPageActive = State(initialValue: openedFileUrl != nil)
     }
@@ -60,7 +64,7 @@ struct CrosswordListView: View {
                     })
             } else {
                 let filteredCrosswords = self.crosswords.filter {
-                    (!$0.solved || self.showSolvedPuzzles) && !$0.isHidden
+                    (!$0.solved || self.showSolvedPuzzles)
                 }
                 List(filteredCrosswords, id: \.id) { crossword in
                     NavigationLink {
@@ -73,6 +77,11 @@ struct CrosswordListView: View {
                     }.swipeActions {
                         Button("Delete", systemImage: "trash.fill") {
                             crossword.isHidden = true
+                            do {
+                                try self.managedObjectContext.save()
+                            } catch {
+                                print(error.localizedDescription)
+                            }
                         }
                         .labelStyle(.iconOnly)
                         .tint(.red)
@@ -151,10 +160,6 @@ struct CrosswordListView: View {
         }
         self.refreshEnabled = false
 
-        if (self.userSettings.user == nil) {
-            checkUser()
-        }
-
         refreshQueue.async() {
             if (userSettings.useLocalMode) {
                 if (crosswords.isEmpty) {
@@ -170,6 +175,10 @@ struct CrosswordListView: View {
                 return
             }
 
+            if (self.userSettings.user == nil) {
+                checkUser()
+            }
+
             UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
 
             let lastDate: Date
@@ -180,22 +189,22 @@ struct CrosswordListView: View {
                 // crosswords are sorted by date desc, so pull the first one
                 lastDate = self.crosswords[0].date!
             }
-            
+
+            let shownCrosswordIds: Array<String> = crosswords.map {$0.id!}
+            var allCrosswords: Array<Crossword> = Array(self.crosswords)
+            allCrosswords.append(contentsOf: self.hiddenCrosswords)
+            let allCrosswordIds: Array<String> = allCrosswords.map {$0.id!}
+
             let db = Firestore.firestore()
             let docRef = db.collection("crosswords")
                 .whereField("date", isGreaterThanOrEqualTo: lastDate)
                 .whereField("crossword_outlet_name", in: subscriptions)
             
-            
             let lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
             let alertDocRef = db.collection("alerts")
                 .whereField("id", isGreaterThan: lastAlertId)
                 .order(by: "id", descending: true)
-            
-            let crosswordIds: Array<String> = crosswords.map { (crossword) -> String in
-                crossword.id!
-            }
-            
+
             let overwrittenCrosswords = db.collection("crosswords")
                 .whereField("version", isGreaterThan: 0)
             
@@ -217,7 +226,8 @@ struct CrosswordListView: View {
                     print("Error getting documents: \(error)")
                 } else {
                     for document in querySnapshot!.documents {
-                        if (!crosswordIds.contains(document.documentID)) {
+                        // if we aren't showing it, it doesn't need to be overwritten
+                        if (!shownCrosswordIds.contains(document.documentID)) {
                             continue
                         }
                         let crossword = crosswords.first(where: {
@@ -235,13 +245,14 @@ struct CrosswordListView: View {
                     }
                 }
             }
-            
+
             docRef.getDocuments {(querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")
                 } else {
                     for document in querySnapshot!.documents {
-                        if (crosswordIds.contains(document.documentID)) {
+                        // if it's hidden, then we don't need to save it
+                        if (allCrosswordIds.contains(document.documentID)) {
                             continue
                         }
                         let crossword = Crossword(context: self.managedObjectContext)
@@ -256,37 +267,34 @@ struct CrosswordListView: View {
                         }
                     }
                 }
-                checkForDeletions()
-                syncSavedGames()
+                self.checkForDeletions(allCrosswords: allCrosswords)
+                self.syncSavedGames()
                 self.refreshEnabled = true
             }
         }
     }
     
-    func checkForDeletions() -> Void {
-        if (daysAgoToDelete == -1) {
+    func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {
+        if (self.daysAgoToDelete == -1) {
             return
         }
-        let timeToGoBack: Double = Double(-1 * daysAgoToDelete * 86400)
+        let timeToGoBack: Double = Double(-1 * self.daysAgoToDelete * 86400)
         let lastDate = Date.init(timeInterval: timeToGoBack, since: Date())
-        for crossword in self.crosswords {
-            if (crossword.date == nil) {
-                deleteGame(crossword: crossword)
-            }
+
+        for crossword in allCrosswords {
             // deletes old crosswords
-            if crossword.date! < lastDate {
-                deleteGame(crossword: crossword)
+            if (crossword.date == nil || crossword.date! < lastDate) {
+                self.deleteGame(crossword: crossword)
             }
             // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
             else if (!self.subscriptions.contains(crossword.outletName!) && !crossword.solved &&
                         !(crossword.outletName! == "Custom" || crossword.isCustomUpload)) {
-                deleteGame(crossword: crossword)
+                self.deleteGame(crossword: crossword)
             }
             // Commented out - this deletes the most recent day's crossword
 //            if crossword.date! > Date.init(timeInterval: -86400*2, since: Date()) {
 //                deleteGame(crossword: crossword)
 //            }
-            
         }
     }
     
@@ -326,11 +334,6 @@ struct CrosswordListView: View {
                 }
             })
         }
-    }
-    
-    func hideGame(crossword: Crossword) -> Void {
-        crossword.isHidden = true
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
     
     func deleteGame(crossword: Crossword) -> Void {
