@@ -151,7 +151,8 @@ struct CrosswordListView: View {
             if (userSettings.useLocalMode) {
                 if (crosswords.isEmpty) {
                     let crossword = Crossword(context: self.managedObjectContext)
-                    buildSampleCrossword(crossword: crossword)
+                    DataUtils.buildSampleCrossword(crossword: crossword,
+                                                   resourceName: "sampleData")
                     do {
                         try self.managedObjectContext.save()
                     } catch {
