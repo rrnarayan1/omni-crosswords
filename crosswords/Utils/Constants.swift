@@ -1,0 +1,15 @@
+//
+//  Constants.swift
+//  crosswords
+//
+//  Created by Rohan Narayan on 1/10/26.
+//  Copyright © 2026 Rohan Narayan. All rights reserved.
+//
+import SwiftUI
+
+enum Constants {
+    static let keybordToolbarHeight: Int = 40
+    static let navigationBarHeight: Int = 45
+    static let maxInitialCellSize: Int = 40
+    static let crosswordToolbarButtonSize: CGFloat = 16.0
+}

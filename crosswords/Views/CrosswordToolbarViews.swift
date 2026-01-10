@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-let crosswordToolbarButtonSize = 16.0
-
 struct CrosswordTrailingToolbarView: View, Equatable {
     let title: String
     let author: String
@@ -61,7 +59,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                                       errorTracking: self.isErrorTrackingEnabled,
                                       showSolution: showSolution)
             }
-            .font(.system(size: crosswordToolbarButtonSize))
+            .font(.system(size: Constants.crosswordToolbarButtonSize))
 
             Button {
                 self.showShareSheet = true
@@ -73,7 +71,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                    content: {ActivityView(activityItems:
                                             shareSheet(isSolved: isSolved, outletName: outletName))}
             )
-            .font(.system(size: crosswordToolbarButtonSize))
+            .font(.system(size: Constants.crosswordToolbarButtonSize))
         }
     }
 }
@@ -91,7 +89,9 @@ struct CrosswordLeadingToolbarView: View, Equatable {
             goBack()
         }) {
             Image(systemName: "chevron.left")
-        }.padding(0).font(.system(size: crosswordToolbarButtonSize))
+        }
+        .padding(0)
+        .font(.system(size: Constants.crosswordToolbarButtonSize))
     }
 }
 

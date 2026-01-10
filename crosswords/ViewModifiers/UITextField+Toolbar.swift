@@ -9,8 +9,6 @@
 import UIKit
 import SwiftUI
 
-let toolbarHeight = 40.0
-
 extension UITextField {
     
     var nextImage: UIImage {
@@ -59,7 +57,7 @@ extension UITextField {
     func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, barColor: UIColor) {
         self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0,
                                                           width: Double(UIScreen.main.bounds.size.width),
-                                                          height: toolbarHeight))
+                                                          height: Double(Constants.keybordToolbarHeight)))
         let clueTitleLabel = UITextView()
         var clueFontSize = coordinator.parent.userSettings.clueSize
         if (clueFontSize < 13) {
@@ -80,7 +78,7 @@ extension UITextField {
                                                  constant: UIScreen.main.bounds.size.width-170)
         let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal,
                                                   toItem: nil, attribute: .notAnAttribute, multiplier: 1.0,
-                                                  constant: toolbarHeight)
+                                                  constant: Double(Constants.keybordToolbarHeight))
 
         clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
         
@@ -183,7 +181,8 @@ extension UITextField {
     func createCustomButtonGroup(firstButton: UIButton, secondButton: UIButton, firstButtonWidth: CGFloat,
                                  secondButtonWidth: CGFloat) -> UIBarButtonItem {
         let containerWidth = firstButtonWidth+secondButtonWidth+15
-        let containerView = UIView(frame: CGRectMake(0, 0, containerWidth, toolbarHeight))
+        let containerView = UIView(frame: CGRectMake(0, 0, containerWidth,
+                                                     Double(Constants.keybordToolbarHeight)))
         containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
         firstButton.translatesAutoresizingMaskIntoConstraints = false
         secondButton.translatesAutoresizingMaskIntoConstraints = false

@@ -16,10 +16,11 @@ struct CrosswordView: View {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let window = windowScene?.windows.filter {$0.isKeyWindow}.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        
-        // 40 is height of keyboard toolbar
-        // 45 is height of navigation bar
-        return 40 + 45 + statusBarHeight + self.initialBoxWidth*CGFloat(self.crossword.height) - 10
+        let crosswordHeight = self.initialBoxWidth*CGFloat(self.crossword.height)
+        let barHeights: CGFloat = CGFloat(Constants.keybordToolbarHeight
+                                          + Constants.navigationBarHeight) + statusBarHeight
+
+        return barHeights + crosswordHeight - 10
     }
     var initialBoxWidth: CGFloat {
         getInitialBoxWidth()
@@ -148,7 +149,7 @@ struct CrosswordView: View {
     }
     
     func getInitialBoxWidth() -> CGFloat {
-        let maxInitialSize: CGFloat = 40.0
+        let maxInitialSize: CGFloat = CGFloat(Constants.maxInitialCellSize)
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
         return min(defaultSize, maxInitialSize)
     }
