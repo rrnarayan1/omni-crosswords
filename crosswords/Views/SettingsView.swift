@@ -13,37 +13,39 @@ import FirebaseAuth
 import GameKit
 
 let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday", "New Yorker", "USA Today",
-                                       "Vox", "NYT Syndicated", "Universal", "NYT Mini", "Crossword Club"]
+                                       "Vox", "NYT Syndicated", "Universal", "NYT Mini",
+                                       "Crossword Club"]
 
 struct SettingsView: View {
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
     @State var showSubscriptions = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                TogglesSettingsView()
+                TogglesSettingsView(userSettings: self.userSettings)
 
-                PickerViews()
+                PickerViews(userSettings: self.userSettings)
 
-                GameCenterLoginView()
+                GameCenterLoginView(userSettings: self.userSettings)
 
-                VStack(alignment: .leading) {
-                    NavigationLink(
-                        destination: SubscriptionsView(),
-                        label: {Text("Configure Puzzle Subscriptions")}
-                    )
-
-                    Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
-                        Text("Like Omni Crosswords? Buy me a coffee!")
-                    }
-                }.padding(20)
+                Button("Configure Puzzle Subscriptions"){
+                    self.showSubscriptions.toggle()
+                }
+                .padding(.top)
+                .buttonStyle(.bordered)
+                .navigationDestination(isPresented: self.$showSubscriptions) {
+                    SubscriptionsView(userSettings: self.userSettings)
+                }
             }
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 450))
         .navigationBarTitle("Settings")
         .navigationBarItems(trailing:
             HStack {
+                Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
+                    Image(systemName: "hands.clap.fill")
+                }
                 Link(destination: URL(string: "https://omnicrosswords.app")!) {
                     Image(systemName: "questionmark.circle")
                 }
@@ -53,7 +55,7 @@ struct SettingsView: View {
 }
 
 struct TogglesSettingsView: View {
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
 
     var body: some View {
         Toggle(isOn: $userSettings.showSolved) {
@@ -97,7 +99,7 @@ struct TogglesSettingsView: View {
 }
 
 struct PickerViews: View {
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
     @AppStorage("selectedAppearance") var selectedAppearance = 0
     
     var body: some View {
@@ -161,7 +163,7 @@ struct PickerViews: View {
 }
 
 struct GameCenterLoginView: View {
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
 
     func authenticateUser() {
         let localPlayer = GKLocalPlayer.local
@@ -188,8 +190,8 @@ struct GameCenterLoginView: View {
 }
 
 struct SubscriptionsView: View {
-    @ObservedObject var userSettings = UserSettings()
-    
+    @ObservedObject var userSettings: UserSettings
+
     var body: some View {
         VStack(alignment: .leading) {
             ForEach((0..<allSubscriptions.count), id: \.self) { i in
@@ -197,7 +199,8 @@ struct SubscriptionsView: View {
                     Text(allSubscriptions[i])
                     Spacer()
                     Button(action: {self.toggleSubscription(allSubscriptions[i])}) {
-                        Image(systemName: self.hasSub(allSubscriptions[i]) ? "checkmark.square" : "square")
+                        Image(systemName: self.hasSub(allSubscriptions[i])
+                              ? "checkmark.square" : "square")
                             .foregroundColor(Color(UIColor.systemGray))
                             .font(.system(size: 18))
                     }
@@ -205,7 +208,7 @@ struct SubscriptionsView: View {
                 .padding(5)
             }
         }
-        .navigationBarTitle("Subscriptions", displayMode: .large)
+        .navigationBarTitle("Subscriptions", displayMode: .inline)
         .padding(30)
     }
     

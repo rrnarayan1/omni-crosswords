@@ -24,8 +24,8 @@ struct BannerModifier: ViewModifier {
     }
     
     @Binding var data: BannerData
-    @ObservedObject var userSettings = UserSettings()
-    
+    @ObservedObject var userSettings: UserSettings
+
     func body(content: Content) -> some View {
         VStack {
             if (self.data.title != "") {
@@ -58,7 +58,7 @@ struct BannerModifier: ViewModifier {
 }
 
 extension View {
-    func banner(data: Binding<BannerModifier.BannerData>) -> some View {
-        self.modifier(BannerModifier(data: data))
+    func banner(data: Binding<BannerModifier.BannerData>, userSettings: UserSettings) -> some View {
+        self.modifier(BannerModifier(data: data, userSettings: userSettings))
     }
 }

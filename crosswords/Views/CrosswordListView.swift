@@ -20,7 +20,7 @@ struct CrosswordListView: View {
     @State var openedFileUrl: URL? = nil
     @State var uploadPageActive = false
 
-    @ObservedObject var userSettings = UserSettings()
+    var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
     
     @FetchRequest(entity: Crossword.entity(),
@@ -32,23 +32,6 @@ struct CrosswordListView: View {
                   predicate: NSPredicate(format: "isHidden == true"))
     var hiddenCrosswords: FetchedResults<Crossword>
 
-    var showSolvedPuzzles: Bool {
-        UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
-    }
-    
-    var subscriptions: Array<String> {
-        UserDefaults.standard.object(forKey: "subscriptions") as? Array<String> ?? allSubscriptions
-    }
-    
-    var daysAgoToDelete: Int {
-        let days = UserDefaults.standard.object(forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
-        if (days == "Never") {
-            return -1
-        } else {
-            return Int(days)!
-        }
-    }
-
     init(openedFileUrl: URL? = nil) {
         self._openedFileUrl = State(initialValue: openedFileUrl)
         self._uploadPageActive = State(initialValue: openedFileUrl != nil)
@@ -56,7 +39,7 @@ struct CrosswordListView: View {
 
     var body: some View {
         NavigationStack {
-            if (userSettings.user == nil && !userSettings.useLocalMode) {
+            if (self.userSettings.user == nil && !self.userSettings.useLocalMode) {
                 Image(systemName: "circle.dotted")
                     .font(.system(size: 20))
                     .onAppear(perform: {
@@ -64,12 +47,11 @@ struct CrosswordListView: View {
                     })
             } else {
                 let filteredCrosswords = self.crosswords.filter {
-                    (!$0.solved || self.showSolvedPuzzles)
+                    (!$0.solved || self.userSettings.showSolved)
                 }
                 List(filteredCrosswords, id: \.id) { crossword in
                     NavigationLink {
                         NavigationLazyView(CrosswordView(crossword: crossword))
-                            .environment(\.managedObjectContext, self.managedObjectContext)
                     } label: {
                         CrosswordListItemView(
                             crossword: crossword,
@@ -113,8 +95,12 @@ struct CrosswordListView: View {
                             Image(systemName: "arrow.up.circle")
                                 .font(.system(size: 18))
                         }
+                        .navigationDestination(isPresented: self.$uploadPageActive) {
+                            UploadPuzzleView(openedFileUrl: self.openedFileUrl)
+                        }
+
                         NavigationLink(
-                            destination: SettingsView()
+                            destination: SettingsView(userSettings: self.userSettings)
                         ) {
                             Image(systemName: "gearshape.fill")
                                 .font(.system(size: 18))
@@ -128,12 +114,9 @@ struct CrosswordListView: View {
                         }.disabled(!self.refreshEnabled)
                     }
                 )
-                .navigationDestination(isPresented: self.$uploadPageActive) {
-                    UploadPuzzleView(openedFileUrl: self.openedFileUrl)
-                }
             }
         }
-        .banner(data: self.$bannerData)
+        .banner(data: self.$bannerData, userSettings: self.userSettings)
     }
 
     func checkUser() -> Void {
@@ -179,7 +162,7 @@ struct CrosswordListView: View {
                 checkUser()
             }
 
-            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
+            // UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
 
             let lastDate: Date
             if self.crosswords.count == 0 {
@@ -198,9 +181,9 @@ struct CrosswordListView: View {
             let db = Firestore.firestore()
             let docRef = db.collection("crosswords")
                 .whereField("date", isGreaterThanOrEqualTo: lastDate)
-                .whereField("crossword_outlet_name", in: subscriptions)
-            
-            let lastAlertId = UserDefaults.standard.integer(forKey: "lastAlertId")
+                .whereField("crossword_outlet_name", in: self.userSettings.subscriptions)
+
+            let lastAlertId = self.userSettings.lastAlertId
             let alertDocRef = db.collection("alerts")
                 .whereField("id", isGreaterThan: lastAlertId)
                 .order(by: "id", descending: true)
@@ -273,12 +256,22 @@ struct CrosswordListView: View {
             }
         }
     }
-    
+
+    func getDaysAgoToDelete() -> Int {
+        let days = self.userSettings.daysToWaitBeforeDeleting
+        if (days == "Never") {
+            return -1
+        } else {
+            return Int(days)!
+        }
+    }
+
     func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {
-        if (self.daysAgoToDelete == -1) {
+        let daysAgoToDelete = self.getDaysAgoToDelete()
+        if (daysAgoToDelete == -1) {
             return
         }
-        let timeToGoBack: Double = Double(-1 * self.daysAgoToDelete * 86400)
+        let timeToGoBack: Double = Double(-1 * daysAgoToDelete * 86400)
         let lastDate = Date.init(timeInterval: timeToGoBack, since: Date())
 
         for crossword in allCrosswords {
@@ -287,8 +280,9 @@ struct CrosswordListView: View {
                 self.deleteGame(crossword: crossword)
             }
             // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
-            else if (!self.subscriptions.contains(crossword.outletName!) && !crossword.solved &&
-                        !(crossword.outletName! == "Custom" || crossword.isCustomUpload)) {
+            else if (!self.userSettings.subscriptions.contains(crossword.outletName!)
+                     && !crossword.solved
+                     && !(crossword.outletName! == "Custom" || crossword.isCustomUpload)) {
                 self.deleteGame(crossword: crossword)
             }
             // Commented out - this deletes the most recent day's crossword
