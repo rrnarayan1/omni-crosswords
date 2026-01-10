@@ -15,10 +15,11 @@ import GameKit
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
-    @State var refreshEnabled = false
+    @State var refreshEnabled = true
     @State var bannerData: BannerModifier.BannerData = BannerModifier.BannerData()
     @State var openedFileUrl: URL? = nil
     @State var uploadPageActive = false
+    @State var selectedCrossword: [Crossword] = []
 
     var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
@@ -38,7 +39,7 @@ struct CrosswordListView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: self.$selectedCrossword) {
             if (self.userSettings.user == nil && !self.userSettings.useLocalMode) {
                 Image(systemName: "circle.dotted")
                     .font(.system(size: 20))
@@ -50,9 +51,7 @@ struct CrosswordListView: View {
                     (!$0.solved || self.userSettings.showSolved)
                 }
                 List(filteredCrosswords, id: \.id) { crossword in
-                    NavigationLink {
-                        NavigationLazyView(CrosswordView(crossword: crossword))
-                    } label: {
+                    NavigationLink(value: crossword) {
                         CrosswordListItemView(
                             crossword: crossword,
                         )
@@ -69,6 +68,9 @@ struct CrosswordListView: View {
                         .tint(.red)
                     }
                 }
+                .navigationDestination(for: Crossword.self) {crossword in
+                    CrosswordView(crossword: crossword)
+                }
                 .refreshable {
                     self.refreshCrosswords()
                  }
@@ -78,7 +80,9 @@ struct CrosswordListView: View {
                     if (!self.uploadPageActive && self.openedFileUrl != nil) {
                         self.openedFileUrl = nil
                     }
-                    self.refreshCrosswords()
+                    if (self.selectedCrossword.isEmpty) {
+                        self.refreshCrosswords()
+                    }
                 })
                 .navigationBarTitle("Crosswords")
                 .navigationBarItems(trailing:
