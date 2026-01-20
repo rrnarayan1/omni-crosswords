@@ -59,6 +59,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                                       errorTracking: self.isErrorTrackingEnabled,
                                       showSolution: showSolution)
             }
+            .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
 
             Button {
@@ -71,6 +72,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                    content: {ActivityView(activityItems:
                                             shareSheet(isSolved: isSolved, outletName: outletName))}
             )
+            .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
         }
     }
@@ -91,18 +93,7 @@ struct CrosswordLeadingToolbarView: View, Equatable {
             Image(systemName: "chevron.left")
         }
         .padding(0)
+        .tint(Color(UIColor.label))
         .font(.system(size: Constants.crosswordToolbarButtonSize))
-    }
-}
-
-extension ToolbarContent {
-
-    @ToolbarContentBuilder
-    func hideSharedBackgroundIfAvailable() -> some ToolbarContent {
-        if #available(iOS 26.0, *) {
-            sharedBackgroundVisibility(.hidden)
-        } else {
-            self
-        }
     }
 }

@@ -45,6 +45,8 @@
 		F35263612F1306FB0049F0B6 /* UIScreen+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35263602F1306F40049F0B6 /* UIScreen+Extensions.swift */; };
 		F35263632F1307150049F0B6 /* ShapeStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35263622F1307150049F0B6 /* ShapeStyle+Extensions.swift */; };
 		F35263652F1307B60049F0B6 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35263642F1307B20049F0B6 /* UserSettings.swift */; };
+		F35263692F20147C0049F0B6 /* ToolbarContent+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */; };
+		F352636B2F2014AD0049F0B6 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
 		F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* DataUtils.swift */; };
@@ -92,6 +94,8 @@
 		F35263602F1306F40049F0B6 /* UIScreen+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+Extensions.swift"; sourceTree = "<group>"; };
 		F35263622F1307150049F0B6 /* ShapeStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShapeStyle+Extensions.swift"; sourceTree = "<group>"; };
 		F35263642F1307B20049F0B6 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolbarContent+Extensions.swift"; sourceTree = "<group>"; };
+		F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPuzzleView.swift; sourceTree = "<group>"; };
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
 		F38D69BC2EE4D10A001E6096 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
@@ -180,8 +184,6 @@
 			children = (
 				F352635F2F1304DF0049F0B6 /* SampleDataFiles */,
 				1C30E3A6289736CE00189562 /* Data */,
-				1C59BF4F277E99A00076F371 /* crosswords.entitlements */,
-				1C59BF4C277E97960076F371 /* crosswordsDebug.entitlements */,
 				1C4FF2542501D061002BBE48 /* Utils */,
 				1C6A26B524CA7311002F8DAD /* Views */,
 				1C958AB7284C09FE00695B9B /* ViewModifiers */,
@@ -189,11 +191,13 @@
 				1C73206924C4F44000240AF8 /* SceneDelegate.swift */,
 				1C73207024C4F44200240AF8 /* Assets.xcassets */,
 				1C73207524C4F44200240AF8 /* LaunchScreen.storyboard */,
+				1C8AB1AC289752B7008D8841 /* DevOverrides.plist */,
 				1C73207824C4F44200240AF8 /* Info.plist */,
 				1C06D8EF24D142EC00B734BB /* GoogleService-Info.plist */,
 				1C73206B24C4F44000240AF8 /* crosswords.xcdatamodeld */,
+				1C59BF4F277E99A00076F371 /* crosswords.entitlements */,
+				1C59BF4C277E97960076F371 /* crosswordsDebug.entitlements */,
 				1C73207224C4F44200240AF8 /* Preview Content */,
-				1C8AB1AC289752B7008D8841 /* DevOverrides.plist */,
 			);
 			path = crosswords;
 			sourceTree = "<group>";
@@ -213,6 +217,8 @@
 				1C958ABA284C0ADC00695B9B /* BannerModifier.swift */,
 				1C4FF2552501D074002BBE48 /* NavigationBarModifier.swift */,
 				F35263622F1307150049F0B6 /* ShapeStyle+Extensions.swift */,
+				F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */,
+				F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */,
 				1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */,
 				F35263602F1306F40049F0B6 /* UIScreen+Extensions.swift */,
 			);
@@ -319,6 +325,8 @@
 				1C4FF2562501D074002BBE48 /* NavigationBarModifier.swift in Sources */,
 				F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */,
 				F32FD9502AF6125100CC90E1 /* CrosswordUtils.swift in Sources */,
+				F352636B2F2014AD0049F0B6 /* UIBarButtonItem+Extensions.swift in Sources */,
+				F35263692F20147C0049F0B6 /* ToolbarContent+Extensions.swift in Sources */,
 				1C9424F629748177005BBFA9 /* StatisticsView.swift in Sources */,
 				1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */,
 				F352635E2F12EADC0049F0B6 /* Constants.swift in Sources */,

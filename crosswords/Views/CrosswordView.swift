@@ -17,8 +17,7 @@ struct CrosswordView: View {
         let window = windowScene?.windows.filter {$0.isKeyWindow}.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
         let crosswordHeight = self.initialBoxWidth*CGFloat(self.crossword.height)
-        let barHeights: CGFloat = CGFloat(Constants.keybordToolbarHeight
-                                          + Constants.navigationBarHeight) + statusBarHeight
+        let barHeights: CGFloat = CGFloat(Constants.keybordToolbarHeight) + statusBarHeight
 
         return barHeights + crosswordHeight - 10
     }
@@ -27,7 +26,8 @@ struct CrosswordView: View {
     }
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
     @ObservedObject var userSettings = UserSettings()
     @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
     @State var focusedTag: Int = -1
@@ -62,7 +62,30 @@ struct CrosswordView: View {
     
     @ViewBuilder
     var body: some View {
-        VStack{
+        VStack {
+            if (self.horizontalSizeClass == .compact) {
+                HStack {
+                    CrosswordLeadingToolbarView(goBack: self.goBack)
+                        .padding(.leading)
+                    Spacer()
+                    Text(verbatim: self.displayTitle)
+                        .bold()
+                    Spacer()
+                    CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!,
+                                                 notes: crossword.notes!,
+                                                 copyright: crossword.copyright!,
+                                                 isSolved: crossword.solved,
+                                                 outletName: crossword.outletName!,
+                                                 isSolutionAvailable:
+                                                    isSolutionAvailable(crossword: crossword),
+                                                 isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                                                 showSolution: self.showSolution,
+                                                 showSettings: self.showSettings)
+                    .padding(.trailing)
+                }
+                .background(self.crossword.solved ? .green : Color(UIColor.systemBackground))
+            }
+
             ScrollView([.horizontal, .vertical]) {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
@@ -86,23 +109,23 @@ struct CrosswordView: View {
                             scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
                         }
                     }
-                    .padding(.top, 10)
                 }
             }
             //.background(.random)
             .frame(width: UIScreen.screenWidth)
 
             HStack {
-                if (focusedTag != -1) {
+                if (self.focusedTag != -1) {
                     Button(action: {self.zoom()}) {
-                        Image(systemName: self.isZoomed ? "minus.magnifyingglass" : "plus.magnifyingglass")
+                        Image(systemName: self.isZoomed ? "minus.magnifyingglass"
+                              : "plus.magnifyingglass")
                     }
                     Button(action: {self.isRebusMode.toggle()}) {
                         Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
                     }
                 }
                 Spacer()
-                if (userSettings.showTimer) {
+                if (self.userSettings.showTimer) {
                     TimerView(
                         isSolved: self.crossword.solved,
                         solvedTime: Int(self.crossword.solvedTime))
@@ -124,18 +147,23 @@ struct CrosswordView: View {
         }
         .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
             .onEnded({ value in
-                if value.translation.width < 0 && self.focusedTag != -1 {
+                if (value.translation.width < 0 && self.focusedTag != -1) {
                     // left
-                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword,
+                                     goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
+                                     isHighlighted: self.$highlighted)
                 }
 
-                if value.translation.width > 0 && self.focusedTag != -1 {
+                if (value.translation.width > 0 && self.focusedTag != -1) {
                     // right
-                    goToNextClue(tag: self.focusedTag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+                    goToNextClue(tag: self.focusedTag, crossword: self.crossword,
+                                 goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
+                                 isHighlighted: self.$highlighted)
                 }
             }))
+        .toolbar(self.horizontalSizeClass == .compact ? .hidden : .automatic)
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
-        .navigationBarColor(self.crossword.solved ? .systemGreen : .systemGray6)
+        .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isSolutionAvailable: isSolutionAvailable(crossword: crossword), isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
@@ -224,7 +252,7 @@ struct CrosswordGridView: View {
             ForEach(rows, id: \.self) { rowNum in
                 HStack (spacing: 0) {
                     ForEach(cols, id: \.self) { colNum in
-                        makeCellView(colNum: colNum, rowNum: rowNum)
+                        self.makeCellView(colNum: colNum, rowNum: rowNum)
                     }
                 }
                 .id("row"+String(rowNum))
@@ -254,7 +282,9 @@ struct CrosswordGridView: View {
             isErrorTrackingEnabled: self.doErrorTracking,
             isFocused: self.focusedTag == tag,
             isHighlighted: self.highlighted.contains(tag),
-        ).equatable().frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
+        )
+        .equatable()
+        .frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
     }
     
     func onTapCell(tag: Int) -> Void {
@@ -268,11 +298,13 @@ struct CrosswordGridView: View {
             toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
         } else {
             self.isRebusMode = false
-            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross,
+                        focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
         }
     }
     
     func solveCell(tag: Int) -> Void {
-        OmniCrosswords.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+        OmniCrosswords.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag,
+                                 goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
     }
 }

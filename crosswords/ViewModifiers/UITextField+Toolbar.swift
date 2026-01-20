@@ -27,8 +27,7 @@ extension UITextField {
         return UIImage(systemName: "arrow.2.squarepath")!
     }
     
-    func changeToolbar(clueTitle: String, barColor: UIColor) {
-        
+    func changeToolbar(clueTitle: String) {
         guard let uiTextFieldToolbar = self.inputAccessoryView as? UIToolbar else {
             print("inputAccessoryView is nil or not a UIToolbar")
             return
@@ -41,9 +40,6 @@ extension UITextField {
         }
         let clueTitleLabel = uiTextFieldToolbar.items![clueTitleIndex].customView as! UITextView
 
-        if (uiTextFieldToolbar.backgroundColor != barColor) {
-            uiTextFieldToolbar.backgroundColor = barColor
-        }
         if (clueTitleLabel.text.trimmingCharacters(in: .whitespaces) != clueTitle.trimmingCharacters(in: .whitespaces)) {
             uiTextFieldToolbar.items?.remove(at: clueTitleIndex)
             clueTitleLabel.text = clueTitle
@@ -54,7 +50,7 @@ extension UITextField {
         }
     }
     
-    func addToolbar(coordinator: CrosswordTextFieldView.Coordinator, clueTitle: String, barColor: UIColor) {
+    func addToolbar(coordinator: CrosswordTextFieldView.Coordinator) {
         self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0,
                                                           width: Double(UIScreen.main.bounds.size.width),
                                                           height: Double(Constants.keybordToolbarHeight)))
@@ -64,7 +60,7 @@ extension UITextField {
             clueFontSize = 13
         }
         
-        clueTitleLabel.text = clueTitle
+        clueTitleLabel.text = ""
         clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
         clueTitleLabel.textColor = UIColor.label
         clueTitleLabel.backgroundColor = UIColor.clear
@@ -175,7 +171,7 @@ extension UITextField {
 
         (self.inputAccessoryView as! UIToolbar).setItems(configuredToolbarItems, animated: false)
 
-        (self.inputAccessoryView as! UIToolbar).backgroundColor = barColor
+        (self.inputAccessoryView as! UIToolbar).backgroundColor = UIColor.systemGray6
     }
 
     func createCustomButtonGroup(firstButton: UIButton, secondButton: UIButton, firstButtonWidth: CGFloat,
@@ -205,17 +201,5 @@ extension UITextField {
         ])
         return UIBarButtonItem(customView: containerView)
             .hideSharedBackgroundIfAvailable()
-    }
-}
-
-extension UIBarButtonItem {
-
-    func hideSharedBackgroundIfAvailable() -> some UIBarButtonItem {
-        if #available(iOS 26.0, *) {
-            self.hidesSharedBackground = true
-            return self
-        } else {
-            return self
-        }
     }
 }

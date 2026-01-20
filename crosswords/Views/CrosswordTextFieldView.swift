@@ -32,7 +32,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
         textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
-        textField.addToolbar(coordinator: context.coordinator, clueTitle: "", barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        textField.addToolbar(coordinator: context.coordinator)
         return textField
     }
     
@@ -47,7 +47,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
 
-        uiTextField.changeToolbar(clueTitle: currentClue, barColor: self.crossword.solved ? UIColor.systemGreen : UIColor.systemGray6)
+        uiTextField.changeToolbar(clueTitle: self.currentClue)
     }
     
     func makeCoordinator() -> Coordinator {
