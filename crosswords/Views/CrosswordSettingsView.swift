@@ -22,34 +22,34 @@ struct CrosswordSettingsView: View {
     var body: some View {
         VStack(alignment: .center) {
             VStack {
-                Toggle(isOn: $errorTracking) {
+                Toggle(isOn: self.$errorTracking) {
                     Text("Error Tracking")
                 }
-                .disabled(!isSolutionAvailable)
+                .disabled(!self.isSolutionAvailable)
                 .frame(width: 200)
                 
-                if (!isSolved) {
-                    Button(action: {showSolution()}) {
+                if (!self.isSolved) {
+                    Button(action: {self.showSolution()}) {
                         Text("Show Solution")
                     }
                     .padding()
                     .buttonStyle(.bordered)
-                    .disabled(!isSolutionAvailable)
+                    .disabled(!self.isSolutionAvailable)
                     .frame(width: 200)
                 }
                 
-                if (!isSolutionAvailable) {
+                if (!self.isSolutionAvailable) {
                     Text("Error Tracking and Show Solution are Disabled because the solution is not available")
                 }
             }
             .padding([.bottom], 30)
-            Text("Title: "+title)
-            Text("Author: "+author)
-            if (notes != "") {
-                Text("Notes: "+notes)
+            Text("Title: "+self.title)
+            Text("Author: "+self.author)
+            if (self.notes != "") {
+                Text("Notes: "+self.notes)
             }
-            Text(copyright)
-            
+            Text(self.copyright)
+
             Spacer()
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))

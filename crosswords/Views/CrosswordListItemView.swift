@@ -63,11 +63,9 @@ struct CrosswordListItemView: View {
     }
     
     func getCrosswordProgress(crossword: Crossword) -> CGFloat {
-        let emptySquares = (crossword.symbols?.filter({ (symbol) -> Bool in
-            symbol != -1
-        }).count)
-        let filledSquares = getFilledCellsCount(crossword.entry!)
-        let retval = CGFloat(filledSquares)/CGFloat(emptySquares!)
+        let fillableSquaresCount = CrosswordUtils.getFillableCellsCount(crossword.symbols!)
+        let filledSquaresCount = CrosswordUtils.getFilledCellsCount(crossword.entry!)
+        let retval = CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
         return retval
     }
 }

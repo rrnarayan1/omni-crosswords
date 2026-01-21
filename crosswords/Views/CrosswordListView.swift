@@ -318,8 +318,9 @@ struct CrosswordListView: View {
                         let entryString: String = String(data: gameData!, encoding: .utf8)!
                         let gcEntry: Array<String> = entryString.components(separatedBy: ",")
                         let savedCrossword = self.crosswords.first(where: {xw in xw.id == game.name})
-                        if (savedCrossword != nil && savedCrossword?.solved == false &&
-                            getFilledCellsCount((savedCrossword?.entry)!) < getFilledCellsCount(gcEntry)) {
+                        if (savedCrossword != nil && savedCrossword?.solved == false
+                            && CrosswordUtils.getFilledCellsCount((savedCrossword?.entry)!)
+                            < CrosswordUtils.getFilledCellsCount(gcEntry)) {
                             // overwrite if: current crossword is not already solved and
                             // if progress would increase on the crossword
                             savedCrossword?.entry = gcEntry

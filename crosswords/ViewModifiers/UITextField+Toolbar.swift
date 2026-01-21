@@ -107,8 +107,8 @@ extension UITextField {
                                                         target: coordinator,
                                                         action: #selector(coordinator.solveCell))
             let emptyButton = UIButton()
-            
-            if (!coordinator.isSolutionAvailable(textField: self as! NoActionTextField)) {
+
+            if (!CrosswordUtils.isSolutionAvailable(crossword: coordinator.parent.crossword)) {
                 solveCellButton = emptyButton
             }
 

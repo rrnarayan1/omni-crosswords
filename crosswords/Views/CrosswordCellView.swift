@@ -15,7 +15,6 @@ struct CrosswordCellView: View, Equatable {
     var symbol: Int
     var tag: Int
     var onTap: (Int) -> Void
-    var onLongPress: (Int) -> Void
     var boxWidth: CGFloat
     var isErrorTrackingEnabled: Bool
     var isFocused: Bool

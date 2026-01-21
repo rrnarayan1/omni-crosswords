@@ -42,7 +42,8 @@ struct CrosswordView: View {
     
     init(crossword: Crossword) {
         self.crossword = crossword
-        self._isErrorTrackingEnabled = State(initialValue: isSolutionAvailable(crossword: crossword)
+        self._isErrorTrackingEnabled = State(initialValue:
+                                                CrosswordUtils.isSolutionAvailable(crossword: crossword)
                                              ? userSettings.defaultErrorTracking
                                              : false)
         self._boxWidth = State(initialValue: initialBoxWidth)
@@ -77,7 +78,7 @@ struct CrosswordView: View {
                                                  isSolved: crossword.solved,
                                                  outletName: crossword.outletName!,
                                                  isSolutionAvailable:
-                                                    isSolutionAvailable(crossword: crossword),
+                                                    CrosswordUtils.isSolutionAvailable(crossword: crossword),
                                                  isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                                  showSolution: self.showSolution,
                                                  showSettings: self.showSettings)
@@ -104,8 +105,9 @@ struct CrosswordView: View {
                         if (self.isZoomed) {
                             scrollreader.scrollTo("cell"+String(newFocusedTag))
                             return
-                        } else if (newFocusedTag >= 0 && self.shouldScroll(self.keyboardHeightHelper.keyboardHeight)) {
-                            let newRowNumber = self.getRowNumberFromTag(newFocusedTag)
+                        } else if (newFocusedTag >= 0 && self.shouldScroll()) {
+                            let newRowNumber = CrosswordUtils
+                                .getRowNumberFromTag(tag: newFocusedTag, crossword: self.crossword)
                             scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
                         }
                     }
@@ -166,7 +168,14 @@ struct CrosswordView: View {
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!, notes: crossword.notes!, copyright: crossword.copyright!, isSolved: crossword.solved, outletName: crossword.outletName!, isSolutionAvailable: isSolutionAvailable(crossword: crossword), isErrorTrackingEnabled: self.$isErrorTrackingEnabled, showSolution: showSolution, showSettings: showSettings)
+                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!,
+                                             notes: crossword.notes!, copyright: crossword.copyright!,
+                                             isSolved: crossword.solved,
+                                             outletName: crossword.outletName!,
+                                             isSolutionAvailable:
+                                                CrosswordUtils.isSolutionAvailable(crossword: crossword),
+                                             isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                                             showSolution: showSolution, showSettings: showSettings)
             }.hideSharedBackgroundIfAvailable()
             ToolbarItem(placement: .navigationBarLeading) {
                 CrosswordLeadingToolbarView(goBack: goBack)
@@ -199,14 +208,11 @@ struct CrosswordView: View {
         return self.crossword.clues![possibleClues[directionalLetter]!]!
     }
     
-    func getRowNumberFromTag(_ tag: Int) -> Int {
-        return tag / Int(self.crossword.length)
-    }
-    
-    func shouldScroll(_ keyboardHeight: CGFloat) -> Bool {
+    func shouldScroll() -> Bool {
         let navigationBarHeight = self.horizontalSizeClass == .compact ?
             Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
-        let componentHeights = self.componentHeights + navigationBarHeight + keyboardHeight
+        let componentHeights = self.componentHeights + navigationBarHeight
+            + self.keyboardHeightHelper.keyboardHeight
 //        print(componentHeights)
 //        print(UIScreen.main.bounds.size.height)
 //        print("")
@@ -279,7 +285,6 @@ struct CrosswordGridView: View {
             symbol: symbol,
             tag: tag,
             onTap: self.onTapCell,
-            onLongPress: self.solveCell,
             boxWidth: self.boxWidth,
             isErrorTrackingEnabled: self.doErrorTracking,
             isFocused: self.focusedTag == tag,
@@ -306,7 +311,7 @@ struct CrosswordGridView: View {
     }
     
     func solveCell(tag: Int) -> Void {
-        OmniCrosswords.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag,
+        CrosswordUtils.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag,
                                  goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
     }
 }

@@ -77,11 +77,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         @objc func solveCell(textField: NoActionTextField) {
             parent.isRebusMode = false
-            OmniCrosswords.solveCell(tag: parent.focusedTag, crossword: parent.crossword, focusedTag: parent.$focusedTag, goingAcross: parent.$goingAcross, isHighlighted: parent.$highlighted)
-        }
-        
-        @objc func isSolutionAvailable(textField: NoActionTextField) -> Bool {
-            return OmniCrosswords.isSolutionAvailable(crossword: parent.crossword)
+            CrosswordUtils.solveCell(tag: parent.focusedTag, crossword: parent.crossword, focusedTag: parent.$focusedTag, goingAcross: parent.$goingAcross, isHighlighted: parent.$highlighted)
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
