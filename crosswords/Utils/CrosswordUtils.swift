@@ -9,6 +9,14 @@
 import SwiftUI
 
 struct CrosswordUtils {
+
+    static func getCrosswordProgress(_ crossword: Crossword) -> CGFloat {
+        let fillableSquaresCount = CrosswordUtils.getFillableCellsCount(crossword.symbols!)
+        let filledSquaresCount = CrosswordUtils.getFilledCellsCount(crossword.entry!)
+        let retval = CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
+        return retval
+    }
+
     static func getFilledCellsCount(_ crosswordEntry: Array<String>) -> Int {
         return crosswordEntry.filter({ (entry) -> Bool in
             entry != "." && !entry.isEmpty

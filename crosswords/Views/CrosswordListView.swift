@@ -52,9 +52,13 @@ struct CrosswordListView: View {
                 }
                 List(filteredCrosswords, id: \.id) { crossword in
                     NavigationLink(value: crossword) {
-                        CrosswordListItemView(
-                            crossword: crossword,
-                        )
+                        CrosswordListItemView(date: crossword.date!,
+                                              progressPercentage:
+                                                CrosswordUtils.getCrosswordProgress(crossword),
+                                              outletName: crossword.outletName!,
+                                              isSolved: crossword.solved,
+                                              solvedTime: Int(crossword.solvedTime),
+                                              userSettings: self.userSettings)
                     }.swipeActions {
                         Button("Delete", systemImage: "trash.fill") {
                             crossword.isHidden = true

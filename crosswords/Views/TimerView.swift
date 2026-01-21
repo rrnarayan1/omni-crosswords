@@ -9,17 +9,16 @@
 import SwiftUI
 
 struct TimerView: View {
-    
-    @EnvironmentObject var timerWrapper : TimerWrapper
+    @EnvironmentObject var timerWrapper: TimerWrapper
     var isSolved: Bool
     var solvedTime: Int?
     
     var body: some View {
         var text: Text
-        if (isSolved) {
-            text = Text(toTime(self.solvedTime!))
+        if (self.isSolved) {
+            text = Text(TimeUtils.toDisplayTime(self.solvedTime!))
         } else {
-            text = Text(toTime(self.timerWrapper.count))
+            text = Text(TimeUtils.toDisplayTime(self.timerWrapper.count))
         }
         return text
             .onAppear(perform: {
@@ -30,13 +29,4 @@ struct TimerView: View {
                 }
             })
     }
-}
-
-func toTime(_ currentTimeInSeconds: Int) -> String {
-    let timeInSeconds = currentTimeInSeconds
-    let numMin = timeInSeconds / 60
-    let numSec = timeInSeconds % 60
-    
-    let secString: String = numSec < 10 ? "0"+String(numSec) : String(numSec)
-    return String(numMin) + ":" + secString
 }
