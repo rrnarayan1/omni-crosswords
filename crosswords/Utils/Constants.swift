@@ -9,7 +9,7 @@ import SwiftUI
 
 enum Constants {
     static let keybordToolbarHeight: Int = 40
-    static let navigationBarHeight: Int = 45
+    static let navigationBarHeight: CGFloat = 45.0
     static let maxInitialCellSize: Int = 40
     static let crosswordToolbarButtonSize: CGFloat = 16.0
     static let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday",

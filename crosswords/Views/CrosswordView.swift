@@ -204,11 +204,13 @@ struct CrosswordView: View {
     }
     
     func shouldScroll(_ keyboardHeight: CGFloat) -> Bool {
-//        print(self.componentHeights)
-//        print(keyboardHeight)
+        let navigationBarHeight = self.horizontalSizeClass == .compact ?
+            Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
+        let componentHeights = self.componentHeights + navigationBarHeight + keyboardHeight
+//        print(componentHeights)
 //        print(UIScreen.main.bounds.size.height)
 //        print("")
-        return (self.componentHeights + keyboardHeight) > UIScreen.main.bounds.size.height
+        return componentHeights > UIScreen.main.bounds.size.height
     }
     
     func showSolution() -> Void {
