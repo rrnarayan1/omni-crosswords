@@ -15,4 +15,4 @@ The app expects a collection named "crosswords". An example document (in JSON) c
 1. Remove the dependency in the build on `GoogleService-Info.plist` in Build Phases > Copy Bundle Resources
 2. Change [DevOverrides.plist](crosswords/DevOverrides.plist) to set `localMode` to `true`
   * This will automatically show one crossword in the list - this crossword data be changed by changing [sampleData.json](crosswords/sampleData.json). It will only show one crossword.
-3. Do not commit these changes.
+3. Do not commit these changes. (git update-index --skip-worktree crosswords/DevOverrides.plist is your friend!)
