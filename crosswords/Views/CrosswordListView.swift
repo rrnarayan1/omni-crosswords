@@ -148,7 +148,7 @@ struct CrosswordListView: View {
         self.refreshEnabled = false
 
         refreshQueue.async() {
-            if (userSettings.useLocalMode) {
+            if (self.userSettings.useLocalMode) {
                 if (crosswords.isEmpty) {
                     let crossword = Crossword(context: self.managedObjectContext)
                     DataUtils.buildSampleCrossword(crossword: crossword,
@@ -164,7 +164,7 @@ struct CrosswordListView: View {
             }
 
             if (self.userSettings.user == nil) {
-                checkUser()
+                self.checkUser()
             }
 
             // UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
@@ -178,7 +178,7 @@ struct CrosswordListView: View {
                 lastDate = self.crosswords[0].date!
             }
 
-            let shownCrosswordIds: Array<String> = crosswords.map {$0.id!}
+            let shownCrosswordIds: Array<String> = self.crosswords.map {$0.id!}
             var allCrosswords: Array<Crossword> = Array(self.crosswords)
             allCrosswords.append(contentsOf: self.hiddenCrosswords)
             let allCrosswordIds: Array<String> = allCrosswords.map {$0.id!}
@@ -218,7 +218,7 @@ struct CrosswordListView: View {
                         if (!shownCrosswordIds.contains(document.documentID)) {
                             continue
                         }
-                        let crossword = crosswords.first(where: {
+                        let crossword = self.crosswords.first(where: {
                             $0.id == document.documentID && ($0.versionId < document.get("version") as! Int16)
                         })
                         if (crossword == nil) {
@@ -340,7 +340,8 @@ struct CrosswordListView: View {
         self.managedObjectContext.delete(crossword)
         
         if (self.userSettings.gameCenterPlayer != nil) {
-            self.userSettings.gameCenterPlayer?.deleteSavedGames(withName: crossword.id!, completionHandler: {error in
+            self.userSettings.gameCenterPlayer?.deleteSavedGames(withName: crossword.id!,
+                                                                 completionHandler: {error in
                 if let error = error {
                     print("Error deleting game from game center saved game: \(error)")
                     return
