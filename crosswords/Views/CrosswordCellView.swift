@@ -27,7 +27,8 @@ struct CrosswordCellView: View, Equatable {
         }
         if ((lhs.value != rhs.value) || (lhs.isFocused != rhs.isFocused)
             || (lhs.isHighlighted != rhs.isHighlighted)
-            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled) || (lhs.boxWidth != rhs.boxWidth)) {
+            || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled)
+            || (lhs.boxWidth != rhs.boxWidth)) {
             return false
         }
         return true
@@ -35,13 +36,13 @@ struct CrosswordCellView: View, Equatable {
     
     var body: some View {
         return ZStack(alignment: .center) {
-            Color.init(getBackgroundColor())
-            if (isEditable()) {
-                Text(value)
-                    .font(.system(size: getFontSize()))
-                    .padding(boxWidth/30)
+            Color.init(self.getBackgroundColor())
+            if (self.isEditable()) {
+                Text(self.value)
+                    .font(.system(size: self.getFontSize()))
+                    .padding(self.boxWidth/30)
             }
-            if symbol >= 1000 && symbol < 10000 {
+            if (self.symbol >= 1000 && self.symbol < 10000) {
                 // 1000 means cell should be circled,
                 // 10000 means cell should be shaded
                 Circle()
@@ -49,14 +50,14 @@ struct CrosswordCellView: View, Equatable {
             }
         }
         .overlay(
-            // clue symbol
-            Text(symbol % 1000 > 0 ? String(symbol % 1000) : "")
-                .font(.system(size: boxWidth/4))
-                .padding(boxWidth/30),
+            // clue number
+            Text(self.symbol % 1000 > 0 ? String(self.symbol % 1000) : "")
+                .font(.system(size: self.boxWidth/4))
+                .padding(self.boxWidth/30),
             alignment: .topLeading
         )
         .onTapGesture {
-            onTap(tag)
+            self.onTap(self.tag)
         }
         .border(.black, width: 0.25)
         .contentShape(Rectangle())
@@ -64,51 +65,50 @@ struct CrosswordCellView: View, Equatable {
     
     func getFontSize() -> CGFloat {
         if (self.value.count == 1) {
-            return 0.7*boxWidth
+            return 0.7*self.boxWidth
         }
-        return (boxWidth) / CGFloat(self.value.count)
+        return (self.boxWidth) / CGFloat(self.value.count)
     }
     
     func getBackgroundColor() -> UIColor {
-        if (!isEditable()) {
+        if (!self.isEditable()) {
+            // Block cell
             return UIColor.black
-        } else if (isErrorTrackingEnabled) {
-            if (value != "" && value != correctValue) {
-                if (isHighlighted) {
-                    if (isFocused) {
-                        return UIColor.systemRed.withAlphaComponent(0.6)
-                    } else {
-                        return UIColor.systemRed.withAlphaComponent(0.5)
-                    }
+        } else if (self.isErrorTrackingEnabled && self.value != "" && self.value != self.correctValue) {
+            // Error tracking is enabled and cell is incorrect
+            if (self.isHighlighted) {
+                if (self.isFocused) {
+                    return UIColor.systemRed.withAlphaComponent(0.6)
                 } else {
-                    return UIColor.systemRed.withAlphaComponent(0.4)
+                    return UIColor.systemRed.withAlphaComponent(0.5)
                 }
+            } else {
+                return UIColor.systemRed.withAlphaComponent(0.4)
             }
-        }
-        
-        if (isHighlighted) {
-            if (colorScheme == .dark) {
-                if (isFocused) {
+        } else if (self.isHighlighted) {
+            // Highlighted cell
+            if (self.colorScheme == .dark) {
+                if (self.isFocused) {
                     return UIColor.systemBlue.withAlphaComponent(0.8)
                 } else {
                     return UIColor.systemBlue.withAlphaComponent(0.5)
                 }
             } else {
-                if (isFocused) {
+                if (self.isFocused) {
                     return UIColor.systemBlue.withAlphaComponent(0.6)
                 } else {
                     return UIColor.systemBlue.withAlphaComponent(0.2)
                 }
             }
-        } else if (symbol >= 10000) {
+        } else if (self.symbol >= 10000) {
             // signifies shaded cells
             return UIColor.gray
         } else {
-            return colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
+            return self.colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
         }
     }
     
     func isEditable() -> Bool {
-        return value != "."
+        return self.value != "."
     }
 }
