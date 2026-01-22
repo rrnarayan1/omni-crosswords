@@ -97,6 +97,10 @@ struct CrosswordUtils {
         }
     }
 
+    static func getTagFromRowAndColNumbers(rowNum: Int, colNum: Int, crossword: Crossword) -> Int {
+        return rowNum*Int(crossword.length)+colNum
+    }
+
     static func getRowNumberFromTag(tag: Int, crossword: Crossword) -> Int {
         return tag / Int(crossword.length)
     }

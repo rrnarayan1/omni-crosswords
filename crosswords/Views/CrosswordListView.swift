@@ -151,7 +151,7 @@ struct CrosswordListView: View {
         }
         self.refreshEnabled = false
 
-        refreshQueue.async() {
+        self.refreshQueue.async() {
             if (self.userSettings.useLocalMode) {
                 if (self.crosswords.isEmpty) {
                     let crossword = Crossword(context: self.managedObjectContext)

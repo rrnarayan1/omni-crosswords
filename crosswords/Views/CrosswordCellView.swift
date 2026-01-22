@@ -20,7 +20,7 @@ struct CrosswordCellView: View, Equatable {
     var isFocused: Bool
     var isHighlighted: Bool
     @Environment(\.colorScheme) var colorScheme
-    
+
     static func == (lhs: CrosswordCellView, rhs: CrosswordCellView) -> Bool {
         if (lhs.tag != rhs.tag) {
             return false
@@ -33,7 +33,7 @@ struct CrosswordCellView: View, Equatable {
         }
         return true
     }
-    
+
     var body: some View {
         return ZStack(alignment: .center) {
             Color.init(self.getBackgroundColor())
@@ -62,14 +62,14 @@ struct CrosswordCellView: View, Equatable {
         .border(.black, width: 0.25)
         .contentShape(Rectangle())
     }
-    
+
     func getFontSize() -> CGFloat {
         if (self.value.count == 1) {
             return 0.7*self.boxWidth
         }
         return (self.boxWidth) / CGFloat(self.value.count)
     }
-    
+
     func getBackgroundColor() -> UIColor {
         if (!self.isEditable()) {
             // Block cell
@@ -107,7 +107,7 @@ struct CrosswordCellView: View, Equatable {
             return self.colorScheme == .dark ? UIColor.systemGray2 : UIColor.systemBackground
         }
     }
-    
+
     func isEditable() -> Bool {
         return self.value != "."
     }

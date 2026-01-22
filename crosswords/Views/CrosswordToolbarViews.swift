@@ -24,7 +24,10 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     @State var showCrosswordSettings: Bool = false
 
     static func == (lhs: CrosswordTrailingToolbarView, rhs: CrosswordTrailingToolbarView) -> Bool {
-        // no need to refresh this view
+        // refresh the view if crossword is now solved
+        if (lhs.isSolved != rhs.isSolved) {
+            return false
+        }
         return true
     }
     

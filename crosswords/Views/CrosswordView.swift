@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct CrosswordView: View {
-    var crossword: Crossword
+    @ObservedObject var crossword: Crossword
 
     // height of components. does not include keyboard height
     var componentHeights: CGFloat {
@@ -55,7 +55,7 @@ struct CrosswordView: View {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(abbreviation: "UTC")
         formatter.dateStyle = .short
-        var prefix: String = self.forceUpdate ? "" : " "
+        var prefix: String = ""
         if (self.crossword.solved) {
             prefix = "Solved: "
         }
@@ -176,7 +176,8 @@ struct CrosswordView: View {
                                              copyright: self.crossword.copyright!,
                                              isSolved: self.crossword.solved,
                                              outletName: self.crossword.outletName!,
-                                             isSolutionAvailable: CrosswordUtils.isSolutionAvailable(crossword:
+                                             isSolutionAvailable:
+                                                CrosswordUtils.isSolutionAvailable(crossword:
                                                                                     self.crossword),
                                              isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                              showSolution: self.showSolution,
@@ -266,9 +267,9 @@ struct CrosswordGridView: View {
         let cols: [Int] = Array(0...Int(self.crossword.length)-1)
         return VStack(spacing: 0) {
             ForEach(rows, id: \.self) { rowNum in
-                HStack (spacing: 0) {
+                HStack(spacing: 0) {
                     ForEach(cols, id: \.self) { colNum in
-                        self.makeCellView(colNum: colNum, rowNum: rowNum)
+                        self.makeCellView(rowNum: rowNum, colNum: colNum)
                     }
                 }
                 .id("row"+String(rowNum))
@@ -282,15 +283,13 @@ struct CrosswordGridView: View {
         }
     }
     
-    func makeCellView(colNum: Int, rowNum: Int) -> some View {
-        let tag: Int = rowNum*Int(self.crossword.length)+colNum
-        let value: String = self.crossword.entry![tag]
-        let correctValue: String = self.crossword.solution![tag]
-        let symbol: Int = self.crossword.symbols![tag]
+    func makeCellView(rowNum: Int, colNum: Int) -> some View {
+        let tag: Int = CrosswordUtils.getTagFromRowAndColNumbers(rowNum: rowNum, colNum: colNum,
+                                                                 crossword: self.crossword)
         return CrosswordCellView(
-            value: value,
-            correctValue: correctValue,
-            symbol: symbol,
+            value: self.crossword.entry![tag],
+            correctValue: self.crossword.solution![tag],
+            symbol: self.crossword.symbols![tag],
             tag: tag,
             onTap: self.onTapCell,
             boxWidth: self.boxWidth,
