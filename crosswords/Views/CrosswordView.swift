@@ -151,16 +151,18 @@ struct CrosswordView: View {
             .onEnded({ value in
                 if (value.translation.width < 0 && self.focusedTag != -1) {
                     // left
-                    goToPreviousClue(tag: self.focusedTag, crossword: self.crossword,
-                                     goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
-                                     isHighlighted: self.$highlighted)
+                    ChangeFocusUtils.goToPreviousClue(focusedTag: self.$focusedTag,
+                                                      crossword: self.crossword,
+                                                      goingAcross: self.$goingAcross,
+                                                      isHighlighted: self.$highlighted)
                 }
 
                 if (value.translation.width > 0 && self.focusedTag != -1) {
                     // right
-                    goToNextClue(tag: self.focusedTag, crossword: self.crossword,
-                                 goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
-                                 isHighlighted: self.$highlighted)
+                    ChangeFocusUtils.goToNextClue(focusedTag: self.$focusedTag,
+                                                  crossword: self.crossword,
+                                                  goingAcross: self.$goingAcross,
+                                                  isHighlighted: self.$highlighted)
                 }
             }))
         .toolbar(self.horizontalSizeClass == .compact ? .hidden : .automatic)
@@ -168,17 +170,19 @@ struct CrosswordView: View {
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!,
-                                             notes: crossword.notes!, copyright: crossword.copyright!,
-                                             isSolved: crossword.solved,
-                                             outletName: crossword.outletName!,
-                                             isSolutionAvailable:
-                                                CrosswordUtils.isSolutionAvailable(crossword: crossword),
+                CrosswordTrailingToolbarView(title: self.crossword.title!, author: self.crossword.author!,
+                                             notes: self.crossword.notes!,
+                                             copyright: self.crossword.copyright!,
+                                             isSolved: self.crossword.solved,
+                                             outletName: self.crossword.outletName!,
+                                             isSolutionAvailable: CrosswordUtils.isSolutionAvailable(crossword:
+                                                                                    self.crossword),
                                              isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                             showSolution: showSolution, showSettings: showSettings)
+                                             showSolution: self.showSolution,
+                                             showSettings: self.showSettings)
             }.hideSharedBackgroundIfAvailable()
             ToolbarItem(placement: .navigationBarLeading) {
-                CrosswordLeadingToolbarView(goBack: goBack)
+                CrosswordLeadingToolbarView(goBack: self.goBack)
             }.hideSharedBackgroundIfAvailable()
         }
         // custom back button added in leading toolbar view
@@ -187,7 +191,7 @@ struct CrosswordView: View {
     
     func getInitialBoxWidth() -> CGFloat {
         let maxInitialSize: CGFloat = CGFloat(Constants.maxInitialCellSize)
-        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(crossword.length)
+        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(self.crossword.length)
         return min(defaultSize, maxInitialSize)
     }
     
@@ -195,7 +199,7 @@ struct CrosswordView: View {
         self.isZoomed.toggle()
         let initialWidth = self.getInitialBoxWidth()
         self.boxWidth = self.isZoomed
-            ? initialWidth * CGFloat(userSettings.zoomMagnificationLevel)
+            ? initialWidth * CGFloat(self.userSettings.zoomMagnificationLevel)
             : initialWidth
     }
 
@@ -270,7 +274,7 @@ struct CrosswordGridView: View {
                                    goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate,
                                    becomeFirstResponder: self.$becomeFirstResponder,
                                    isRebusMode: self.$isRebusMode)
-                .frame(width:1, height: 1)
+                .frame(width: 1, height: 1)
         }
     }
     
@@ -295,23 +299,23 @@ struct CrosswordGridView: View {
     }
     
     func onTapCell(tag: Int) -> Void {
-        if (!self.becomeFirstResponder) {
-            self.becomeFirstResponder = true
-        }
         if (self.crossword.entry![tag] == ".") {
             return
         }
+
+        if (!self.becomeFirstResponder) {
+            self.becomeFirstResponder = true
+        }
+
         if (tag == self.focusedTag) {
-            toggleDirection(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+            ChangeFocusUtils.toggleDirection(focusedTag: tag, crossword: self.crossword,
+                                             goingAcross: self.$goingAcross,
+                                             isHighlighted: self.$highlighted)
         } else {
             self.isRebusMode = false
-            changeFocus(tag: tag, crossword: self.crossword, goingAcross: self.$goingAcross,
-                        focusedTag: self.$focusedTag, isHighlighted: self.$highlighted)
+            ChangeFocusUtils.changeFocus(tag: tag, crossword: self.crossword,
+                                         goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
+                                         isHighlighted: self.$highlighted)
         }
-    }
-    
-    func solveCell(tag: Int) -> Void {
-        CrosswordUtils.solveCell(tag: tag, crossword: self.crossword, focusedTag: self.$focusedTag,
-                                 goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
     }
 }

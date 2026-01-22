@@ -39,9 +39,13 @@ struct CrosswordUtils {
         if (crossword.entry == crossword.solution) {
             crossword.solved = true
         } else if (focusedTag.wrappedValue == tag) {
-            moveFocusToNextFieldAndCheck(currentTag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: focusedTag,
+                                                          crossword: crossword,
+                                                          goingAcross: goingAcross,
+                                                          isHighlighted: isHighlighted)
         } else {
-            changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross, focusedTag: focusedTag, isHighlighted: isHighlighted)
+            ChangeFocusUtils.changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross,
+                                         focusedTag: focusedTag, isHighlighted: isHighlighted)
         }
     }
 

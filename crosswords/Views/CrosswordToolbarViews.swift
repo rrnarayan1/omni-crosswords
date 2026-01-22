@@ -44,7 +44,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     var body: some View {
         HStack {
             Button {
-                showSettings()
+                self.showSettings()
                 DispatchQueue.main.async {
                     self.showCrosswordSettings = true
                 }
@@ -53,11 +53,11 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                 Image(systemName: "slider.horizontal.3")
             }
             .navigationDestination(isPresented: self.$showCrosswordSettings) {
-                CrosswordSettingsView(title: title, author: author, notes: notes,
-                                      copyright: copyright, isSolved: isSolved,
-                                      isSolutionAvailable: isSolutionAvailable,
+                CrosswordSettingsView(title: self.title, author: self.author, notes: self.notes,
+                                      copyright: self.copyright, isSolved: self.isSolved,
+                                      isSolutionAvailable: self.isSolutionAvailable,
                                       errorTracking: self.isErrorTrackingEnabled,
-                                      showSolution: showSolution)
+                                      showSolution: self.showSolution)
             }
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
@@ -70,7 +70,7 @@ struct CrosswordTrailingToolbarView: View, Equatable {
             .sheet(isPresented: self.$showShareSheet,
                    onDismiss: {self.showShareSheet = false},
                    content: {ActivityView(activityItems:
-                                            shareSheet(isSolved: isSolved, outletName: outletName))}
+                                            self.shareSheet(isSolved: isSolved, outletName: outletName))}
             )
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
@@ -88,7 +88,7 @@ struct CrosswordLeadingToolbarView: View, Equatable {
     
     var body: some View {
         Button(action: {
-            goBack()
+            self.goBack()
         }) {
             Image(systemName: "chevron.left")
         }
