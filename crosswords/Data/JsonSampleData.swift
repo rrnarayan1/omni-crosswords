@@ -1,5 +1,5 @@
 //
-//  DataBuilder.swift
+//  JsonSampleData.swift
 //  crosswords
 //
 //  Created by Rohan Narayan on 7/24/20.

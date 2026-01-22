@@ -28,7 +28,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .allCharacters
-        textField.keyboardType = userSettings.useEmailAddressKeyboard
+        textField.keyboardType = self.userSettings.useEmailAddressKeyboard
             ? UIKeyboardType.emailAddress: UIKeyboardType.asciiCapable
         textField.returnKeyType = UIReturnKeyType.next
         textField.tintColor = UIColor.clear
@@ -62,72 +62,77 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         }
         
         @objc func pressToggleButton(textField: NoActionTextField) {
-            ChangeFocusUtils.toggleDirection(focusedTag: parent.focusedTag,
-                                             crossword: parent.crossword,
-                                             goingAcross: parent.$goingAcross,
-                                             isHighlighted: parent.$highlighted)
+            ChangeFocusUtils.toggleDirection(focusedTag: self.parent.focusedTag,
+                                             crossword: self.parent.crossword,
+                                             goingAcross: self.parent.$goingAcross,
+                                             isHighlighted: self.parent.$highlighted)
         }
         
         @objc func goToNextClue(textField: NoActionTextField) {
-            parent.isRebusMode = false
-            ChangeFocusUtils.goToNextClue(focusedTag: parent.$focusedTag,
-                                          crossword: parent.crossword, goingAcross: parent.$goingAcross,
-                                          isHighlighted: parent.$highlighted)
+            self.parent.isRebusMode = false
+            ChangeFocusUtils.goToNextClue(focusedTag: self.parent.$focusedTag,
+                                          crossword: self.parent.crossword,
+                                          goingAcross: self.parent.$goingAcross,
+                                          isHighlighted: self.parent.$highlighted)
         }
         
         @objc func goToPreviousClue(textField: NoActionTextField) {
-            parent.isRebusMode = false
-            ChangeFocusUtils.goToPreviousClue(focusedTag: parent.$focusedTag,
-                                            crossword: parent.crossword, goingAcross: parent.$goingAcross,
-                                            isHighlighted: parent.$highlighted)
+            self.parent.isRebusMode = false
+            ChangeFocusUtils.goToPreviousClue(focusedTag: self.parent.$focusedTag,
+                                              crossword: self.parent.crossword,
+                                              goingAcross: self.parent.$goingAcross,
+                                              isHighlighted: self.parent.$highlighted)
         }
         
         @objc func solveCell(textField: NoActionTextField) {
-            parent.isRebusMode = false
-            CrosswordUtils.solveCell(tag: parent.focusedTag, crossword: parent.crossword,
-                                     focusedTag: parent.$focusedTag, goingAcross: parent.$goingAcross,
-                                     isHighlighted: parent.$highlighted)
+            self.parent.isRebusMode = false
+            CrosswordUtils.solveCell(tag: self.parent.focusedTag, crossword: self.parent.crossword,
+                                     focusedTag: self.parent.$focusedTag,
+                                     goingAcross: self.parent.$goingAcross,
+                                     isHighlighted: self.parent.$highlighted)
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            parent.isRebusMode = false
-            moveFocusToNextField()
+            self.parent.isRebusMode = false
+            self.moveFocusToNextField()
             return true
         }
         
         func didPressBackspace(_ textField: UITextField) {
-            if (parent.focusedTag < 0 || parent.crossword.solved)  {
+            let focusedTag = self.parent.focusedTag
+            if (focusedTag < 0 || self.parent.crossword.solved)  {
                 return
             }
             
-            if (parent.crossword.entry![parent.focusedTag] != "") {
-                parent.crossword.entry![parent.focusedTag] = ""
-                parent.forceUpdate = !parent.forceUpdate
-                saveGame()
+            if (self.parent.crossword.entry![focusedTag] != "") {
+                self.parent.crossword.entry![focusedTag] = ""
+                self.parent.forceUpdate = !self.parent.forceUpdate
+                self.saveGame()
             } else {
                 // current cell is empty, so try to clear the previous cell
                 // no matter what, we're moving cells, so exit rebus mode
-                parent.isRebusMode = false
-                let previousTag : Int = ChangeFocusUtils.getPreviousTagId(tag: parent.focusedTag,
+                self.parent.isRebusMode = false
+                let previousTag : Int = ChangeFocusUtils.getPreviousTagId(tag: focusedTag,
                                                                           goingAcross:
-                                                                            parent.goingAcross,
-                                                                          crossword: parent.crossword)
-                if (previousTag >= 0 && previousTag < parent.crossword.entry!.count
-                    && parent.crossword.entry![previousTag] != ".") {
+                                                                            self.parent.goingAcross,
+                                                                          crossword:
+                                                                            self.parent.crossword)
+                if (previousTag >= 0 && previousTag < self.parent.crossword.entry!.count
+                    && self.parent.crossword.entry![previousTag] != ".") {
                     // our current cell is empty and the previous one is valid,
                     // so clear that and go there
-                    parent.crossword.entry![previousTag] = ""
-                    saveGame()
-                    ChangeFocusUtils.changeFocus(tag: previousTag, crossword: parent.crossword,
-                                                 goingAcross: parent.$goingAcross,
-                                                 focusedTag: parent.$focusedTag,
-                                                 isHighlighted: parent.$highlighted)
+                    self.parent.crossword.entry![previousTag] = ""
+                    self.saveGame()
+                    ChangeFocusUtils.changeFocus(tag: previousTag, crossword: self.parent.crossword,
+                                                 goingAcross: self.parent.$goingAcross,
+                                                 focusedTag: self.parent.$focusedTag,
+                                                 isHighlighted: self.parent.$highlighted)
                 } else {
                     // cannot move backwards, just find some cell to go to
-                   ChangeFocusUtils.goToLeftCell(focusedTag: parent.$focusedTag,
-                                                 crossword: parent.crossword,
-                                                 goingAcross: parent.$goingAcross,
-                                                 isHighlighted: parent.$highlighted)
+                    ChangeFocusUtils.goToLeftCell(focusedTag: self.parent.$focusedTag,
+                                                  crossword: self.parent.crossword,
+                                                  goingAcross: self.parent.$goingAcross,
+                                                  isHighlighted: self.parent.$highlighted)
                 }
             }
         }
@@ -136,65 +141,67 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                        replacementString string: String) -> Bool {
             // invalid entry
             // string count > 1 means they probably used swipe to type, which we don't want to support
-            if (parent.focusedTag < 0 || string == "." || string.count > 1) {
+            if (self.parent.focusedTag < 0 || string == "." || string.count > 1) {
                 return false
             }
             
             // Don't edit a solved crossword
-            if (parent.crossword.solved) {
+            if (self.parent.crossword.solved) {
                 return false
             }
-            
+            let focusedTag = self.parent.focusedTag
+
             if (string == " ") {
-                if (parent.userSettings.spaceTogglesDirection) {
-                    ChangeFocusUtils.toggleDirection(focusedTag: parent.focusedTag,
-                                                     crossword: parent.crossword,
-                                                     goingAcross: parent.$goingAcross,
-                                                     isHighlighted: parent.$highlighted)
+                if (self.parent.userSettings.spaceTogglesDirection) {
+                    ChangeFocusUtils.toggleDirection(focusedTag: focusedTag,
+                                                     crossword: self.parent.crossword,
+                                                     goingAcross: self.parent.$goingAcross,
+                                                     isHighlighted: self.parent.$highlighted)
                 } else {
-                    parent.isRebusMode = false
-                    moveFocusToNextField()
+                    self.parent.isRebusMode = false
+                    self.moveFocusToNextField()
                 }
                 return false
             } else if (string == "\t") {
                 // used for tab
-                parent.isRebusMode = false
-                ChangeFocusUtils.goToNextClue(focusedTag: parent.$focusedTag,
-                                              crossword: parent.crossword,
-                                              goingAcross: parent.$goingAcross,
-                                              isHighlighted: parent.$highlighted)
+                self.parent.isRebusMode = false
+                ChangeFocusUtils.goToNextClue(focusedTag: self.parent.$focusedTag,
+                                              crossword: self.parent.crossword,
+                                              goingAcross: self.parent.$goingAcross,
+                                              isHighlighted: self.parent.$highlighted)
                 return false
             }
             
-            parent.crossword.solvedTime = Int16(parent.timerWrapper.count)
-            
+            self.parent.crossword.solvedTime = Int16(self.parent.timerWrapper.count)
+
             if (string.isEmpty) {
-                didPressBackspace(textField)
+                self.didPressBackspace(textField)
             } else {
                 // it's a valid letter entered, update the crossword
-                if (parent.isRebusMode) {
-                    parent.forceUpdate = !parent.forceUpdate
-                    parent.crossword.entry![parent.focusedTag].append(string.uppercased())
+                if (self.parent.isRebusMode) {
+                    self.parent.forceUpdate = !self.parent.forceUpdate
+                    self.parent.crossword.entry![focusedTag].append(string.uppercased())
                 } else {
-                    parent.crossword.entry![parent.focusedTag] = string.uppercased()
-                    moveFocusToNextField()
+                    self.parent.crossword.entry![focusedTag] = string.uppercased()
+                    self.moveFocusToNextField()
                 }
-                saveGame()
+                self.saveGame()
             }
             
-            if (parent.crossword.entry == parent.crossword.solution) {
-                parent.crossword.solved = true
-                parent.timerWrapper.stop()
-                let solvedCrossword = SolvedCrossword(context: parent.managedObjectContext)
-                solvedCrossword.date = parent.crossword.date
-                solvedCrossword.id = parent.crossword.id
-                solvedCrossword.solveTime = parent.crossword.solvedTime
-                solvedCrossword.outletName = parent.crossword.outletName
-                solvedCrossword.numClues = Int32(parent.crossword.clues!.count)
-                parent.focusedTag = -1
-                parent.highlighted = Array<Int>()
-                parent.becomeFirstResponder = false
-                saveGame()
+            if (self.parent.crossword.entry == self.parent.crossword.solution) {
+                self.parent.crossword.solved = true
+                self.parent.timerWrapper.stop()
+                let solvedCrossword = SolvedCrossword(context: self.parent.managedObjectContext)
+                let crossword = self.parent.crossword
+                solvedCrossword.date = crossword.date
+                solvedCrossword.id = crossword.id
+                solvedCrossword.solveTime = crossword.solvedTime
+                solvedCrossword.outletName = crossword.outletName
+                solvedCrossword.numClues = Int32(crossword.clues!.count)
+                self.parent.focusedTag = -1
+                self.parent.highlighted = Array<Int>()
+                self.parent.becomeFirstResponder = false
+                self.saveGame()
             }
 
             return false
@@ -202,12 +209,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         func saveGame() {
             (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-            if (parent.userSettings.shouldTryGameCenterLogin && parent.userSettings.gameCenterPlayer != nil) {
-                let entryString: String = (parent.crossword.entry?.joined(separator: ","))!
-                
-                parent.userSettings.gameCenterPlayer!.saveGameData(
+            if (self.parent.userSettings.shouldTryGameCenterLogin
+                && self.parent.userSettings.gameCenterPlayer != nil) {
+                let entryString: String = (self.parent.crossword.entry?.joined(separator: ","))!
+
+                self.parent.userSettings.gameCenterPlayer!.saveGameData(
                     entryString.data(using: .utf8)!,
-                    withName: parent.crossword.id!,
+                    withName: self.parent.crossword.id!,
                     completionHandler: {_, error in
                         if let error = error {
                             print("Error saving to game center: \(error)")
@@ -219,10 +227,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         
         // checks settings and completed squares
         func moveFocusToNextField() {
-            ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: parent.$focusedTag,
-                                                          crossword: parent.crossword,
-                                                          goingAcross: parent.$goingAcross,
-                                                          isHighlighted: parent.$highlighted)
+            ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: self.parent.$focusedTag,
+                                                          crossword: self.parent.crossword,
+                                                          goingAcross: self.parent.$goingAcross,
+                                                          isHighlighted: self.parent.$highlighted)
         }
     }
 }
