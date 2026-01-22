@@ -153,7 +153,7 @@ struct CrosswordListView: View {
 
         refreshQueue.async() {
             if (self.userSettings.useLocalMode) {
-                if (crosswords.isEmpty) {
+                if (self.crosswords.isEmpty) {
                     let crossword = Crossword(context: self.managedObjectContext)
                     DataUtils.buildSampleCrossword(crossword: crossword,
                                                    resourceName: "sampleData")

@@ -27,6 +27,7 @@ struct CrosswordView: View {
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.managedObjectContext) var managedObjectContext
 
     @ObservedObject var userSettings = UserSettings()
     @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
@@ -225,9 +226,12 @@ struct CrosswordView: View {
     
     func showSolution() -> Void {
         self.crossword.entry = self.crossword.solution
-        self.crossword.solved = true
-        self.forceUpdate = !self.forceUpdate
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        self.forceUpdate.toggle()
+        CrosswordUtils.solutionHandler(crossword: self.crossword, shouldAddStatistics: false,
+                                       userSettings: self.userSettings, focusedTag: self.$focusedTag,
+                                       becomeFirstResponder: self.$becomeFirstResponder,
+                                       isHighlighted: self.$highlighted, timerWrapper: nil,
+                                       managedObjectContext: self.managedObjectContext)
     }
     
     func showSettings() -> Void {

@@ -15,9 +15,9 @@ struct ChangeFocusUtils {
     static func moveFocusToNextFieldAndCheck(focusedTag: Binding<Int>, crossword: Crossword,
                                              goingAcross: Binding<Bool>,
                                              isHighlighted: Binding<Array<Int>>) {
-        let nextTag: Int = ChangeFocusUtils.getNextTagId(tag: focusedTag.wrappedValue,
-                                                         goingAcross: goingAcross.wrappedValue,
-                                                         crossword: crossword)
+        let nextTag: Int = CrosswordUtils.getNextTag(tag: focusedTag.wrappedValue,
+                                                     goingAcross: goingAcross.wrappedValue,
+                                                     crossword: crossword)
         ChangeFocusUtils.moveFocusToFieldAndCheck(currentTag: focusedTag.wrappedValue, tag: nextTag,
                                                   crossword: crossword, goingAcross: goingAcross,
                                                   focusedTag: focusedTag, isHighlighted: isHighlighted,
@@ -124,30 +124,14 @@ struct ChangeFocusUtils {
         }
     }
 
-    static func getPreviousTagId(tag: Int, goingAcross: Bool, crossword: Crossword) -> Int {
-        if (goingAcross) {
-             return tag - 1
-        } else {
-             return tag - Int(crossword.length)
-        }
-    }
-
-    private static func getNextTagId(tag: Int, goingAcross: Bool, crossword: Crossword) -> Int {
-        if (goingAcross) {
-            return tag + 1
-        } else {
-            return tag + Int(crossword.length)
-        }
-    }
-
     private static func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword,
                                                  goingAcross: Binding<Bool>, focusedTag: Binding<Int>,
                                                  isHighlighted: Binding<Array<Int>>,
                                                  checkCluesForwards: Bool, checkLoopingBack: Bool) {
         let skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
         var loopBackInsideCurrentWord = checkLoopingBack ? UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord") : false
-        let currentClueId = ChangeFocusUtils.getClueID(tag: currentTag, crossword: crossword,
-                                                       goingAcross: goingAcross.wrappedValue)
+        let currentClueId = CrosswordUtils.getClueID(tag: currentTag, crossword: crossword,
+                                                     goingAcross: goingAcross.wrappedValue)
 
         if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil
             || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != ""
@@ -190,10 +174,9 @@ struct ChangeFocusUtils {
                     } else {
                         // possibleTag's cell is full, so move to next cell
                         oldTag = possibleTag
-                        possibleTag = ChangeFocusUtils.getNextTagId(tag: possibleTag,
-                                                                    goingAcross:
-                                                                        goingAcross.wrappedValue,
-                                                                    crossword: crossword)
+                        possibleTag = CrosswordUtils.getNextTag(tag: possibleTag,
+                                                                goingAcross: goingAcross.wrappedValue,
+                                                                crossword: crossword)
                     }
                 }
                 // if it reaches here, just try the cell
@@ -225,8 +208,8 @@ struct ChangeFocusUtils {
 
     private static func getNextClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
         let directionalLetter: String = goingAcross.wrappedValue == true ? "A" : "D"
-        let currentClueID = ChangeFocusUtils.getClueID(tag: tag, crossword: crossword,
-                                                       goingAcross: goingAcross.wrappedValue)
+        let currentClueID = CrosswordUtils.getClueID(tag: tag, crossword: crossword,
+                                                     goingAcross: goingAcross.wrappedValue)
         let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
         for i in (currentClueNum+1..<crossword.clues!.count) {
             let trialClueID: String = String(i)+directionalLetter
@@ -246,8 +229,8 @@ struct ChangeFocusUtils {
 
     private static func getPreviousClueID(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>) -> String {
         let directionalLetter: String = goingAcross.wrappedValue == true ? "A" : "D"
-        let currentClueID = ChangeFocusUtils.getClueID(tag: tag, crossword: crossword,
-                                                       goingAcross: goingAcross.wrappedValue)
+        let currentClueID = CrosswordUtils.getClueID(tag: tag, crossword: crossword,
+                                                     goingAcross: goingAcross.wrappedValue)
         let currentClueNum: Int = Int(String(currentClueID.dropLast()))!
         for i in (1..<currentClueNum).reversed() {
             let trialClueID: String = String(i)+directionalLetter
@@ -257,14 +240,6 @@ struct ChangeFocusUtils {
         }
         goingAcross.wrappedValue = !goingAcross.wrappedValue
         return String(1) + String(directionalLetter == "A" ? "D" : "A")
-    }
-
-    private static func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-        let directionalLetter: String = goingAcross ? "A" : "D"
-        if (tag < 0 || tag > crossword.tagToCluesMap!.count || crossword.tagToCluesMap![tag].isEmpty) {
-            return ""
-        }
-        return crossword.tagToCluesMap![tag][directionalLetter]!
     }
 }
 

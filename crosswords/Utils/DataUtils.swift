@@ -151,4 +151,12 @@ class DataUtils {
             }
         }
     }
+
+    static func buildSolvedCrossword(solvedCrossword: SolvedCrossword, crossword: Crossword) -> Void {
+        solvedCrossword.date = crossword.date
+        solvedCrossword.id = crossword.id
+        solvedCrossword.solveTime = crossword.solvedTime
+        solvedCrossword.outletName = crossword.outletName
+        solvedCrossword.numClues = Int32(crossword.clues!.count)
+    }
 }

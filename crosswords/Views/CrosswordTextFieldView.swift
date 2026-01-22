@@ -87,9 +87,13 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         @objc func solveCell(textField: NoActionTextField) {
             self.parent.isRebusMode = false
             CrosswordUtils.solveCell(tag: self.parent.focusedTag, crossword: self.parent.crossword,
+                                     userSettings: self.parent.userSettings,
                                      focusedTag: self.parent.$focusedTag,
+                                     becomeFirstResponder: self.parent.$becomeFirstResponder,
                                      goingAcross: self.parent.$goingAcross,
-                                     isHighlighted: self.parent.$highlighted)
+                                     isHighlighted: self.parent.$highlighted,
+                                     timerWrapper: self.parent.timerWrapper,
+                                     managedObjectContext: self.parent.managedObjectContext)
         }
 
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -112,11 +116,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 // current cell is empty, so try to clear the previous cell
                 // no matter what, we're moving cells, so exit rebus mode
                 self.parent.isRebusMode = false
-                let previousTag : Int = ChangeFocusUtils.getPreviousTagId(tag: focusedTag,
-                                                                          goingAcross:
-                                                                            self.parent.goingAcross,
-                                                                          crossword:
-                                                                            self.parent.crossword)
+                let previousTag : Int = CrosswordUtils.getPreviousTag(tag: focusedTag,
+                                                                      goingAcross:
+                                                                        self.parent.goingAcross,
+                                                                      crossword: self.parent.crossword)
                 if (previousTag >= 0 && previousTag < self.parent.crossword.entry!.count
                     && self.parent.crossword.entry![previousTag] != ".") {
                     // our current cell is empty and the previous one is valid,
@@ -189,40 +192,22 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
             
             if (self.parent.crossword.entry == self.parent.crossword.solution) {
-                self.parent.crossword.solved = true
-                self.parent.timerWrapper.stop()
-                let solvedCrossword = SolvedCrossword(context: self.parent.managedObjectContext)
-                let crossword = self.parent.crossword
-                solvedCrossword.date = crossword.date
-                solvedCrossword.id = crossword.id
-                solvedCrossword.solveTime = crossword.solvedTime
-                solvedCrossword.outletName = crossword.outletName
-                solvedCrossword.numClues = Int32(crossword.clues!.count)
-                self.parent.focusedTag = -1
-                self.parent.highlighted = Array<Int>()
-                self.parent.becomeFirstResponder = false
-                self.saveGame()
+                CrosswordUtils.solutionHandler(crossword: self.parent.crossword,
+                                               shouldAddStatistics: true,
+                                               userSettings: self.parent.userSettings,
+                                               focusedTag: self.parent.$focusedTag,
+                                               becomeFirstResponder: self.parent.$becomeFirstResponder,
+                                               isHighlighted: self.parent.$highlighted,
+                                               timerWrapper: self.parent.timerWrapper,
+                                               managedObjectContext: self.parent.managedObjectContext)
             }
 
             return false
         }
-        
-        func saveGame() {
-            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-            if (self.parent.userSettings.shouldTryGameCenterLogin
-                && self.parent.userSettings.gameCenterPlayer != nil) {
-                let entryString: String = (self.parent.crossword.entry?.joined(separator: ","))!
 
-                self.parent.userSettings.gameCenterPlayer!.saveGameData(
-                    entryString.data(using: .utf8)!,
-                    withName: self.parent.crossword.id!,
-                    completionHandler: {_, error in
-                        if let error = error {
-                            print("Error saving to game center: \(error)")
-                        }
-                    }
-                )
-            }
+        func saveGame() {
+            CrosswordUtils.saveGame(crossword: self.parent.crossword,
+                                    userSettings: self.parent.userSettings)
         }
         
         // checks settings and completed squares
