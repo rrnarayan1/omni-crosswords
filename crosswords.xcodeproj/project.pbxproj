@@ -512,7 +512,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.5;
+				MARKETING_VERSION = 1.8.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
@@ -538,7 +538,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.5;
+				MARKETING_VERSION = 1.8.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
