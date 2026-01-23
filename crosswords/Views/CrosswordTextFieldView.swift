@@ -15,7 +15,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
 
     var crossword: Crossword
     var currentClue: String
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
 
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
@@ -73,6 +73,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             self.parent.isRebusMode = false
             ChangeFocusUtils.goToNextClue(focusedTag: self.parent.$focusedTag,
                                           crossword: self.parent.crossword,
+                                          userSettings: self.parent.userSettings,
                                           goingAcross: self.parent.$goingAcross,
                                           isHighlighted: self.parent.$highlighted)
         }
@@ -81,6 +82,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             self.parent.isRebusMode = false
             ChangeFocusUtils.goToPreviousClue(focusedTag: self.parent.$focusedTag,
                                               crossword: self.parent.crossword,
+                                              userSettings: self.parent.userSettings,
                                               goingAcross: self.parent.$goingAcross,
                                               isHighlighted: self.parent.$highlighted)
         }
@@ -171,6 +173,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 self.parent.isRebusMode = false
                 ChangeFocusUtils.goToNextClue(focusedTag: self.parent.$focusedTag,
                                               crossword: self.parent.crossword,
+                                              userSettings: self.parent.userSettings,
                                               goingAcross: self.parent.$goingAcross,
                                               isHighlighted: self.parent.$highlighted)
                 return false
@@ -215,6 +218,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
         func moveFocusToNextField() {
             ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: self.parent.$focusedTag,
                                                           crossword: self.parent.crossword,
+                                                          userSettings: self.parent.userSettings,
                                                           goingAcross: self.parent.$goingAcross,
                                                           isHighlighted: self.parent.$highlighted)
         }

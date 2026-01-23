@@ -13,13 +13,13 @@ struct ChangeFocusUtils {
      Moves focus to the next applicable cell, checking forwards. Does apply checks to skip completed cells
      */
     static func moveFocusToNextFieldAndCheck(focusedTag: Binding<Int>, crossword: Crossword,
-                                             goingAcross: Binding<Bool>,
+                                             userSettings: UserSettings, goingAcross: Binding<Bool>,
                                              isHighlighted: Binding<Array<Int>>) {
         let nextTag: Int = CrosswordUtils.getNextTag(tag: focusedTag.wrappedValue,
                                                      goingAcross: goingAcross.wrappedValue,
                                                      crossword: crossword)
-        ChangeFocusUtils.moveFocusToFieldAndCheck(currentTag: focusedTag.wrappedValue, tag: nextTag,
-                                                  crossword: crossword, goingAcross: goingAcross,
+        ChangeFocusUtils.moveFocusToFieldAndCheck(tag: nextTag, crossword: crossword,
+                                                  userSettings: userSettings, goingAcross: goingAcross,
                                                   focusedTag: focusedTag, isHighlighted: isHighlighted,
                                                   checkCluesForwards: true, checkLoopingBack: true)
     }
@@ -84,32 +84,31 @@ struct ChangeFocusUtils {
     /**
      Goes to the first cell of the next clue, then starts to apply checks to skip completed cells, checking backwards
      */
-    static func goToNextClue(focusedTag: Binding<Int>, crossword: Crossword, goingAcross: Binding<Bool>,
-                             isHighlighted: Binding<Array<Int>>) {
+    static func goToNextClue(focusedTag: Binding<Int>, crossword: Crossword, userSettings: UserSettings,
+                             goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
         let nextClueId: String = ChangeFocusUtils.getNextClueID(tag: focusedTag.wrappedValue,
                                                                 crossword: crossword,
                                                                 goingAcross: goingAcross)
         let nextClueStartTag: Int = crossword.clueToTagsMap![nextClueId]!.min()!
-        ChangeFocusUtils.moveFocusToFieldAndCheck(currentTag: focusedTag.wrappedValue,
-                                                  tag: nextClueStartTag, crossword: crossword,
-                                                  goingAcross: goingAcross, focusedTag: focusedTag,
-                                                  isHighlighted: isHighlighted, checkCluesForwards: true,
-                                                  checkLoopingBack: false)
+        ChangeFocusUtils.moveFocusToFieldAndCheck(tag: nextClueStartTag, crossword: crossword,
+                                                  userSettings: userSettings, goingAcross: goingAcross,
+                                                  focusedTag: focusedTag, isHighlighted: isHighlighted,
+                                                  checkCluesForwards: true, checkLoopingBack: false)
     }
 
     /**
      Goes to the first cell of the previous clue, then starts to apply checks to skip completed cells, checking backwards
      */
     static func goToPreviousClue(focusedTag: Binding<Int>, crossword: Crossword,
-                                 goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
+                                 userSettings: UserSettings, goingAcross: Binding<Bool>,
+                                 isHighlighted: Binding<Array<Int>>) {
         let prevClueId: String = ChangeFocusUtils.getPreviousClueID(tag: focusedTag.wrappedValue,
                                                                     crossword: crossword,
                                                                     goingAcross: goingAcross)
         let prevClueStartTag: Int = crossword.clueToTagsMap![prevClueId]!.min()!
-        ChangeFocusUtils.moveFocusToFieldAndCheck(currentTag: focusedTag.wrappedValue,
-                                                  tag: prevClueStartTag, crossword: crossword,
-                                                  goingAcross: goingAcross, focusedTag: focusedTag,
-                                                  isHighlighted: isHighlighted,
+        ChangeFocusUtils.moveFocusToFieldAndCheck(tag: prevClueStartTag, crossword: crossword,
+                                                  userSettings: userSettings, goingAcross: goingAcross,
+                                                  focusedTag: focusedTag, isHighlighted: isHighlighted,
                                                   checkCluesForwards: false, checkLoopingBack: false)
     }
 
@@ -124,20 +123,22 @@ struct ChangeFocusUtils {
         }
     }
 
-    private static func moveFocusToFieldAndCheck(currentTag: Int, tag: Int, crossword: Crossword,
+    private static func moveFocusToFieldAndCheck(tag: Int, crossword: Crossword,
+                                                 userSettings: UserSettings,
                                                  goingAcross: Binding<Bool>, focusedTag: Binding<Int>,
                                                  isHighlighted: Binding<Array<Int>>,
                                                  checkCluesForwards: Bool, checkLoopingBack: Bool) {
-        let skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
-        var loopBackInsideCurrentWord = checkLoopingBack ? UserDefaults.standard.bool(forKey: "loopBackInsideUncompletedWord") : false
+        let currentTag = focusedTag.wrappedValue
         let currentClueId = CrosswordUtils.getClueID(tag: currentTag, crossword: crossword,
                                                      goingAcross: goingAcross.wrappedValue)
+        var loopBackInsideCurrentWord = checkLoopingBack ? userSettings.loopBackInsideUncompletedWord
+                                                         : false
 
         if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil
             || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != ""
             || tag % Int(crossword.length) == 0) {
             // the cell at the tag is not a valid empty square
-            if (skipCompletedCells && !crossword.solved) {
+            if (userSettings.skipCompletedCells && !crossword.solved) {
                 // skip to next uncompleted square. only makes sense if crossword isn't solved
                 var possibleTag: Int = tag
                 var oldTag: Int = currentTag

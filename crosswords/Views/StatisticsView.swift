@@ -10,7 +10,7 @@ import SwiftUI
 
 struct StatisticsView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
     @State var timeFilter: Date = Date().subtractWeeks(2)
     @State var outletNameFilter: String = ""
     @State var graphStatistic: SolvedCrosswordGraphStat = SolvedCrosswordGraphStat.NUM_PUZZLES

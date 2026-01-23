@@ -12,7 +12,7 @@ struct UploadPuzzleView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.dismiss) var dismiss
 
-    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var userSettings: UserSettings
 
     @State var showFilePicker: Bool = false
     @State var showError: Bool = false
@@ -38,7 +38,7 @@ struct UploadPuzzleView: View {
                     }
                     .buttonStyle(.bordered)
                 } else {
-                    Text("Your selected file: " + (openedFileUrl?.lastPathComponent ?? "none"))
+                    Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
                     HStack {
                         Text("Displayed Outlet Name:")
                         TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
@@ -67,7 +67,7 @@ struct UploadPuzzleView: View {
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .fileImporter(
-            isPresented: $showFilePicker,
+            isPresented: self.$showFilePicker,
             allowedContentTypes: [.data],
             allowsMultipleSelection: false
         ) { fileUrl in
@@ -83,7 +83,7 @@ struct UploadPuzzleView: View {
             guard self.userSettings.user != nil else {
                 return
             }
-            userSettings.user?.getIDToken(completion: {(result, err) in
+            self.userSettings.user?.getIDToken(completion: {(result, err) in
                 if (err != nil || result == nil) {
                     print("Error obtaining token for network request")
                     return

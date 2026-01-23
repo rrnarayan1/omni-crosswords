@@ -73,7 +73,7 @@ struct CrosswordListView: View {
                     }
                 }
                 .navigationDestination(for: Crossword.self) {crossword in
-                    CrosswordView(crossword: crossword)
+                    CrosswordView(crossword: crossword, userSettings: self.userSettings)
                 }
                 .refreshable {
                     self.refreshCrosswords()
@@ -92,7 +92,7 @@ struct CrosswordListView: View {
                 .navigationBarItems(trailing:
                     HStack {
                         NavigationLink(
-                            destination: StatisticsView()
+                            destination: StatisticsView(userSettings: self.userSettings)
                         ) {
                             Image(systemName: "chart.bar.xaxis")
                                 .font(.system(size: 18))
@@ -104,7 +104,8 @@ struct CrosswordListView: View {
                                 .font(.system(size: 18))
                         }
                         .navigationDestination(isPresented: self.$uploadPageActive) {
-                            UploadPuzzleView(openedFileUrl: self.openedFileUrl)
+                            UploadPuzzleView(userSettings: self.userSettings,
+                                             openedFileUrl: self.openedFileUrl)
                         }
 
                         NavigationLink(

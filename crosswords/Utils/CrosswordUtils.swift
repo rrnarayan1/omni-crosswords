@@ -38,7 +38,7 @@ struct CrosswordUtils {
     static func solveCell(tag: Int, crossword: Crossword, userSettings: UserSettings,
                           focusedTag: Binding<Int>, becomeFirstResponder: Binding<Bool>,
                           goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>,
-                          timerWrapper: TimerWrapper, managedObjectContext: NSManagedObjectContext)
+                          timerWrapper: TimerWrapper?, managedObjectContext: NSManagedObjectContext)
     -> Void {
         crossword.entry![tag] = crossword.solution![tag]
         if (crossword.entry == crossword.solution) {
@@ -50,6 +50,7 @@ struct CrosswordUtils {
         } else if (focusedTag.wrappedValue == tag) {
             ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: focusedTag,
                                                           crossword: crossword,
+                                                          userSettings: userSettings,
                                                           goingAcross: goingAcross,
                                                           isHighlighted: isHighlighted)
         } else {
@@ -98,7 +99,7 @@ struct CrosswordUtils {
     }
 
     static func getTagFromRowAndColNumbers(rowNum: Int, colNum: Int, crossword: Crossword) -> Int {
-        return rowNum*Int(crossword.length)+colNum
+        return rowNum * Int(crossword.length) + colNum
     }
 
     static func getRowNumberFromTag(tag: Int, crossword: Crossword) -> Int {

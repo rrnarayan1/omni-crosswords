@@ -14,8 +14,8 @@ struct CrosswordView: View {
     @Environment(\.managedObjectContext) private var managedObjectContext
 
     @ObservedObject var crossword: Crossword
-    @ObservedObject var userSettings = UserSettings()
-    @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
+    @ObservedObject var userSettings: UserSettings
+    @StateObject var keyboardHeightHelper = KeyboardHeightHelper()
 
     @State var focusedTag: Int = -1
     @State var highlighted: Array<Int> = Array()
@@ -32,22 +32,20 @@ struct CrosswordView: View {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let window = windowScene?.windows.filter {$0.isKeyWindow}.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        let crosswordHeight = self.initialBoxWidth*CGFloat(self.crossword.height)
+        let crosswordHeight = self.getInitialBoxWidth()*CGFloat(self.crossword.height)
         let barHeights: CGFloat = CGFloat(Constants.keybordToolbarHeight) + statusBarHeight
 
         return barHeights + crosswordHeight - 10
     }
-    var initialBoxWidth: CGFloat {
-        getInitialBoxWidth()
-    }
 
-    init(crossword: Crossword) {
+    init(crossword: Crossword, userSettings: UserSettings) {
         self.crossword = crossword
+        self.userSettings = userSettings
         self._isErrorTrackingEnabled = State(initialValue:
                                                 CrosswordUtils.isSolutionAvailable(crossword: crossword)
-                                             ? userSettings.defaultErrorTracking
+                                             ? self.userSettings.defaultErrorTracking
                                              : false)
-        self._boxWidth = State(initialValue: initialBoxWidth)
+        self._boxWidth = State(initialValue: self.getInitialBoxWidth())
     }
     
     var displayTitle: String {
@@ -99,6 +97,7 @@ struct CrosswordView: View {
                         return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
                                                  currentClue: currentClue,
                                                  doErrorTracking: self.isErrorTrackingEnabled,
+                                                 userSettings: self.userSettings, 
                                                  focusedTag: self.$focusedTag,
                                                  highlighted: self.$highlighted,
                                                  goingAcross: self.$goingAcross,
@@ -138,7 +137,7 @@ struct CrosswordView: View {
                         isSolved: self.crossword.solved,
                         solvedTime: Int(self.crossword.solvedTime))
                 }
-            }.frame(width: self.initialBoxWidth*CGFloat(self.crossword.length), height: 10)
+            }.frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
 
             Spacer()
 
@@ -159,6 +158,7 @@ struct CrosswordView: View {
                     // left
                     ChangeFocusUtils.goToPreviousClue(focusedTag: self.$focusedTag,
                                                       crossword: self.crossword,
+                                                      userSettings: self.userSettings,
                                                       goingAcross: self.$goingAcross,
                                                       isHighlighted: self.$highlighted)
                 }
@@ -167,6 +167,7 @@ struct CrosswordView: View {
                     // right
                     ChangeFocusUtils.goToNextClue(focusedTag: self.$focusedTag,
                                                   crossword: self.crossword,
+                                                  userSettings: self.userSettings,
                                                   goingAcross: self.$goingAcross,
                                                   isHighlighted: self.$highlighted)
                 }
@@ -250,7 +251,9 @@ struct CrosswordGridView: View {
     var boxWidth: CGFloat
     var currentClue: String
     var doErrorTracking: Bool
-    
+
+    @ObservedObject var userSettings: UserSettings
+
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
@@ -271,8 +274,9 @@ struct CrosswordGridView: View {
                 .id("row"+String(rowNum))
             }
             CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue,
-                                   focusedTag: self.$focusedTag, highlighted: self.$highlighted,
-                                   goingAcross: self.$goingAcross, forceUpdate: self.$forceUpdate,
+                                   userSettings: self.userSettings, focusedTag: self.$focusedTag,
+                                   highlighted: self.$highlighted, goingAcross: self.$goingAcross,
+                                   forceUpdate: self.$forceUpdate,
                                    becomeFirstResponder: self.$becomeFirstResponder,
                                    isRebusMode: self.$isRebusMode)
                 .frame(width: 1, height: 1)
