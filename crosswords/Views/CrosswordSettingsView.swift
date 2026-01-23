@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct CrosswordSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+
     let title: String
     let author: String
     let notes: String
@@ -29,7 +31,10 @@ struct CrosswordSettingsView: View {
                 .frame(width: 200)
                 
                 if (!self.isSolved) {
-                    Button(action: {self.showSolution()}) {
+                    Button(action: {
+                        self.showSolution()
+                        self.dismiss()
+                    }) {
                         Text("Show Solution")
                     }
                     .padding()

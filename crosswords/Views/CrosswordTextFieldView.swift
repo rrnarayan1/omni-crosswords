@@ -10,18 +10,19 @@ import SwiftUI
 import GameKit
 
 struct CrosswordTextFieldView: UIViewRepresentable {
+    @EnvironmentObject var timerWrapper: TimerWrapper
+    @Environment(\.managedObjectContext) var managedObjectContext
+
     var crossword: Crossword
     var currentClue: String
-    
+    @ObservedObject var userSettings = UserSettings()
+
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var isRebusMode: Bool
-    @EnvironmentObject var timerWrapper : TimerWrapper
-    @Environment(\.managedObjectContext) var managedObjectContext
-    @ObservedObject var userSettings = UserSettings()
     
     func makeUIView(context: Context) -> NoActionTextField {
         let textField = NoActionTextField(frame: .zero)

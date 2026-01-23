@@ -10,7 +10,7 @@ import SwiftUI
 
 struct UploadPuzzleView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.dismiss) var dismiss
 
     @ObservedObject var userSettings = UserSettings()
 
@@ -102,7 +102,7 @@ struct UploadPuzzleView: View {
 
     // Dismiss page, go back to list view
     func uploadFileCompletionHandler() -> Void {
-        self.presentationMode.wrappedValue.dismiss()
+        self.dismiss()
     }
 
     func uploadFile(fileUrl: URL) -> Void {

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct TimerView: View {
     @EnvironmentObject var timerWrapper: TimerWrapper
+
     var isSolved: Bool
     var solvedTime: Int?
     

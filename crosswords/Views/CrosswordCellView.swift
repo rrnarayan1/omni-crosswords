@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct CrosswordCellView: View, Equatable {
+    @Environment(\.colorScheme) var colorScheme
 
     var value: String
     var correctValue: String
@@ -19,7 +20,6 @@ struct CrosswordCellView: View, Equatable {
     var isErrorTrackingEnabled: Bool
     var isFocused: Bool
     var isHighlighted: Bool
-    @Environment(\.colorScheme) var colorScheme
 
     static func == (lhs: CrosswordCellView, rhs: CrosswordCellView) -> Bool {
         if (lhs.tag != rhs.tag) {

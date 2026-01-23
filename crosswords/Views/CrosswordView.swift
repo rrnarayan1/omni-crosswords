@@ -9,7 +9,23 @@
 import SwiftUI
 
 struct CrosswordView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.managedObjectContext) private var managedObjectContext
+
     @ObservedObject var crossword: Crossword
+    @ObservedObject var userSettings = UserSettings()
+    @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
+
+    @State var focusedTag: Int = -1
+    @State var highlighted: Array<Int> = Array()
+    @State var goingAcross: Bool = true
+    @State var isErrorTrackingEnabled: Bool = false
+    @State var forceUpdate = false
+    @State var becomeFirstResponder: Bool = false
+    @State var boxWidth: CGFloat = 0.0
+    @State var isZoomed: Bool = false
+    @State var isRebusMode: Bool = false
 
     // height of components. does not include keyboard height
     var componentHeights: CGFloat {
@@ -24,23 +40,7 @@ struct CrosswordView: View {
     var initialBoxWidth: CGFloat {
         getInitialBoxWidth()
     }
-    
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @Environment(\.managedObjectContext) var managedObjectContext
 
-    @ObservedObject var userSettings = UserSettings()
-    @ObservedObject var keyboardHeightHelper = KeyboardHeightHelper()
-    @State var focusedTag: Int = -1
-    @State var highlighted: Array<Int> = Array()
-    @State var goingAcross: Bool = true
-    @State var isErrorTrackingEnabled: Bool = false
-    @State var forceUpdate = false
-    @State var becomeFirstResponder: Bool = false
-    @State var boxWidth: CGFloat = 0.0
-    @State var isZoomed: Bool = false
-    @State var isRebusMode: Bool = false
-    
     init(crossword: Crossword) {
         self.crossword = crossword
         self._isErrorTrackingEnabled = State(initialValue:
@@ -73,13 +73,15 @@ struct CrosswordView: View {
                     Text(verbatim: self.displayTitle)
                         .bold()
                     Spacer()
-                    CrosswordTrailingToolbarView(title: crossword.title!, author: crossword.author!,
-                                                 notes: crossword.notes!,
-                                                 copyright: crossword.copyright!,
-                                                 isSolved: crossword.solved,
-                                                 outletName: crossword.outletName!,
+                    CrosswordTrailingToolbarView(title: self.crossword.title!,
+                                                 author: self.crossword.author!,
+                                                 notes: self.crossword.notes!,
+                                                 copyright: self.crossword.copyright!,
+                                                 isSolved: self.crossword.solved,
+                                                 outletName: self.crossword.outletName!,
                                                  isSolutionAvailable:
-                                                    CrosswordUtils.isSolutionAvailable(crossword: crossword),
+                                                    CrosswordUtils.isSolutionAvailable(crossword:
+                                                                                        self.crossword),
                                                  isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                                  showSolution: self.showSolution,
                                                  showSettings: self.showSettings)
@@ -244,7 +246,7 @@ struct CrosswordView: View {
     func goBack() -> Void {
         self.becomeFirstResponder = false
         DispatchQueue.main.async {
-            self.presentationMode.wrappedValue.dismiss()
+            self.dismiss()
         }
     }
 }
