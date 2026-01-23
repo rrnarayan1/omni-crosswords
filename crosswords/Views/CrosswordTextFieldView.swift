@@ -111,7 +111,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             
             if (self.parent.crossword.entry![focusedTag] != "") {
                 self.parent.crossword.entry![focusedTag] = ""
-                self.parent.forceUpdate = !self.parent.forceUpdate
+                self.parent.forceUpdate.toggle()
                 self.saveGame()
             } else {
                 // current cell is empty, so try to clear the previous cell
@@ -183,7 +183,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             } else {
                 // it's a valid letter entered, update the crossword
                 if (self.parent.isRebusMode) {
-                    self.parent.forceUpdate = !self.parent.forceUpdate
+                    self.parent.forceUpdate.toggle()
                     self.parent.crossword.entry![focusedTag].append(string.uppercased())
                 } else {
                     self.parent.crossword.entry![focusedTag] = string.uppercased()

@@ -107,9 +107,9 @@ struct CrosswordUtils {
 
     static func getPreviousTag(tag: Int, goingAcross: Bool, crossword: Crossword) -> Int {
         if (goingAcross) {
-             return tag - 1
+            return tag - 1
         } else {
-             return tag - Int(crossword.length)
+            return tag - Int(crossword.length)
         }
     }
 
@@ -122,10 +122,16 @@ struct CrosswordUtils {
     }
 
     static func getClueID(tag: Int, crossword: Crossword, goingAcross: Bool) -> String {
-        let directionalLetter: String = goingAcross ? "A" : "D"
         if (tag < 0 || tag > crossword.tagToCluesMap!.count || crossword.tagToCluesMap![tag].isEmpty) {
             return ""
         }
+        let directionalLetter: String = goingAcross ? "A" : "D"
         return crossword.tagToCluesMap![tag][directionalLetter]!
+    }
+
+    static func getClue(focusedTag: Int, crossword: Crossword, goingAcross: Bool) -> String {
+        let clueID = CrosswordUtils.getClueID(tag: focusedTag, crossword: crossword,
+                                              goingAcross: goingAcross)
+        return crossword.clues![clueID] ?? ""
     }
 }

@@ -93,7 +93,9 @@ struct CrosswordView: View {
             ScrollView([.horizontal, .vertical]) {
                 ScrollViewReader { scrollreader in
                     {() -> CrosswordGridView in
-                        let currentClue = getCurrentClue()
+                        let currentClue = CrosswordUtils.getClue(focusedTag: self.focusedTag,
+                                                                 crossword: self.crossword,
+                                                                 goingAcross: self.goingAcross)
                         return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
                                                  currentClue: currentClue,
                                                  doErrorTracking: self.isErrorTrackingEnabled,
@@ -109,8 +111,9 @@ struct CrosswordView: View {
                             scrollreader.scrollTo("cell"+String(newFocusedTag))
                             return
                         } else if (newFocusedTag >= 0 && self.shouldScroll()) {
-                            let newRowNumber = CrosswordUtils
-                                .getRowNumberFromTag(tag: newFocusedTag, crossword: self.crossword)
+                            let newRowNumber = CrosswordUtils.getRowNumberFromTag(tag: newFocusedTag,
+                                                                                  crossword:
+                                                                                    self.crossword)
                             scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
                         }
                     }
@@ -205,15 +208,6 @@ struct CrosswordView: View {
         self.boxWidth = self.isZoomed
             ? initialWidth * CGFloat(self.userSettings.zoomMagnificationLevel)
             : initialWidth
-    }
-
-    func getCurrentClue() -> String {
-        if (self.focusedTag < 0 || self.crossword.tagToCluesMap?[self.focusedTag] == nil) {
-            return ""
-        }
-        let possibleClues : Dictionary<String, String> = (self.crossword.tagToCluesMap?[self.focusedTag])!
-        let directionalLetter : String = self.goingAcross ? "A" : "D"
-        return self.crossword.clues![possibleClues[directionalLetter]!]!
     }
     
     func shouldScroll() -> Bool {
