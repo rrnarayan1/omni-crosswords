@@ -116,7 +116,7 @@ extension UITextField {
                 var leftContainerButton: UIBarButtonItem
                 var rightContainerButton: UIBarButtonItem
 
-                switch coordinator.parent.userSettings.clueCyclePlacement {
+                switch (coordinator.parent.userSettings.clueCyclePlacement) {
                 case 1: // split
                     leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
                                                                       secondButton: solveCellButton,
@@ -149,7 +149,7 @@ extension UITextField {
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
             } else {
                 // for some reason in < iOS 18 the container groups don't work
-                switch coordinator.parent.userSettings.clueCyclePlacement {
+                switch (coordinator.parent.userSettings.clueCyclePlacement) {
                 case 1: // split
                     return [UIBarButtonItem(customView: previousButton), flexible,
                             UIBarButtonItem(customView: solveCellButton), fixed, clueTitle,

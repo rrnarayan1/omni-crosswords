@@ -6,7 +6,6 @@
 //  Copyright © 2022 Rohan Narayan. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 class ColorSchemeUtil {
@@ -15,11 +14,12 @@ class ColorSchemeUtil {
     func overrideDisplayMode() {
         var userInterfaceStyle: UIUserInterfaceStyle
 
-        if selectedAppearance == 2 {
+        switch (self.selectedAppearance) {
+        case 2:
             userInterfaceStyle = .dark
-        } else if selectedAppearance == 1 {
+        case 1:
             userInterfaceStyle = .light
-        } else {
+        default:
             userInterfaceStyle = .unspecified
         }
         

@@ -37,16 +37,6 @@ struct CrosswordView: View {
 
         return barHeights + crosswordHeight - 10
     }
-
-    init(crossword: Crossword, userSettings: UserSettings) {
-        self.crossword = crossword
-        self.userSettings = userSettings
-        self._isErrorTrackingEnabled = State(initialValue:
-                                                CrosswordUtils.isSolutionAvailable(crossword: crossword)
-                                             ? self.userSettings.defaultErrorTracking
-                                             : false)
-        self._boxWidth = State(initialValue: self.getInitialBoxWidth())
-    }
     
     var displayTitle: String {
         let date = self.crossword.date ?? Date.init(timeIntervalSinceNow: TimeInterval(0))
@@ -59,7 +49,17 @@ struct CrosswordView: View {
         }
         return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
     }
-    
+
+    init(crossword: Crossword, userSettings: UserSettings) {
+        self.crossword = crossword
+        self.userSettings = userSettings
+        self._isErrorTrackingEnabled = State(initialValue:
+                                                CrosswordUtils.isSolutionAvailable(crossword: crossword)
+                                             ? self.userSettings.defaultErrorTracking
+                                             : false)
+        self._boxWidth = State(initialValue: self.getInitialBoxWidth())
+    }
+
     @ViewBuilder
     var body: some View {
         VStack {
@@ -90,22 +90,19 @@ struct CrosswordView: View {
 
             ScrollView([.horizontal, .vertical]) {
                 ScrollViewReader { scrollreader in
-                    {() -> CrosswordGridView in
-                        let currentClue = CrosswordUtils.getClue(focusedTag: self.focusedTag,
-                                                                 crossword: self.crossword,
-                                                                 goingAcross: self.goingAcross)
-                        return CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
-                                                 currentClue: currentClue,
-                                                 doErrorTracking: self.isErrorTrackingEnabled,
-                                                 userSettings: self.userSettings, 
-                                                 focusedTag: self.$focusedTag,
-                                                 highlighted: self.$highlighted,
-                                                 goingAcross: self.$goingAcross,
-                                                 forceUpdate: self.$forceUpdate,
-                                                 becomeFirstResponder: self.$becomeFirstResponder,
-                                                 isRebusMode: self.$isRebusMode)
-                    }()
-                    .onChange(of: focusedTag) {_, newFocusedTag in
+                    CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
+                                      currentClue: CrosswordUtils.getClue(focusedTag: self.focusedTag,
+                                                                          crossword: self.crossword,
+                                                                          goingAcross: self.goingAcross),
+                                      doErrorTracking: self.isErrorTrackingEnabled,
+                                      userSettings: self.userSettings,
+                                      focusedTag: self.$focusedTag,
+                                      highlighted: self.$highlighted,
+                                      goingAcross: self.$goingAcross,
+                                      forceUpdate: self.$forceUpdate,
+                                      becomeFirstResponder: self.$becomeFirstResponder,
+                                      isRebusMode: self.$isRebusMode)
+                    .onChange(of: self.focusedTag) {_, newFocusedTag in
                         if (self.isZoomed) {
                             scrollreader.scrollTo("cell"+String(newFocusedTag))
                             return

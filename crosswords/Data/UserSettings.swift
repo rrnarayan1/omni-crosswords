@@ -112,14 +112,7 @@ class UserSettings: ObservableObject {
     @Published var useLocalMode: Bool
 
     init() {
-        var useLocalMode = false
-        if let path = Bundle.main.path(forResource: "DevOverrides", ofType: "plist") {
-            // If your plist contain root as Dictionary
-            if let dic = NSDictionary(contentsOfFile: path) as? [String: Bool] {
-                useLocalMode = dic["localMode"] ?? false
-            }
-        }
-
+        let useLocalMode = DevOverridesUtils.getLocalMode()
         self.useLocalMode = useLocalMode
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
         self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
