@@ -192,6 +192,7 @@ struct CrosswordListView: View {
             let docRef = db.collection("crosswords")
                 .whereField("date", isGreaterThanOrEqualTo: lastDate)
                 .whereField("crossword_outlet_name", in: self.userSettings.subscriptions)
+                .limit(to: 100)
 
             let lastAlertId = self.userSettings.lastAlertId
             let alertDocRef = db.collection("alerts")
