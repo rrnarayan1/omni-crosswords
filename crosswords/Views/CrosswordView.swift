@@ -24,8 +24,10 @@ struct CrosswordView: View {
     @State var forceUpdate = false
     @State var becomeFirstResponder: Bool = false
     @State var boxWidth: CGFloat = 0.0
+
     @State var isZoomed: Bool = false
     @State var isRebusMode: Bool = false
+    @State var isPaused: Bool = false
 
     // height of components. does not include keyboard height
     var componentHeights: CGFloat {
@@ -127,12 +129,16 @@ struct CrosswordView: View {
                     Button(action: {self.isRebusMode.toggle()}) {
                         Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
                     }
+                    if (self.userSettings.showTimer) {
+                        Button(action: {self.isPaused.toggle()}) {
+                            Image(systemName: "pause.fill")
+                        }
+                    }
                 }
                 Spacer()
                 if (self.userSettings.showTimer) {
-                    TimerView(
-                        isSolved: self.crossword.solved,
-                        solvedTime: Int(self.crossword.solvedTime))
+                    TimerView(isSolved: self.crossword.solved, solvedTime: Int(self.crossword.solvedTime),
+                              isPaused: self.isPaused)
                 }
             }.frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
 

@@ -131,7 +131,7 @@ class UserSettings: ObservableObject {
             forKey: "loopBackInsideUncompletedWord")
         self.lastRefreshTime = UserDefaults.standard.double(forKey: "lastRefreshTime")
         self.gameCenterPlayer = GKLocalPlayer.local
-        self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 13
+        self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 14
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
         self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
         self.zoomMagnificationLevel = UserDefaults.standard.object(forKey: "zoomMagnificationLevel")

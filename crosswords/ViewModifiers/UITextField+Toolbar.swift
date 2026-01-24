@@ -19,7 +19,7 @@ extension UITextField {
         return UIImage(systemName: "chevron.left")!
     }
     
-    var solveCellImage: UIImage {
+    var solveImage: UIImage {
         return UIImage(systemName: "lifepreserver")!
     }
     
@@ -69,11 +69,13 @@ extension UITextField {
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
         
-        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width, relatedBy: .equal,
-                                                 toItem: nil, attribute: .notAnAttribute, multiplier: 1.0,
+        let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width,
+                                                 relatedBy: .equal, toItem: nil,
+                                                 attribute: .notAnAttribute, multiplier: 1.0,
                                                  constant: UIScreen.main.bounds.size.width-170)
-        let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height, relatedBy: .equal,
-                                                  toItem: nil, attribute: .notAnAttribute, multiplier: 1.0,
+        let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height,
+                                                  relatedBy: .equal, toItem: nil,
+                                                  attribute: .notAnAttribute, multiplier: 1.0,
                                                   constant: Double(Constants.keybordToolbarHeight))
 
         clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
@@ -91,26 +93,28 @@ extension UITextField {
                                            action: nil)
             fixed.width = 5
 
-            let previousButton = UIButton.systemButton(with: previousImage,
-                                                   target: coordinator,
-                                                   action: #selector(coordinator.goToPreviousClue))
+            let previousButton = UIButton.systemButton(with: previousImage, target: coordinator,
+                                                       action: #selector(coordinator.goToPreviousClue))
+            let previousButtonWithSize = UIButtonWithSize(button: previousButton, width: 20, height: 33)
 
-            let nextButton = UIButton.systemButton(with: nextImage,
-                                                   target: coordinator,
+            let nextButton = UIButton.systemButton(with: nextImage, target: coordinator,
                                                    action: #selector(coordinator.goToNextClue))
+            let nextButtonWithSize = UIButtonWithSize(button: nextButton, width: 20, height: 33)
 
-            let toggleButton = UIButton.systemButton(with: toggleImage,
-                                                     target: coordinator,
+            let toggleButton = UIButton.systemButton(with: toggleImage, target: coordinator,
                                                      action: #selector(coordinator.pressToggleButton))
+            let toggleButtonWithSize = UIButtonWithSize(button: toggleButton, width: 20, height: 19)
 
-            var solveCellButton = UIButton.systemButton(with: solveCellImage,
-                                                        target: coordinator,
-                                                        action: #selector(coordinator.solveCell))
+            var solveButton = UIButton.systemButton(with: solveImage, target: coordinator,
+                                                    action: #selector(coordinator.solveCell))
+
             let emptyButton = UIButton()
 
             if (!CrosswordUtils.isSolutionAvailable(crossword: coordinator.parent.crossword)) {
-                solveCellButton = emptyButton
+                solveButton = emptyButton
             }
+
+            let solveButtonWithSize = UIButtonWithSize(button: solveButton, width: 20, height: 20)
 
             if #available(iOS 26.0, *) {
                 var leftContainerButton: UIBarButtonItem
@@ -118,32 +122,20 @@ extension UITextField {
 
                 switch (coordinator.parent.userSettings.clueCyclePlacement) {
                 case 1: // split
-                    leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
-                                                                      secondButton: solveCellButton,
-                                                                      firstButtonWidth: 20,
-                                                                      secondButtonWidth: 20)
-                    rightContainerButton = createCustomButtonGroup(firstButton: toggleButton,
-                                                                       secondButton: nextButton,
-                                                                       firstButtonWidth: 20,
-                                                                       secondButtonWidth: 20)
+                    leftContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
+                                                                  secondButton: solveButtonWithSize)
+                    rightContainerButton = createCustomButtonGroup(firstButton: toggleButtonWithSize,
+                                                                   secondButton: nextButtonWithSize)
                 case 2: // right
-                    leftContainerButton = createCustomButtonGroup(firstButton: toggleButton,
-                                                                      secondButton: solveCellButton,
-                                                                      firstButtonWidth: 20,
-                                                                      secondButtonWidth: 20)
-                    rightContainerButton = createCustomButtonGroup(firstButton: previousButton,
-                                                                       secondButton: nextButton,
-                                                                       firstButtonWidth: 20,
-                                                                       secondButtonWidth: 20)
+                    leftContainerButton = createCustomButtonGroup(firstButton: toggleButtonWithSize,
+                                                                  secondButton: solveButtonWithSize)
+                    rightContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
+                                                                   secondButton: nextButtonWithSize)
                 default: // left
-                    leftContainerButton = createCustomButtonGroup(firstButton: previousButton,
-                                                                      secondButton: nextButton,
-                                                                      firstButtonWidth: 20,
-                                                                      secondButtonWidth: 20)
-                    rightContainerButton = createCustomButtonGroup(firstButton: solveCellButton,
-                                                                       secondButton: toggleButton,
-                                                                       firstButtonWidth: 20,
-                                                                       secondButtonWidth: 20)
+                    leftContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
+                                                                  secondButton: nextButtonWithSize)
+                    rightContainerButton = createCustomButtonGroup(firstButton: solveButtonWithSize,
+                                                                   secondButton: toggleButtonWithSize)
                 }
 
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
@@ -152,18 +144,18 @@ extension UITextField {
                 switch (coordinator.parent.userSettings.clueCyclePlacement) {
                 case 1: // split
                     return [UIBarButtonItem(customView: previousButton), flexible,
-                            UIBarButtonItem(customView: solveCellButton), fixed, clueTitle,
+                            UIBarButtonItem(customView: solveButton), fixed, clueTitle,
                             UIBarButtonItem(customView: toggleButton), flexible,
                             UIBarButtonItem(customView: nextButton)]
                 case 2: // right
                     return [UIBarButtonItem(customView: toggleButton), fixed,
-                            UIBarButtonItem(customView: solveCellButton), flexible, clueTitle, flexible,
+                            UIBarButtonItem(customView: solveButton), flexible, clueTitle, flexible,
                             UIBarButtonItem(customView: previousButton), fixed,
                             UIBarButtonItem(customView: nextButton)]
                 default: // left
                     return [UIBarButtonItem(customView: previousButton), fixed,
                             UIBarButtonItem(customView: nextButton), flexible, clueTitle, flexible,
-                            UIBarButtonItem(customView: solveCellButton), fixed,
+                            UIBarButtonItem(customView: solveButton), fixed,
                             UIBarButtonItem(customView: toggleButton)]
                 }
             }
@@ -174,29 +166,29 @@ extension UITextField {
         (self.inputAccessoryView as! UIToolbar).backgroundColor = UIColor.systemGray6
     }
 
-    func createCustomButtonGroup(firstButton: UIButton, secondButton: UIButton, firstButtonWidth: CGFloat,
-                                 secondButtonWidth: CGFloat) -> UIBarButtonItem {
-        let containerWidth = firstButtonWidth+secondButtonWidth+15
+    func createCustomButtonGroup(firstButton: UIButtonWithSize, secondButton: UIButtonWithSize)
+    -> UIBarButtonItem {
+        let containerWidth = firstButton.width+secondButton.width + 15
         let containerView = UIView(frame: CGRectMake(0, 0, containerWidth,
                                                      Double(Constants.keybordToolbarHeight)))
         containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
-        firstButton.translatesAutoresizingMaskIntoConstraints = false
-        secondButton.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(firstButton)
-        containerView.addSubview(secondButton)
+        firstButton.button.translatesAutoresizingMaskIntoConstraints = false
+        secondButton.button.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(firstButton.button)
+        containerView.addSubview(secondButton.button)
 
         NSLayoutConstraint.activate([
-            firstButton.widthAnchor.constraint(equalToConstant: firstButtonWidth),
-            firstButton.heightAnchor.constraint(equalToConstant: firstButtonWidth),
-            firstButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            firstButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
+            firstButton.button.widthAnchor.constraint(equalToConstant: firstButton.width),
+            firstButton.button.heightAnchor.constraint(equalToConstant: firstButton.height),
+            firstButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            firstButton.button.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
                                                 constant: 0)
         ])
         NSLayoutConstraint.activate([
-            secondButton.widthAnchor.constraint(equalToConstant: secondButtonWidth),
-            secondButton.heightAnchor.constraint(equalToConstant: secondButtonWidth),
-            secondButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            secondButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
+            secondButton.button.widthAnchor.constraint(equalToConstant: secondButton.width),
+            secondButton.button.heightAnchor.constraint(equalToConstant: secondButton.height),
+            secondButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            secondButton.button.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
                                                 constant: containerWidth/2)
         ])
         return UIBarButtonItem(customView: containerView)

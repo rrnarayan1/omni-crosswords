@@ -13,7 +13,8 @@ struct TimerView: View {
 
     var isSolved: Bool
     var solvedTime: Int?
-    
+    var isPaused: Bool
+
     var body: some View {
         return Text(TimeUtils.toDisplayTime(self.isSolved ? self.solvedTime! : self.timerWrapper.count))
             .onAppear(perform: {
@@ -23,5 +24,12 @@ struct TimerView: View {
                     self.timerWrapper.stop()
                 }
             })
+            .onChange(of: self.isPaused) {_, newPausedValue in
+                if (newPausedValue) {
+                    self.timerWrapper.stop()
+                } else {
+                    self.timerWrapper.start(Int(self.solvedTime ?? 0))
+                }
+            }
     }
 }
