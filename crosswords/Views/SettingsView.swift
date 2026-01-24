@@ -83,10 +83,6 @@ struct TogglesSettingsView: View {
         Toggle(isOn: $userSettings.spaceTogglesDirection) {
             Text("Space bar toggles direction")
         }
-
-        Toggle(isOn: $userSettings.enableHapticFeedback) {
-            Text("Enable haptic feedback")
-        }
         
         Toggle(isOn: $userSettings.useEmailAddressKeyboard) {
             Text("Use alternate keyboard type")
