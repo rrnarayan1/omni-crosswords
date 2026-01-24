@@ -62,7 +62,6 @@ struct CrosswordView: View {
         self._boxWidth = State(initialValue: self.getInitialBoxWidth())
     }
 
-    @ViewBuilder
     var body: some View {
         VStack {
             if (self.horizontalSizeClass == .compact) {
@@ -130,7 +129,7 @@ struct CrosswordView: View {
                         Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
                     }
                     if (self.userSettings.showTimer) {
-                        Button(action: {self.isPaused.toggle()}) {
+                        Button(action: {self.pause()}) {
                             Image(systemName: "pause.fill")
                         }
                     }
@@ -140,7 +139,8 @@ struct CrosswordView: View {
                     TimerView(isSolved: self.crossword.solved, solvedTime: Int(self.crossword.solvedTime),
                               isPaused: self.isPaused)
                 }
-            }.frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
+            }
+            .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
 
             Spacer()
 
@@ -155,6 +155,7 @@ struct CrosswordView: View {
                 }
             }
         }
+        .overlay(alignment: .bottom, content: self.maybePauseScreen)
         .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
             .onEnded({ value in
                 if (value.translation.width < 0 && self.focusedTag != -1) {
@@ -245,6 +246,34 @@ struct CrosswordView: View {
         self.becomeFirstResponder = false
         DispatchQueue.main.async {
             self.dismiss()
+        }
+    }
+
+    func pause() -> Void {
+        self.becomeFirstResponder = false
+        self.focusedTag = -1
+        self.highlighted = Array()
+        self.isPaused = true
+    }
+
+    @ViewBuilder
+    func maybePauseScreen() -> some View {
+        if (self.isPaused) {
+            VStack {
+                Text(TimeUtils.toDisplayTime(Int(self.crossword.solvedTime)))
+                    .font(.system(size: 30))
+                    .padding(.bottom)
+                Button(action: {self.isPaused.toggle()}) {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 30))
+                        .tint(Color(UIColor.label))
+                }
+            }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0,
+                   maxHeight: UIScreen.main.bounds.size.height-120)
+            .background(.ultraThinMaterial)
+        } else {
+            EmptyView()
         }
     }
 }
