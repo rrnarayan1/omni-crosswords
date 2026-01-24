@@ -10,19 +10,6 @@ import Foundation
 import SwiftUI
 
 struct BannerModifier: ViewModifier {
-    
-    struct BannerData {
-        var bannerId: Int
-        var title: String
-        var detail: String
-
-        init() {
-            self.bannerId = 0
-            self.title = ""
-            self.detail = ""
-        }
-    }
-    
     @Binding var data: BannerData
     @ObservedObject var userSettings: UserSettings
 
@@ -58,7 +45,7 @@ struct BannerModifier: ViewModifier {
 }
 
 extension View {
-    func banner(data: Binding<BannerModifier.BannerData>, userSettings: UserSettings) -> some View {
+    func banner(data: Binding<BannerData>, userSettings: UserSettings) -> some View {
         self.modifier(BannerModifier(data: data, userSettings: userSettings))
     }
 }

@@ -10,7 +10,7 @@ import UIKit
 import SwiftUI
 
 extension UITextField {
-    
+
     var nextImage: UIImage {
         return UIImage(systemName: "chevron.right")!
     }

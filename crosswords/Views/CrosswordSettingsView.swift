@@ -48,10 +48,10 @@ struct CrosswordSettingsView: View {
                 }
             }
             .padding([.bottom], 30)
-            Text("Title: "+self.title)
-            Text("Author: "+self.author)
+            Text("Title: " + self.title)
+            Text("Author: " + self.author)
             if (self.notes != "") {
-                Text("Notes: "+self.notes)
+                Text("Notes: " + self.notes)
             }
             Text(self.copyright)
 
