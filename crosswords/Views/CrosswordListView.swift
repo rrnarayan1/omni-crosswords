@@ -16,7 +16,7 @@ struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
     @State var refreshEnabled = true
-    @State var bannerData: BannerModifier.BannerData = BannerModifier.BannerData()
+    @State var bannerData: BannerData = BannerData()
     @State var openedFileUrl: URL? = nil
     @State var uploadPageActive = false
     @State var selectedCrossword: [Crossword] = []
