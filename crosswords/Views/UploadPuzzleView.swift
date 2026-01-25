@@ -20,47 +20,66 @@ struct UploadPuzzleView: View {
     @State var token: String = ""
     @State var openedFileUrl: URL? = nil
     @State var overridenOutletName: String = ""
+    @State var localFileName: String = ""
 
     var body: some View {
         VStack {
-            if (!self.showError && self.showLoader) {
-                ProgressView("Uploading...")
-            } else {
-                if (self.showError) {
-                    Text("Something went wrong. Try again and check the formatting of your file")
-                        .foregroundColor(.red)
-                        .padding()
+            if (self.userSettings.useLocalMode) {
+                HStack {
+                    Text("Local file to upload:")
+                    TextField("Local file to upload:", text: self.$localFileName,
+                              prompt: Text("sampleData"))
+                    .border(.secondary)
+                    .textFieldStyle(.roundedBorder)
+                    .padding(.leading, 10)
                 }
 
-                if (self.openedFileUrl == nil) {
-                    Button("Select .puz file") {
-                        self.showFilePicker.toggle()
-                    }
-                    .buttonStyle(.bordered)
+                Button("Upload") {
+                    self.uploadLocalFile(localFileName: self.localFileName)
+                }
+                .padding()
+                .buttonStyle(.borderedProminent)
+
+            } else {
+                if (!self.showError && self.showLoader) {
+                    ProgressView("Uploading...")
                 } else {
-                    Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
-                    HStack {
-                        Text("Displayed Outlet Name:")
-                        TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
-                                  prompt: Text("Custom"))
+                    if (self.showError) {
+                        Text("Something went wrong. Try again and check the formatting of your file")
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+
+                    if (self.openedFileUrl == nil) {
+                        Button("Select .puz file") {
+                            self.showFilePicker.toggle()
+                        }
+                        .buttonStyle(.bordered)
+                    } else {
+                        Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
+                        HStack {
+                            Text("Displayed Outlet Name:")
+                            TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
+                                      prompt: Text("Custom"))
                             .border(.secondary)
                             .textFieldStyle(.roundedBorder)
                             .padding(.leading, 10)
-                    }
-
-                    HStack {
-                        Button("Cancel") {
-                            self.openedFileUrl = nil
                         }
-                        .padding()
-                        .buttonStyle(.bordered)
 
-                        Button("Upload") {
-                            self.showLoader = true
-                            self.uploadFile(fileUrl: self.openedFileUrl!)
+                        HStack {
+                            Button("Cancel") {
+                                self.openedFileUrl = nil
+                            }
+                            .padding()
+                            .buttonStyle(.bordered)
+
+                            Button("Upload") {
+                                self.showLoader = true
+                                self.uploadFile(fileUrl: self.openedFileUrl!)
+                            }
+                            .padding()
+                            .buttonStyle(.borderedProminent)
                         }
-                        .padding()
-                        .buttonStyle(.borderedProminent)
                     }
                 }
             }
@@ -168,5 +187,17 @@ struct UploadPuzzleView: View {
             }
             task.resume()
         }
+    }
+
+    func uploadLocalFile(localFileName: String) -> Void {
+        let crossword = Crossword(context: self.managedObjectContext)
+        DataUtils.buildSampleCrossword(crossword: crossword,
+                                       resourceName: localFileName)
+        do {
+            try self.managedObjectContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+        self.uploadFileCompletionHandler()
     }
 }
