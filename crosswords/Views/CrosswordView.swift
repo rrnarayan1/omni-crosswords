@@ -72,19 +72,8 @@ struct CrosswordView: View {
                     Text(verbatim: self.displayTitle)
                         .bold()
                     Spacer()
-                    CrosswordTrailingToolbarView(title: self.crossword.title!,
-                                                 author: self.crossword.author!,
-                                                 notes: self.crossword.notes!,
-                                                 copyright: self.crossword.copyright!,
-                                                 isSolved: self.crossword.solved,
-                                                 outletName: self.crossword.outletName!,
-                                                 isSolutionAvailable:
-                                                    CrosswordUtils.isSolutionAvailable(crossword:
-                                                                                        self.crossword),
-                                                 isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                                 showSolution: self.showSolution,
-                                                 showSettings: self.showSettings)
-                    .padding(.trailing)
+                    self.getTrailingToolbarView()
+                        .padding(.trailing)
                 }
                 .background(self.crossword.solved ? .green : Color(UIColor.systemBackground))
             }
@@ -181,17 +170,7 @@ struct CrosswordView: View {
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                CrosswordTrailingToolbarView(title: self.crossword.title!, author: self.crossword.author!,
-                                             notes: self.crossword.notes!,
-                                             copyright: self.crossword.copyright!,
-                                             isSolved: self.crossword.solved,
-                                             outletName: self.crossword.outletName!,
-                                             isSolutionAvailable:
-                                                CrosswordUtils.isSolutionAvailable(crossword:
-                                                                                    self.crossword),
-                                             isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                             showSolution: self.showSolution,
-                                             showSettings: self.showSettings)
+                self.getTrailingToolbarView()
             }.hideSharedBackgroundIfAvailable()
             ToolbarItem(placement: .navigationBarLeading) {
                 CrosswordLeadingToolbarView(goBack: self.goBack)
@@ -200,7 +179,25 @@ struct CrosswordView: View {
         // custom back button added in leading toolbar view
         .navigationBarBackButtonHidden(true)
     }
-    
+
+    func getTrailingToolbarView() -> CrosswordTrailingToolbarView {
+        return CrosswordTrailingToolbarView(title: self.crossword.title!, author: self.crossword.author!,
+                                            notes: self.crossword.notes!,
+                                            copyright: self.crossword.copyright!,
+                                            isSolved: self.crossword.solved,
+                                            outletName: self.crossword.outletName!,
+                                            isSolutionAvailable:
+                                                CrosswordUtils.isSolutionAvailable(crossword:
+                                                                                    self.crossword),
+                                            isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                                            showSolution: self.showSolution,
+                                            showSettings: self.showSettings,
+                                            getProgressPercentage: {() -> CGFloat in
+                                                CrosswordUtils.getCrosswordProgress(self.crossword)
+                                            },
+                                            markAsSolved: self.markAsSolved)
+    }
+
     func getInitialBoxWidth() -> CGFloat {
         let maxInitialSize: CGFloat = CGFloat(Constants.maxInitialCellSize)
         let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(self.crossword.length)
@@ -235,7 +232,21 @@ struct CrosswordView: View {
                                        isHighlighted: self.$highlighted, timerWrapper: nil,
                                        managedObjectContext: self.managedObjectContext)
     }
-    
+
+    func markAsSolved() -> Void {
+        if (CrosswordUtils.isSolutionAvailable(crossword: self.crossword)
+            || CrosswordUtils.getCrosswordProgress(self.crossword) != 1.0) {
+            // should only call this method if the solution is not available and the crossword is complete
+            return
+        }
+        CrosswordUtils.solutionHandler(crossword: self.crossword, shouldAddStatistics: false,
+                                       shouldCheckSolution: false, userSettings: self.userSettings,
+                                       focusedTag: self.$focusedTag,
+                                       becomeFirstResponder: self.$becomeFirstResponder,
+                                       isHighlighted: self.$highlighted, timerWrapper: nil,
+                                       managedObjectContext: self.managedObjectContext)
+    }
+
     func showSettings() -> Void {
         self.becomeFirstResponder = false
         self.focusedTag = -1

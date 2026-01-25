@@ -19,7 +19,9 @@ struct CrosswordSettingsView: View {
     let isSolutionAvailable: Bool
     
     @Binding var errorTracking: Bool
-    var showSolution: () -> Void
+    let showSolution: () -> Void
+    let getProgressPercentage: () -> CGFloat
+    let markAsSolved: () -> Void
 
     var body: some View {
         VStack(alignment: .center) {
@@ -30,7 +32,7 @@ struct CrosswordSettingsView: View {
                 .disabled(!self.isSolutionAvailable)
                 .frame(width: 200)
                 
-                if (!self.isSolved) {
+                if (!self.isSolved && self.isSolutionAvailable) {
                     Button(action: {
                         self.showSolution()
                         self.dismiss()
@@ -39,15 +41,23 @@ struct CrosswordSettingsView: View {
                     }
                     .padding()
                     .buttonStyle(.bordered)
-                    .disabled(!self.isSolutionAvailable)
                     .frame(width: 200)
                 }
-                
-                if (!self.isSolutionAvailable) {
-                    Text("""
-                         Error Tracking and Show Solution are disabled because the solution
-                         is not available
-                    """)
+
+                if (!self.isSolutionAvailable && !self.isSolved) {
+                    Button(action: {
+                        self.markAsSolved()
+                        self.dismiss()
+                    }) {
+                        Text("Mark as Solved")
+                    }
+                    .padding()
+                    .disabled(self.getProgressPercentage() != 1.0)
+                    .buttonStyle(.bordered)
+                    .frame(width: 200)
+
+                    Text("Error Tracking is disabled because the solution is not available. " +
+                         "Complete the puzzle to mark it as solved.")
                     .multilineTextAlignment(.center)
                 }
             }

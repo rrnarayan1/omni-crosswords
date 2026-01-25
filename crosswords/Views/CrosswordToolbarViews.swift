@@ -20,6 +20,8 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     let isErrorTrackingEnabled: Binding<Bool>
     let showSolution: () -> Void
     let showSettings: () -> Void
+    let getProgressPercentage: () -> CGFloat
+    let markAsSolved: () -> Void
     @State var showShareSheet: Bool = false
     @State var showCrosswordSettings: Bool = false
 
@@ -60,7 +62,9 @@ struct CrosswordTrailingToolbarView: View, Equatable {
                                       copyright: self.copyright, isSolved: self.isSolved,
                                       isSolutionAvailable: self.isSolutionAvailable,
                                       errorTracking: self.isErrorTrackingEnabled,
-                                      showSolution: self.showSolution)
+                                      showSolution: self.showSolution,
+                                      getProgressPercentage: self.getProgressPercentage,
+                                      markAsSolved: self.markAsSolved)
             }
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))

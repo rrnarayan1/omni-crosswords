@@ -62,12 +62,13 @@ struct CrosswordUtils {
         }
     }
 
-    static func solutionHandler(crossword: Crossword, shouldAddStatistics: Bool,
-                                userSettings: UserSettings, focusedTag: Binding<Int>,
-                                becomeFirstResponder: Binding<Bool>, isHighlighted: Binding<Array<Int>>,
-                                timerWrapper: TimerWrapper?, managedObjectContext: NSManagedObjectContext)
+    static func solutionHandler(crossword: Crossword, shouldAddStatistics: Bool = true,
+                                shouldCheckSolution: Bool = true, userSettings: UserSettings,
+                                focusedTag: Binding<Int>, becomeFirstResponder: Binding<Bool>,
+                                isHighlighted: Binding<Array<Int>>, timerWrapper: TimerWrapper?,
+                                managedObjectContext: NSManagedObjectContext)
     -> Void {
-        if (crossword.entry != crossword.solution) {
+        if (shouldCheckSolution && crossword.entry != crossword.solution) {
             // this function should not have been called, the crossword isn't solved
             return
         }
