@@ -48,7 +48,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
         }
 
-        uiTextField.changeToolbar(clueTitle: self.currentClue)
+        uiTextField.changeToolbar(userSettings: self.userSettings, clueTitle: self.currentClue)
     }
     
     func makeCoordinator() -> Coordinator {

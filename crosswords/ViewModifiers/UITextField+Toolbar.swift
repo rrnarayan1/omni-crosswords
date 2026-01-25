@@ -27,7 +27,7 @@ extension UITextField {
         return UIImage(systemName: "arrow.2.squarepath")!
     }
     
-    func changeToolbar(clueTitle: String) {
+    func changeToolbar(userSettings: UserSettings, clueTitle: String) {
         guard let uiTextFieldToolbar = self.inputAccessoryView as? UIToolbar else {
             print("inputAccessoryView is nil or not a UIToolbar")
             return
@@ -39,33 +39,54 @@ extension UITextField {
             clueTitleIndex = 4
         }
         let clueTitleLabel = uiTextFieldToolbar.items![clueTitleIndex].customView as! UITextView
+        let attributedText = clueTitleLabel.attributedText
+        var newAttributedString: NSMutableAttributedString
 
-        if (clueTitleLabel.text.trimmingCharacters(in: .whitespaces) != clueTitle.trimmingCharacters(in: .whitespaces)) {
+        do {
+            newAttributedString = try NSMutableAttributedString(AttributedString(markdown: clueTitle))
+        } catch {
+            print("Failure in creating attributed text: \(error)")
+            return
+        }
+
+        if (attributedText!.string.trimmingCharacters(in: .whitespaces)
+            != newAttributedString.string.trimmingCharacters(in: .whitespaces)) {
             uiTextFieldToolbar.items?.remove(at: clueTitleIndex)
-            clueTitleLabel.text = clueTitle
+            clueTitleLabel.attributedText = self.formatClueTitle(userSettings: userSettings,
+                                                                 attributedString: newAttributedString)
             uiTextFieldToolbar.items?.insert(
                 UIBarButtonItem.init(customView: clueTitleLabel).hideSharedBackgroundIfAvailable(),
                 at: clueTitleIndex
             )
         }
     }
-    
+
+    func formatClueTitle(userSettings: UserSettings, attributedString: NSMutableAttributedString)
+    -> NSAttributedString {
+        var clueFontSize = userSettings.clueSize
+        if (clueFontSize < 14) {
+            clueFontSize = 14
+        }
+        let fullRange: NSRange = NSRange(location: 0, length: attributedString.length)
+        let centerAlignment = NSMutableParagraphStyle()
+        centerAlignment.alignment = NSTextAlignment.center
+        attributedString.addAttribute(.foregroundColor, value: UIColor.label, range: fullRange)
+        attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: CGFloat(clueFontSize)),
+                                      range: fullRange)
+        attributedString.addAttribute(.paragraphStyle, value: centerAlignment, range: fullRange)
+
+        return attributedString
+    }
+
     func addToolbar(coordinator: CrosswordTextFieldView.Coordinator) {
         self.inputAccessoryView = UIToolbar(frame: CGRect(x: 0.0, y: 0.0,
                                                           width: Double(UIScreen.main.bounds.size.width),
                                                           height: Double(Constants.keybordToolbarHeight)))
         let clueTitleLabel = UITextView()
-        var clueFontSize = coordinator.parent.userSettings.clueSize
-        if (clueFontSize < 13) {
-            clueFontSize = 13
-        }
-        
-        clueTitleLabel.text = ""
-        clueTitleLabel.font = UIFont.systemFont(ofSize: CGFloat(clueFontSize))
-        clueTitleLabel.textColor = UIColor.label
+
+        clueTitleLabel.attributedText = NSAttributedString(string: "")
         clueTitleLabel.backgroundColor = UIColor.clear
         clueTitleLabel.isEditable = false
-        clueTitleLabel.textAlignment = NSTextAlignment.center
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
         
@@ -93,19 +114,19 @@ extension UITextField {
                                            action: nil)
             fixed.width = 5
 
-            let previousButton = UIButton.systemButton(with: previousImage, target: coordinator,
+            let previousButton = UIButton.systemButton(with: self.previousImage, target: coordinator,
                                                        action: #selector(coordinator.goToPreviousClue))
             let previousButtonWithSize = UIButtonWithSize(button: previousButton, width: 20, height: 33)
 
-            let nextButton = UIButton.systemButton(with: nextImage, target: coordinator,
+            let nextButton = UIButton.systemButton(with: self.nextImage, target: coordinator,
                                                    action: #selector(coordinator.goToNextClue))
             let nextButtonWithSize = UIButtonWithSize(button: nextButton, width: 20, height: 33)
 
-            let toggleButton = UIButton.systemButton(with: toggleImage, target: coordinator,
+            let toggleButton = UIButton.systemButton(with: self.toggleImage, target: coordinator,
                                                      action: #selector(coordinator.pressToggleButton))
             let toggleButtonWithSize = UIButtonWithSize(button: toggleButton, width: 20, height: 19)
 
-            var solveButton = UIButton.systemButton(with: solveImage, target: coordinator,
+            var solveButton = UIButton.systemButton(with: self.solveImage, target: coordinator,
                                                     action: #selector(coordinator.solveCell))
 
             let emptyButton = UIButton()
@@ -122,20 +143,24 @@ extension UITextField {
 
                 switch (coordinator.parent.userSettings.clueCyclePlacement) {
                 case 1: // split
-                    leftContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
-                                                                  secondButton: solveButtonWithSize)
-                    rightContainerButton = createCustomButtonGroup(firstButton: toggleButtonWithSize,
-                                                                   secondButton: nextButtonWithSize)
+                    leftContainerButton = self.createCustomButtonGroup(firstButton:
+                                                                        previousButtonWithSize,
+                                                                       secondButton: solveButtonWithSize)
+                    rightContainerButton = self.createCustomButtonGroup(firstButton: toggleButtonWithSize,
+                                                                        secondButton: nextButtonWithSize)
                 case 2: // right
-                    leftContainerButton = createCustomButtonGroup(firstButton: toggleButtonWithSize,
-                                                                  secondButton: solveButtonWithSize)
-                    rightContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
-                                                                   secondButton: nextButtonWithSize)
+                    leftContainerButton = self.createCustomButtonGroup(firstButton: toggleButtonWithSize,
+                                                                       secondButton: solveButtonWithSize)
+                    rightContainerButton = self.createCustomButtonGroup(firstButton:
+                                                                            previousButtonWithSize,
+                                                                        secondButton: nextButtonWithSize)
                 default: // left
-                    leftContainerButton = createCustomButtonGroup(firstButton: previousButtonWithSize,
-                                                                  secondButton: nextButtonWithSize)
-                    rightContainerButton = createCustomButtonGroup(firstButton: solveButtonWithSize,
-                                                                   secondButton: toggleButtonWithSize)
+                    leftContainerButton = self.createCustomButtonGroup(firstButton:
+                                                                        previousButtonWithSize,
+                                                                       secondButton: nextButtonWithSize)
+                    rightContainerButton = self.createCustomButtonGroup(firstButton: solveButtonWithSize,
+                                                                        secondButton:
+                                                                            toggleButtonWithSize)
                 }
 
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
@@ -168,7 +193,7 @@ extension UITextField {
 
     func createCustomButtonGroup(firstButton: UIButtonWithSize, secondButton: UIButtonWithSize)
     -> UIBarButtonItem {
-        let containerWidth = firstButton.width+secondButton.width + 15
+        let containerWidth = firstButton.width + secondButton.width + 15
         let containerView = UIView(frame: CGRectMake(0, 0, containerWidth,
                                                      Double(Constants.keybordToolbarHeight)))
         containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
