@@ -320,7 +320,7 @@ struct CrosswordGridView: View {
                                                                  crossword: self.crossword)
         return CrosswordCellView(
             value: self.crossword.entry![tag],
-            correctValue: self.crossword.solution![tag],
+            correctValue: self.crossword.solution?[safe: tag],
             symbol: self.crossword.symbols![tag],
             tag: tag,
             onTap: self.onTapCell,

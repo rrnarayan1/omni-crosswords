@@ -41,6 +41,8 @@
 		F32FD9502AF6125100CC90E1 /* CrosswordUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */; };
 		F33211B52AF4B81500018651 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33211B42AF4B81500018651 /* TimerView.swift */; };
 		F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */; };
+		F342061B2F25B6A200C6E41D /* noSolution.json in Resources */ = {isa = PBXBuildFile; fileRef = F342061A2F25B6A200C6E41D /* noSolution.json */; };
+		F342061D2F25BA3B00C6E41D /* Collections+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F342061C2F25BA3600C6E41D /* Collections+Extensions.swift */; };
 		F34252272ED81603006D090D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F34252262ED81603006D090D /* FirebaseAuth */; };
 		F34252292ED81603006D090D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F34252282ED81603006D090D /* FirebaseCore */; };
 		F342522B2ED81603006D090D /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F342522A2ED81603006D090D /* FirebaseFirestore */; };
@@ -97,6 +99,8 @@
 		F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordUtils.swift; sourceTree = "<group>"; };
 		F33211B42AF4B81500018651 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordToolbarViews.swift; sourceTree = "<group>"; };
+		F342061A2F25B6A200C6E41D /* noSolution.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noSolution.json; sourceTree = "<group>"; };
+		F342061C2F25BA3600C6E41D /* Collections+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collections+Extensions.swift"; sourceTree = "<group>"; };
 		F352635D2F12EAD80049F0B6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F35263602F1306F40049F0B6 /* UIScreen+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+Extensions.swift"; sourceTree = "<group>"; };
 		F35263622F1307150049F0B6 /* ShapeStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShapeStyle+Extensions.swift"; sourceTree = "<group>"; };
@@ -226,11 +230,12 @@
 			children = (
 				1C7FD49828778582006D38A6 /* ActivityView.swift */,
 				1C958ABA284C0ADC00695B9B /* BannerModifier.swift */,
-				F32398D62F2487CC00EDED49 /* UIButtonWithSize.swift */,
+				F342061C2F25BA3600C6E41D /* Collections+Extensions.swift */,
 				1C4FF2552501D074002BBE48 /* NavigationBarModifier.swift */,
 				F35263622F1307150049F0B6 /* ShapeStyle+Extensions.swift */,
 				F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */,
 				F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */,
+				F32398D62F2487CC00EDED49 /* UIButtonWithSize.swift */,
 				1CBB3F562584040000BD1B5A /* UITextField+Toolbar.swift */,
 				F35263602F1306F40049F0B6 /* UIScreen+Extensions.swift */,
 			);
@@ -250,6 +255,7 @@
 			isa = PBXGroup;
 			children = (
 				F3B806CB2C3270B00087DE82 /* sampleData1.json */,
+				F342061A2F25B6A200C6E41D /* noSolution.json */,
 				1C30E3A7289736FC00189562 /* sampleData.json */,
 			);
 			path = SampleDataFiles;
@@ -318,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C8AB1AF289756D1008D8841 /* GoogleService-Info.plist in Resources */,
+				F342061B2F25B6A200C6E41D /* noSolution.json in Resources */,
 				1C73207724C4F44200240AF8 /* LaunchScreen.storyboard in Resources */,
 				1C8AB1AD289752B7008D8841 /* DevOverrides.plist in Resources */,
 				1C73207424C4F44200240AF8 /* Preview Assets.xcassets in Resources */,
@@ -361,6 +368,7 @@
 				1CA8EA492974AA6400168E83 /* SolvedCrosswordStatistics.swift in Sources */,
 				1C6A26B724CA7340002F8DAD /* CrosswordCellView.swift in Sources */,
 				F35263652F1307B60049F0B6 /* UserSettings.swift in Sources */,
+				F342061D2F25BA3B00C6E41D /* Collections+Extensions.swift in Sources */,
 				1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */,
 				1C08D87E24CB62ED006AF7A0 /* JsonSampleData.swift in Sources */,
 				F32398D92F2559F200EDED49 /* BannerData.swift in Sources */,

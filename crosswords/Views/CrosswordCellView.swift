@@ -12,7 +12,7 @@ struct CrosswordCellView: View, Equatable {
     @Environment(\.colorScheme) var colorScheme
 
     var value: String
-    var correctValue: String
+    var correctValue: String?
     var symbol: Int
     var tag: Int
     var onTap: (Int) -> Void

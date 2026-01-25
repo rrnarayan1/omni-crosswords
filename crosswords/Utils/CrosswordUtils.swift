@@ -31,6 +31,9 @@ struct CrosswordUtils {
     }
 
     static func isSolutionAvailable(crossword: Crossword) -> Bool {
+        if (crossword.solution == nil || crossword.solution!.isEmpty) {
+            return false
+        }
         let solutionSet = Set(crossword.solution!)
         return solutionSet != Set(["X","."])
     }

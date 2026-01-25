@@ -44,7 +44,11 @@ struct CrosswordSettingsView: View {
                 }
                 
                 if (!self.isSolutionAvailable) {
-                    Text("Error Tracking and Show Solution are Disabled because the solution is not available")
+                    Text("""
+                         Error Tracking and Show Solution are disabled because the solution
+                         is not available
+                    """)
+                    .multilineTextAlignment(.center)
                 }
             }
             .padding([.bottom], 30)
