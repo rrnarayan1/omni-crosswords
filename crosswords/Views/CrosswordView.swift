@@ -143,6 +143,12 @@ struct CrosswordView: View {
                     Text(self.crossword.copyright!).multilineTextAlignment(.center)
                 }
             }
+            if (ProcessInfo.processInfo.isiOSAppOnMac) {
+                // they have a hardware keyboard, so artificially create space at the bottom
+                // this is becuase the scrollview pushes the timer row to below the toolbar only on macOS
+                Divider()
+                    .frame(height: CGFloat(Constants.keybordToolbarHeight))
+            }
         }
         .overlay(alignment: .bottom, content: self.maybePauseScreen)
         .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
