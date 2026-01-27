@@ -10,7 +10,6 @@ import SwiftUI
 import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
-import GameKit
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -139,18 +138,8 @@ struct CrosswordListView: View {
     }
     
     func refreshCrosswords() -> Void {
-        if (self.userSettings.shouldTryGameCenterLogin) {
-            let localPlayer = GKLocalPlayer.local
-            GKLocalPlayer.local.authenticateHandler = { vc, error in
-                guard error == nil else {
-                    print(error?.localizedDescription ?? "")
-                    self.userSettings.shouldTryGameCenterLogin = false
-                    return
-                }
-                self.userSettings.gameCenterPlayer = localPlayer
-            }
-        }
         self.refreshEnabled = false
+        //self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
 
         self.refreshQueue.async() {
             if (self.userSettings.useLocalMode) {
@@ -171,8 +160,7 @@ struct CrosswordListView: View {
             if (self.userSettings.user == nil) {
                 self.checkUser()
             }
-
-            // UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "lastRefreshTime")
+            GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
 
             let lastDate: Date
             if self.crosswords.count == 0 {
@@ -262,7 +250,8 @@ struct CrosswordListView: View {
                     }
                 }
                 self.checkForDeletions(allCrosswords: allCrosswords)
-                self.syncSavedGames()
+                GameCenterUtils.maybeSyncSavedGames(userSettings: self.userSettings,
+                                                    crosswords: allCrosswords)
                 self.refreshEnabled = true
             }
         }
@@ -303,58 +292,10 @@ struct CrosswordListView: View {
         }
     }
     
-    func syncSavedGames() -> Void {
-        if (self.userSettings.shouldTryGameCenterLogin && self.userSettings.gameCenterPlayer != nil) {
-            self.userSettings.gameCenterPlayer?.fetchSavedGames(completionHandler: {(games, error) in
-                if let error = error {
-                    print("Error getting game center saved games: \(error)")
-                    return
-                } else if games == nil {
-                    return
-                }
-                for game in games! {
-                    game.loadData(completionHandler: {(gameData, error) in
-                        if let error = error {
-                            print("Error getting gameData from game center saved game: \(error)")
-                            return
-                        } else if (gameData == nil) {
-                            return
-                        }
-                        
-                        let entryString: String = String(data: gameData!, encoding: .utf8)!
-                        let gcEntry: Array<String> = entryString.components(separatedBy: ",")
-                        let savedCrossword = self.crosswords.first(where: {xw in xw.id == game.name})
-                        if (savedCrossword != nil && savedCrossword?.solved == false
-                            && CrosswordUtils.getFilledCellsCount((savedCrossword?.entry)!)
-                            < CrosswordUtils.getFilledCellsCount(gcEntry)) {
-                            // overwrite if: current crossword is not already solved and
-                            // if progress would increase on the crossword
-                            savedCrossword?.entry = gcEntry
-                            if (gcEntry == savedCrossword?.solution) {
-                                savedCrossword?.solved = true
-                            } else {
-                                savedCrossword?.solved = false
-                            }
-                        }
-                    })
-                }
-            })
-        }
-    }
-    
     func deleteGame(crossword: Crossword) -> Void {
         self.managedObjectContext.delete(crossword)
-        
-        if (self.userSettings.gameCenterPlayer != nil) {
-            self.userSettings.gameCenterPlayer?.deleteSavedGames(withName: crossword.id!,
-                                                                 completionHandler: {error in
-                if let error = error {
-                    print("Error deleting game from game center saved game: \(error)")
-                    return
-                }
-            })
-        }
-        
+        GameCenterUtils.maybeDeleteGame(userSettings: self.userSettings, crosswordId: crossword.id!)
+
         do {
             try self.managedObjectContext.save()
         } catch {

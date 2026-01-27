@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import GameKit
 
 struct CrosswordTextFieldView: UIViewRepresentable {
     @EnvironmentObject var timerWrapper: TimerWrapper

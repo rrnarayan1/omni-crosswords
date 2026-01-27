@@ -12,7 +12,7 @@ import CoreData
 struct CrosswordUtils {
 
     static func getCrosswordProgress(_ crossword: Crossword) -> CGFloat {
-        let fillableSquaresCount = CrosswordUtils.getFillableCellsCount(crossword.symbols!)
+        let fillableSquaresCount = CrosswordUtils.getFillableCellsCount(crossword.entry!)
         let filledSquaresCount = CrosswordUtils.getFilledCellsCount(crossword.entry!)
         let retval = CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
         return retval
@@ -24,9 +24,9 @@ struct CrosswordUtils {
         }).count
     }
 
-    static func getFillableCellsCount(_ symbols: Array<Int>) -> Int {
-        return symbols.filter({ (symbol) -> Bool in
-            symbol != -1
+    static func getFillableCellsCount(_ symbols: Array<String>) -> Int {
+        return symbols.filter({ (entry) -> Bool in
+            entry != "."
         }).count
     }
 
@@ -86,20 +86,8 @@ struct CrosswordUtils {
 
     static func saveGame(crossword: Crossword, userSettings: UserSettings) -> Void {
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-        if (userSettings.shouldTryGameCenterLogin
-            && userSettings.gameCenterPlayer != nil) {
-            let entryString: String = (crossword.entry?.joined(separator: ","))!
-
-            userSettings.gameCenterPlayer!.saveGameData(
-                entryString.data(using: .utf8)!,
-                withName: crossword.id!,
-                completionHandler: {_, error in
-                    if let error = error {
-                        print("Error saving to game center: \(error)")
-                    }
-                }
-            )
-        }
+        GameCenterUtils.maybeSaveGame(userSettings: userSettings, crosswordId: crossword.id!,
+                                      crosswordEntry: crossword.entry!)
     }
 
     static func getTagFromRowAndColNumbers(rowNum: Int, colNum: Int, crossword: Crossword) -> Int {

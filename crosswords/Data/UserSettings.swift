@@ -8,7 +8,6 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
-import GameKit
 
 class UserSettings: ObservableObject {
     @Published var showSolved: Bool {
@@ -108,7 +107,6 @@ class UserSettings: ObservableObject {
     }
 
     @Published var user: User?
-    @Published var gameCenterPlayer: GKLocalPlayer?
     @Published var useLocalMode: Bool
 
     init() {
@@ -130,12 +128,10 @@ class UserSettings: ObservableObject {
         self.loopBackInsideUncompletedWord = UserDefaults.standard.bool(
             forKey: "loopBackInsideUncompletedWord")
         self.lastRefreshTime = UserDefaults.standard.double(forKey: "lastRefreshTime")
-        self.gameCenterPlayer = GKLocalPlayer.local
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 14
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
         self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
         self.zoomMagnificationLevel = UserDefaults.standard.object(forKey: "zoomMagnificationLevel")
             as? Float ?? 2.0
-        self.gameCenterPlayer?.register(GameCenterListener())
     }
 }

@@ -56,6 +56,7 @@
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
 		F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* DataUtils.swift */; };
 		F396923F2F20785900BBBDB3 /* TimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F396923E2F20785500BBBDB3 /* TimeUtils.swift */; };
+		F3B1F8832F285A3C0052682B /* GameCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8822F285A370052682B /* GameCenterUtils.swift */; };
 		F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */ = {isa = PBXBuildFile; fileRef = F3B806CB2C3270B00087DE82 /* sampleData1.json */; };
 		F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */; };
 /* End PBXBuildFile section */
@@ -111,6 +112,7 @@
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
 		F38D69BC2EE4D10A001E6096 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		F396923E2F20785500BBBDB3 /* TimeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtils.swift; sourceTree = "<group>"; };
+		F3B1F8822F285A370052682B /* GameCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterUtils.swift; sourceTree = "<group>"; };
 		F3B806CB2C3270B00087DE82 /* sampleData1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sampleData1.json; sourceTree = "<group>"; };
 		F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,6 +154,7 @@
 				F38D69BC2EE4D10A001E6096 /* DataUtils.swift */,
 				F32398D22F24350800EDED49 /* DevOverridesUtils.swift */,
 				1C59BF50278B6E3A0076F371 /* GameCenterListener.swift */,
+				F3B1F8822F285A370052682B /* GameCenterUtils.swift */,
 				1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */,
 				F396923E2F20785500BBBDB3 /* TimeUtils.swift */,
 			);
@@ -374,6 +377,7 @@
 				F32398D92F2559F200EDED49 /* BannerData.swift in Sources */,
 				F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */,
 				1C73206D24C4F44000240AF8 /* crosswords.xcdatamodeld in Sources */,
+				F3B1F8832F285A3C0052682B /* GameCenterUtils.swift in Sources */,
 				1C3D87EA2749ACFB001A7591 /* CrosswordTextFieldView.swift in Sources */,
 				1C59BF51278B6E3B0076F371 /* GameCenterListener.swift in Sources */,
 				F32398D32F24351800EDED49 /* DevOverridesUtils.swift in Sources */,

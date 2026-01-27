@@ -7,10 +7,6 @@
 //
 
 import SwiftUI
-import Combine
-import Firebase
-import FirebaseAuth
-import GameKit
 
 struct SettingsView: View {
     @ObservedObject var userSettings: UserSettings
@@ -157,26 +153,28 @@ struct PickerViews: View {
 struct GameCenterLoginView: View {
     @ObservedObject var userSettings: UserSettings
 
-    func authenticateUser() {
-        let localPlayer = GKLocalPlayer.local
-        localPlayer.authenticateHandler = { vc, error in
-            guard error == nil else {
-                userSettings.shouldTryGameCenterLogin = false
-                print(error?.localizedDescription ?? "")
-                return
-            }
-            userSettings.gameCenterPlayer = localPlayer
-        }
-    }
+    @State var showGameCenterDiagnostics: Bool = false
 
     var body: some View {
-        Toggle(isOn: $userSettings.shouldTryGameCenterLogin) {
-            Text("Game Center Sync (BETA) (Enable this on all devices)")
-        }
-        .onChange(of: userSettings.shouldTryGameCenterLogin) { _, shouldTryLogin in
-            if (shouldTryLogin) {
-                authenticateUser()
+        VStack(alignment: .leading) {
+            Toggle(isOn: self.$userSettings.shouldTryGameCenterLogin) {
+                Text("Game Center Sync")
             }
+            .onChange(of: self.userSettings.shouldTryGameCenterLogin) { _, shouldTryLogin in
+                if (shouldTryLogin) {
+                    GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
+                }
+            }
+
+            if (self.userSettings.shouldTryGameCenterLogin) {
+                Button("Game Center Diagnostics") {
+                    self.showGameCenterDiagnostics.toggle()
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+        .navigationDestination(isPresented: self.$showGameCenterDiagnostics) {
+            GameCenterDiagnosticsView(userSettings: self.userSettings)
         }
     }
 }
@@ -205,15 +203,50 @@ struct SubscriptionsView: View {
     }
     
     func toggleSubscription(_ sub: String) -> Void {
-        let index = userSettings.subscriptions.lastIndex(of: sub)
+        let index = self.userSettings.subscriptions.lastIndex(of: sub)
         if (index == nil) {
-            userSettings.subscriptions.append(sub)
+            self.userSettings.subscriptions.append(sub)
         } else {
-            userSettings.subscriptions.remove(at: index!)
+            self.userSettings.subscriptions.remove(at: index!)
         }
     }
     
     func hasSub(_ sub : String) -> Bool {
-        return userSettings.subscriptions.contains(sub)
+        return self.userSettings.subscriptions.contains(sub)
+    }
+}
+
+struct GameCenterDiagnosticsView: View {
+    @ObservedObject var userSettings: UserSettings
+    @State var fetchGamesError: String?
+
+    var body: some View {
+        VStack {
+            Text("Ensure that the setting is enabled on all devices")
+                .padding(.bottom)
+            let shouldTryGameCenter = self.userSettings.shouldTryGameCenterLogin
+            Text("Setting Enabled: \(shouldTryGameCenter ? "YES" : "NO")")
+                .foregroundStyle(shouldTryGameCenter ? .green : .red)
+
+            if (shouldTryGameCenter) {
+                let isAuthenticated = GameCenterUtils.isAuthenticated()
+                Text("Game Center Authenticated: \(isAuthenticated ? "YES" : "NO")")
+                    .foregroundStyle(isAuthenticated ? .green : .red)
+
+                if (isAuthenticated) {
+                    Text("Fetch Game Center Games: \(self.fetchGamesError ?? "GOOD")")
+                        .foregroundStyle(self.fetchGamesError == nil ? .green : .red)
+                }
+            }
+        }
+        .onAppear {
+            GameCenterUtils.fetchGames(userSettings: self.userSettings,
+                                       completionHandler: {_ in self.fetchGamesError = nil},
+                                       errorHandler: {error in
+                                            self.fetchGamesError = error.localizedDescription
+                                       })
+        }
+        .navigationTitle("Game Center Diagnostics")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
