@@ -40,46 +40,56 @@ struct UploadPuzzleView: View {
                 .padding()
                 .buttonStyle(.borderedProminent)
 
+            }
+
+            if (!self.showError && self.showLoader) {
+                ProgressView("Uploading...")
             } else {
-                if (!self.showError && self.showLoader) {
-                    ProgressView("Uploading...")
+                if (self.showError) {
+                    Text("Something went wrong. Try again and check the formatting of your file")
+                        .foregroundColor(.red)
+                        .padding()
+                }
+
+                if (self.openedFileUrl == nil) {
+                    Button("Select .puz file") {
+                        self.showFilePicker.toggle()
+                    }
+                    .buttonStyle(.bordered)
                 } else {
-                    if (self.showError) {
-                        Text("Something went wrong. Try again and check the formatting of your file")
-                            .foregroundColor(.red)
-                            .padding()
+                    Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
+                    HStack {
+                        Text("Displayed Outlet Name:")
+                        TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
+                                  prompt: Text("Custom"))
+                        .border(.secondary)
+                        .textFieldStyle(.roundedBorder)
+                        .padding(.leading, 10)
                     }
 
-                    if (self.openedFileUrl == nil) {
-                        Button("Select .puz file") {
-                            self.showFilePicker.toggle()
+                    HStack {
+                        Button("Cancel") {
+                            self.openedFileUrl = nil
                         }
+                        .padding()
                         .buttonStyle(.bordered)
-                    } else {
-                        Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
-                        HStack {
-                            Text("Displayed Outlet Name:")
-                            TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
-                                      prompt: Text("Custom"))
-                            .border(.secondary)
-                            .textFieldStyle(.roundedBorder)
-                            .padding(.leading, 10)
-                        }
 
-                        HStack {
-                            Button("Cancel") {
-                                self.openedFileUrl = nil
-                            }
-                            .padding()
-                            .buttonStyle(.bordered)
-
-                            Button("Upload") {
-                                self.showLoader = true
-                                self.uploadFile(fileUrl: self.openedFileUrl!)
-                            }
-                            .padding()
-                            .buttonStyle(.borderedProminent)
+                        Button("Upload") {
+                            self.showLoader = true
+                            self.uploadFile(fileUrl: self.openedFileUrl!)
                         }
+                        .padding()
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+            }
+        }
+        .navigationBarTitle("Upload")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack {
+                    Link(destination: URL(string: "https://omnicrosswords.app")!) {
+                        Image(systemName: "questionmark.circle")
                     }
                 }
             }

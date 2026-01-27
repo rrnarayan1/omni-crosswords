@@ -89,7 +89,7 @@ struct CrosswordListView: View {
                 })
                 .navigationBarTitle("Crosswords")
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         CrosswordListViewToolbarView(userSettings: self.userSettings,
                                                  refreshAction: self.refreshCrosswords,
                                                  refreshEnabled: self.refreshEnabled

@@ -34,16 +34,18 @@ struct SettingsView: View {
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 450))
         .navigationBarTitle("Settings")
-        .navigationBarItems(trailing:
-            HStack {
-                Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
-                    Image(systemName: "hands.clap.fill")
-                }
-                Link(destination: URL(string: "https://omnicrosswords.app")!) {
-                    Image(systemName: "questionmark.circle")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack {
+                    Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
+                        Image(systemName: "hands.clap.fill")
+                    }
+                    Link(destination: URL(string: "https://omnicrosswords.app")!) {
+                        Image(systemName: "questionmark.circle")
+                    }
                 }
             }
-        )
+        }
     }
 }
 

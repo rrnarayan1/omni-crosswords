@@ -12,7 +12,7 @@ struct StatisticsView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var userSettings: UserSettings
     @State var timeFilter: Date = Date().subtractWeeks(2)
-    @State var outletNameFilter: String = ""
+    @State var outletNameFilter: String?
     @State var graphStatistic: SolvedCrosswordGraphStat = SolvedCrosswordGraphStat.NUM_PUZZLES
     
     var body: some View {
@@ -23,7 +23,7 @@ struct StatisticsView: View {
                     Text("Time")
                         .bold()
                         .padding(.leading, 10)
-                    Picker("Time", selection: $timeFilter) {
+                    Picker("Time", selection: self.$timeFilter) {
                         Text("2 weeks").tag(date.subtractWeeks(2))
                         Text("1 month").tag(date.subtractMonths(1))
                         Text("3 months").tag(date.subtractMonths(3))
@@ -39,9 +39,9 @@ struct StatisticsView: View {
                 VStack (alignment: .trailing){
                     Text("Outlet")
                         .bold()
-                    Picker("Outlet Name", selection: $outletNameFilter) {
-                        Text("All").tag("")
-                        ForEach(userSettings.subscriptions, id: \.self) {subscription in
+                    Picker("Outlet Name", selection: self.$outletNameFilter) {
+                        Text("All").tag(nil as String?)
+                        ForEach(self.userSettings.subscriptions, id: \.self) {subscription in
                             Text(subscription).tag(subscription)
                         }
                     }
@@ -49,52 +49,30 @@ struct StatisticsView: View {
                 }
             }
             
-            SolvedCrosswordStatistics(afterDate: timeFilter, outletName: outletNameFilter, graphStatEnum: graphStatistic)
-            
-            Picker("Statistic", selection: $graphStatistic) {
+            SolvedCrosswordStatistics(afterDate: self.timeFilter, outletName: self.outletNameFilter,
+                                      graphStatEnum: self.graphStatistic)
+
+            Picker("Statistic", selection: self.$graphStatistic) {
                 Text("Num Puzzles").tag(SolvedCrosswordGraphStat.NUM_PUZZLES)
                 Text("Num Clues").tag(SolvedCrosswordGraphStat.NUM_CLUES)
-                if (userSettings.showTimer) {
+                if (self.userSettings.showTimer) {
                     Text("Avg Time").tag(SolvedCrosswordGraphStat.AVG_TIME)
                 }
             }
             .pickerStyle(.segmented)
 
-            Text("Note: Only shows data for puzzles completed after app version 1.6 update")
-
-            Spacer()
-            
-            Text("This feature is in Beta - please reach out with suggestions.")
-            Link(destination: URL(string: "https://omnicrosswords.app")!) {
-                Text("Contact Me!")
-            }
-            
             Spacer()
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 400))
         .navigationBarTitle("Statistics")
-        .navigationBarColor(.systemGray6)
-        .padding(30)
-    }
-}
-
-extension Date {
-    func startOfYear() -> Date {
-        return Calendar.current.date(from: Calendar.current.dateComponents([.year], from: Calendar.current.startOfDay(for: self)))!
-    }
-    
-    func subtractMonths(_ numMonths: Int) -> Date {
-        return Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .month, value: -1*numMonths, to: self)!)
-    }
-    
-    func subtractWeeks(_ numWeeks: Int) -> Date {
-        return Calendar.current.startOfDay(for: (Calendar.current.date(byAdding: .weekOfYear, value: -1*numWeeks, to: self)!))
-    }
-    
-    func getDayOfWeek() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en-US")
-        dateFormatter.dateFormat = "e"
-        return dateFormatter.string(from: self)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack {
+                    Link(destination: URL(string: "https://omnicrosswords.app")!) {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+            }
+        }
     }
 }

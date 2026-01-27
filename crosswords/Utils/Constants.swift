@@ -15,6 +15,7 @@ enum Constants {
     static let crosswordToolbarButtonSize: CGFloat = 16.0
     static let crosswordListViewToolbarButtonSize: CGFloat = 18.0
     static let listIconSize: CGFloat = 20.0
+    static let statisticsPageMaxHeight: CGFloat = 200.0
     static let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday",
                                                   "New Yorker", "USA Today", "Vox", "NYT Syndicated",
                                                   "Universal", "NYT Mini", "Crossword Club"]
