@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct CrosswordTrailingToolbarView: View, Equatable {
+struct CrosswordViewTrailingToolbarView: View, Equatable {
     let title: String
     let author: String
     let notes: String
@@ -25,7 +25,8 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     @State var showShareSheet: Bool = false
     @State var showCrosswordSettings: Bool = false
 
-    static func == (lhs: CrosswordTrailingToolbarView, rhs: CrosswordTrailingToolbarView) -> Bool {
+    static func == (lhs: CrosswordViewTrailingToolbarView,
+                    rhs: CrosswordViewTrailingToolbarView) -> Bool {
         // refresh the view if crossword is now solved
         if (lhs.isSolved != rhs.isSolved) {
             return false
@@ -85,10 +86,11 @@ struct CrosswordTrailingToolbarView: View, Equatable {
     }
 }
 
-struct CrosswordLeadingToolbarView: View, Equatable {
+struct CrosswordViewLeadingToolbarView: View, Equatable {
     let goBack: () -> Void
     
-    static func == (lhs: CrosswordLeadingToolbarView, rhs: CrosswordLeadingToolbarView) -> Bool {
+    static func == (lhs: CrosswordViewLeadingToolbarView,
+                    rhs: CrosswordViewLeadingToolbarView) -> Bool {
         // no need to refresh this view
         return true
     }

@@ -13,6 +13,7 @@ enum Constants {
     static let navigationBarHeight: CGFloat = 45.0
     static let maxInitialCellSize: Int = 40
     static let crosswordToolbarButtonSize: CGFloat = 16.0
+    static let crosswordListViewToolbarButtonSize: CGFloat = 18.0
     static let listIconSize: CGFloat = 20.0
     static let allSubscriptions: Array<String> = ["LA Times", "The Atlantic", "Newsday",
                                                   "New Yorker", "USA Today", "Vox", "NYT Syndicated",

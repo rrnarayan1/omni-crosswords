@@ -43,7 +43,7 @@ struct CrosswordListView: View {
                 Image(systemName: "circle.dotted")
                     .font(.system(size: 20))
                     .onAppear(perform: {
-                        self.checkUser()
+                        FirebaseUtils.checkFirebaseUser(userSettings: self.userSettings)
                     })
             } else {
                 let filteredCrosswords = self.crosswords.filter {
@@ -74,70 +74,38 @@ struct CrosswordListView: View {
                 .navigationDestination(for: Crossword.self) {crossword in
                     CrosswordView(crossword: crossword, userSettings: self.userSettings)
                 }
+                .navigationDestination(isPresented: self.$uploadPageActive) {
+                    UploadPuzzleView(userSettings: self.userSettings,
+                                     openedFileUrl: self.openedFileUrl)
+                }
                 .refreshable {
                     self.refreshCrosswords()
                  }
                 .onAppear(perform: {
                     // when a file is opened and then the upload page is closed, we don't need
                     // to keep the reference to the originally opened file
-                    if (!self.uploadPageActive && self.openedFileUrl != nil) {
-                        self.openedFileUrl = nil
-                    }
                     if (self.selectedCrossword.isEmpty) {
                         self.refreshCrosswords()
                     }
                 })
                 .navigationBarTitle("Crosswords")
-                .navigationBarItems(trailing:
-                    HStack {
-                        NavigationLink(
-                            destination: StatisticsView(userSettings: self.userSettings)
-                        ) {
-                            Image(systemName: "chart.bar.xaxis")
-                                .font(.system(size: 18))
-                        }
-                        Button {
-                            self.uploadPageActive = true
-                        } label: {
-                            Image(systemName: "arrow.up.circle")
-                                .font(.system(size: 18))
-                        }
-                        .navigationDestination(isPresented: self.$uploadPageActive) {
-                            UploadPuzzleView(userSettings: self.userSettings,
-                                             openedFileUrl: self.openedFileUrl)
-                        }
-
-                        NavigationLink(
-                            destination: SettingsView(userSettings: self.userSettings)
-                        ) {
-                            Image(systemName: "gearshape.fill")
-                                .font(.system(size: 18))
-                        }
-                        Button(action: {
-                            self.refreshCrosswords()
-                        }) {
-                            Image(systemName: "arrow.triangle.2.circlepath")
-                                .font(.system(size: 18, weight: Font.Weight.bold))
-                                .foregroundColor(self.refreshEnabled ? Color(UIColor.systemBlue) : Color(UIColor.systemGray))
-                        }.disabled(!self.refreshEnabled)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        CrosswordListViewToolbarView(userSettings: self.userSettings,
+                                                 refreshAction: self.refreshCrosswords,
+                                                 refreshEnabled: self.refreshEnabled
+                        )
                     }
-                )
+                }
             }
         }
         .banner(data: self.$bannerData, userSettings: self.userSettings)
     }
-
-    func checkUser() -> Void {
-        if (Auth.auth().currentUser == nil) {
-            Auth.auth().signInAnonymously {(authResult, error) in
-                if (error == nil) {
-                    self.userSettings.user = authResult?.user
-                }
-            }
-        }
-    }
     
     func refreshCrosswords() -> Void {
+        if (!self.refreshEnabled) {
+            return
+        }
         self.refreshEnabled = false
         //self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
 
@@ -158,7 +126,7 @@ struct CrosswordListView: View {
             }
 
             if (self.userSettings.user == nil) {
-                self.checkUser()
+                FirebaseUtils.checkFirebaseUser(userSettings: self.userSettings)
             }
             GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
 
@@ -257,17 +225,8 @@ struct CrosswordListView: View {
         }
     }
 
-    func getDaysAgoToDelete() -> Int {
-        let days = self.userSettings.daysToWaitBeforeDeleting
-        if (days == "Never") {
-            return -1
-        } else {
-            return Int(days)!
-        }
-    }
-
     func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {
-        let daysAgoToDelete = self.getDaysAgoToDelete()
+        let daysAgoToDelete = self.userSettings.getDaysAgoToDelete()
         if (daysAgoToDelete == -1) {
             return
         }
@@ -281,8 +240,8 @@ struct CrosswordListView: View {
             }
             // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
             else if (!self.userSettings.subscriptions.contains(crossword.outletName!)
-                     && !crossword.solved
-                     && !(crossword.outletName! == "Custom" || crossword.isCustomUpload)) {
+                     && !(crossword.outletName! == "Custom" || crossword.isCustomUpload)
+                     && !crossword.solved) {
                 self.deleteGame(crossword: crossword)
             }
             // Commented out - this deletes the most recent day's crossword

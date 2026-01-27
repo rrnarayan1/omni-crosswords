@@ -40,7 +40,7 @@
 		F32398D92F2559F200EDED49 /* BannerData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32398D82F2559ED00EDED49 /* BannerData.swift */; };
 		F32FD9502AF6125100CC90E1 /* CrosswordUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */; };
 		F33211B52AF4B81500018651 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33211B42AF4B81500018651 /* TimerView.swift */; };
-		F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */; };
+		F33D537A2AB963F8000A8A31 /* CrosswordViewToolbarViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F33D53792AB963F8000A8A31 /* CrosswordViewToolbarViews.swift */; };
 		F342061B2F25B6A200C6E41D /* noSolution.json in Resources */ = {isa = PBXBuildFile; fileRef = F342061A2F25B6A200C6E41D /* noSolution.json */; };
 		F342061D2F25BA3B00C6E41D /* Collections+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F342061C2F25BA3600C6E41D /* Collections+Extensions.swift */; };
 		F34252272ED81603006D090D /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F34252262ED81603006D090D /* FirebaseAuth */; };
@@ -57,6 +57,8 @@
 		F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* DataUtils.swift */; };
 		F396923F2F20785900BBBDB3 /* TimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F396923E2F20785500BBBDB3 /* TimeUtils.swift */; };
 		F3B1F8832F285A3C0052682B /* GameCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8822F285A370052682B /* GameCenterUtils.swift */; };
+		F3B1F8852F287F3C0052682B /* FirebaseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8842F287F350052682B /* FirebaseUtils.swift */; };
+		F3B1F8872F28805D0052682B /* CrosswordListViewToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8862F28804E0052682B /* CrosswordListViewToolbarView.swift */; };
 		F3B806CC2C3270B00087DE82 /* sampleData1.json in Resources */ = {isa = PBXBuildFile; fileRef = F3B806CB2C3270B00087DE82 /* sampleData1.json */; };
 		F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */; };
 /* End PBXBuildFile section */
@@ -99,7 +101,7 @@
 		F32398D82F2559ED00EDED49 /* BannerData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerData.swift; sourceTree = "<group>"; };
 		F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordUtils.swift; sourceTree = "<group>"; };
 		F33211B42AF4B81500018651 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
-		F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordToolbarViews.swift; sourceTree = "<group>"; };
+		F33D53792AB963F8000A8A31 /* CrosswordViewToolbarViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordViewToolbarViews.swift; sourceTree = "<group>"; };
 		F342061A2F25B6A200C6E41D /* noSolution.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = noSolution.json; sourceTree = "<group>"; };
 		F342061C2F25BA3600C6E41D /* Collections+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collections+Extensions.swift"; sourceTree = "<group>"; };
 		F352635D2F12EAD80049F0B6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -113,6 +115,8 @@
 		F38D69BC2EE4D10A001E6096 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		F396923E2F20785500BBBDB3 /* TimeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtils.swift; sourceTree = "<group>"; };
 		F3B1F8822F285A370052682B /* GameCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterUtils.swift; sourceTree = "<group>"; };
+		F3B1F8842F287F350052682B /* FirebaseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUtils.swift; sourceTree = "<group>"; };
+		F3B1F8862F28804E0052682B /* CrosswordListViewToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListViewToolbarView.swift; sourceTree = "<group>"; };
 		F3B806CB2C3270B00087DE82 /* sampleData1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sampleData1.json; sourceTree = "<group>"; };
 		F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,6 +157,7 @@
 				F32FD94F2AF6125100CC90E1 /* CrosswordUtils.swift */,
 				F38D69BC2EE4D10A001E6096 /* DataUtils.swift */,
 				F32398D22F24350800EDED49 /* DevOverridesUtils.swift */,
+				F3B1F8842F287F350052682B /* FirebaseUtils.swift */,
 				1C59BF50278B6E3A0076F371 /* GameCenterListener.swift */,
 				F3B1F8822F285A370052682B /* GameCenterUtils.swift */,
 				1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */,
@@ -166,10 +171,11 @@
 			children = (
 				1C6A26B624CA7340002F8DAD /* CrosswordCellView.swift */,
 				1C73206E24C4F44000240AF8 /* CrosswordListView.swift */,
+				F3B1F8862F28804E0052682B /* CrosswordListViewToolbarView.swift */,
 				F3B992412AD4B67C00C29F2D /* CrosswordListItemView.swift */,
 				1CAF9ECB289641270075C6E1 /* CrosswordSettingsView.swift */,
 				1C3D87E92749ACFB001A7591 /* CrosswordTextFieldView.swift */,
-				F33D53792AB963F8000A8A31 /* CrosswordToolbarViews.swift */,
+				F33D53792AB963F8000A8A31 /* CrosswordViewToolbarViews.swift */,
 				1C73208C24C688A800240AF8 /* CrosswordView.swift */,
 				1C1EA90E24DE765D00A67BA9 /* SettingsView.swift */,
 				1C9424F529748177005BBFA9 /* StatisticsView.swift */,
@@ -345,12 +351,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C4FF2562501D074002BBE48 /* NavigationBarModifier.swift in Sources */,
-				F33D537A2AB963F8000A8A31 /* CrosswordToolbarViews.swift in Sources */,
+				F33D537A2AB963F8000A8A31 /* CrosswordViewToolbarViews.swift in Sources */,
 				F32FD9502AF6125100CC90E1 /* CrosswordUtils.swift in Sources */,
 				F352636B2F2014AD0049F0B6 /* UIBarButtonItem+Extensions.swift in Sources */,
 				F35263692F20147C0049F0B6 /* ToolbarContent+Extensions.swift in Sources */,
 				1C9424F629748177005BBFA9 /* StatisticsView.swift in Sources */,
 				1C73206824C4F44000240AF8 /* AppDelegate.swift in Sources */,
+				F3B1F8872F28805D0052682B /* CrosswordListViewToolbarView.swift in Sources */,
 				F352635E2F12EADC0049F0B6 /* Constants.swift in Sources */,
 				F35263632F1307150049F0B6 /* ShapeStyle+Extensions.swift in Sources */,
 				1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */,
@@ -360,6 +367,7 @@
 				1C7FD49928778582006D38A6 /* ActivityView.swift in Sources */,
 				F3B992422AD4B67C00C29F2D /* CrosswordListItemView.swift in Sources */,
 				F33211B52AF4B81500018651 /* TimerView.swift in Sources */,
+				F3B1F8852F287F3C0052682B /* FirebaseUtils.swift in Sources */,
 				1CAF9ECC289641270075C6E1 /* CrosswordSettingsView.swift in Sources */,
 				1CBB3F5B2586DC8B00BD1B5A /* KeyboardHeightHelper.swift in Sources */,
 				F396923F2F20785900BBBDB3 /* TimeUtils.swift in Sources */,

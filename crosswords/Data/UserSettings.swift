@@ -22,6 +22,14 @@ class UserSettings: ObservableObject {
         }
     }
 
+    func getDaysAgoToDelete() -> Int {
+        if (daysToWaitBeforeDeleting == "Never") {
+            return -1
+        } else {
+            return Int(daysToWaitBeforeDeleting)!
+        }
+    }
+
     @Published var subscriptions: Array<String> {
         didSet {
             UserDefaults.standard.set(subscriptions, forKey: "subscriptions")
