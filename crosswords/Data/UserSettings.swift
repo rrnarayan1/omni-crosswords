@@ -6,7 +6,6 @@
 //  Copyright © 2026 Rohan Narayan. All rights reserved.
 //
 import SwiftUI
-import Firebase
 import FirebaseAuth
 
 class UserSettings: ObservableObject {
@@ -120,14 +119,15 @@ class UserSettings: ObservableObject {
     init() {
         let useLocalMode = DevOverridesUtils.getLocalMode()
         self.useLocalMode = useLocalMode
+        self.user = useLocalMode ? nil : FirebaseUtils.getFirebaseUser()
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
-        self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells") as? Bool ?? true
+        self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells")
+            as? Bool ?? true
         self.defaultErrorTracking = UserDefaults.standard.bool(forKey: "defaultErrorTracking")
         self.daysToWaitBeforeDeleting = UserDefaults.standard.object(
             forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
         self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions")
             as? Array<String> ?? Constants.allSubscriptions
-        self.user = useLocalMode ? nil : Auth.auth().currentUser
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
         self.spaceTogglesDirection = UserDefaults.standard.bool(forKey: "spaceTogglesDirection")
         self.enableHapticFeedback = UserDefaults.standard.bool(forKey: "enableHapticFeedback")

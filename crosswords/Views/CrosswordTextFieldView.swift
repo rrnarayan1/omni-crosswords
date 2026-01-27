@@ -118,10 +118,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 // current cell is empty, so try to clear the previous cell
                 // no matter what, we're moving cells, so exit rebus mode
                 self.parent.isRebusMode = false
-                let previousTag : Int = CrosswordUtils.getPreviousTag(tag: focusedTag,
-                                                                      goingAcross:
+                let previousTag: Int = CrosswordUtils.getPreviousTag(tag: focusedTag,
+                                                                     goingAcross:
                                                                         self.parent.goingAcross,
-                                                                      crossword: self.parent.crossword)
+                                                                     crossword: self.parent.crossword)
                 if (previousTag >= 0 && previousTag < self.parent.crossword.entry!.count
                     && self.parent.crossword.entry![previousTag] != ".") {
                     // our current cell is empty and the previous one is valid,

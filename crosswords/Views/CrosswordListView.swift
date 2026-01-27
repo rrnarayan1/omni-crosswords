@@ -8,7 +8,6 @@
 
 import SwiftUI
 import FirebaseCore
-import FirebaseAuth
 import FirebaseFirestore
 
 struct CrosswordListView: View {
@@ -145,19 +144,19 @@ struct CrosswordListView: View {
             let allCrosswordIds: Array<String> = allCrosswords.map {$0.id!}
 
             let db = Firestore.firestore()
-            let docRef = db.collection("crosswords")
+            let docRef: Query = db.collection("crosswords")
                 .whereField("date", isGreaterThanOrEqualTo: lastDate)
                 .whereField("crossword_outlet_name", in: self.userSettings.subscriptions)
                 .limit(to: 100)
 
-            let lastAlertId = self.userSettings.lastAlertId
-            let alertDocRef = db.collection("alerts")
-                .whereField("id", isGreaterThan: lastAlertId)
+            let alertDocRef: Query = db.collection("alerts")
+                .whereField("id", isGreaterThan: self.userSettings.lastAlertId)
                 .order(by: "id", descending: true)
 
-            let overwrittenCrosswords = db.collection("crosswords")
+            let overwrittenCrosswords: Query = db.collection("crosswords")
                 .whereField("version", isGreaterThan: 0)
-            
+                .limit(to: 100)
+
             alertDocRef.getDocuments {(querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error)")

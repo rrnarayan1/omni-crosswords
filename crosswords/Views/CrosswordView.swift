@@ -135,13 +135,14 @@ struct CrosswordView: View {
 
             if (self.focusedTag == -1) {
                 VStack (alignment: .center){
-                    Text(self.crossword.title!).multilineTextAlignment(.center)
-                    Text(self.crossword.author!).multilineTextAlignment(.center)
-                    if (self.crossword.notes! != "") {
-                        Text(self.crossword.notes!).multilineTextAlignment(.center)
+                    Text(self.crossword.title!)
+                    Text(self.crossword.author!)
+                    if (self.crossword.notes != nil && !self.crossword.notes!.isEmpty) {
+                        Text(self.crossword.notes!)
                     }
-                    Text(self.crossword.copyright!).multilineTextAlignment(.center)
+                    Text(self.crossword.copyright!)
                 }
+                .multilineTextAlignment(.center)
             }
             if (ProcessInfo.processInfo.isiOSAppOnMac) {
                 // they have a hardware keyboard, so artificially create space at the bottom

@@ -30,6 +30,7 @@ struct SettingsView: View {
                     SubscriptionsView(userSettings: self.userSettings)
                 }
             }
+            .padding(.trailing, 10)
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 450))
         .navigationBarTitle("Settings")

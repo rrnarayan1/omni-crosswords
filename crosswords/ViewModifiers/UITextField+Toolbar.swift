@@ -64,8 +64,8 @@ extension UITextField {
     func formatClueTitle(userSettings: UserSettings, attributedString: NSMutableAttributedString)
     -> NSAttributedString {
         var clueFontSize = userSettings.clueSize
-        if (clueFontSize < 14) {
-            clueFontSize = 14
+        if (clueFontSize < 13) {
+            clueFontSize = 13
         }
         let fullRange: NSRange = NSRange(location: 0, length: attributedString.length)
         let centerAlignment = NSMutableParagraphStyle()
