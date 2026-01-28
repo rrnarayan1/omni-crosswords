@@ -235,7 +235,7 @@ struct CrosswordView: View {
     
     func showSolution() -> Void {
         for tag in (0..<self.crossword.entry!.count) {
-            if (self.crossword.helpTracking![tag]) {
+            if (self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag]) {
                 continue
             }
             if (self.crossword.entry![tag] != self.crossword.solution![tag]) {
@@ -253,7 +253,7 @@ struct CrosswordView: View {
 
     func errorTrackingEnablementSideEffect() -> Void {
         for tag in (0..<self.crossword.entry!.count) {
-            if (self.crossword.helpTracking![tag]) {
+            if (self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag]) {
                 continue
             }
             if (!self.crossword.entry![tag].isEmpty
@@ -366,7 +366,7 @@ struct CrosswordGridView: View {
             value: self.crossword.entry![tag],
             correctValue: self.crossword.solution?[safe: tag],
             receivedHelp: self.userSettings.showHelpIndicators
-                ? self.crossword.helpTracking![tag] : false,
+                ? self.crossword.helpTracking?[safe: tag] : false,
             symbol: self.crossword.symbols![tag],
             tag: tag,
             onTap: self.onTapCell,

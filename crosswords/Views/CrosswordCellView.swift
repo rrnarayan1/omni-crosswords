@@ -13,7 +13,7 @@ struct CrosswordCellView: View, Equatable {
 
     var value: String
     var correctValue: String?
-    var receivedHelp: Bool
+    var receivedHelp: Bool?
     var symbol: Int
     var tag: Int
     var onTap: (Int) -> Void
@@ -60,7 +60,7 @@ struct CrosswordCellView: View, Equatable {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            if (self.isEditable() && self.receivedHelp) {
+            if (self.isEditable() && (self.receivedHelp ?? false)) {
                 Ramp()
                     .frame(width: self.boxWidth/5, height: self.boxWidth/5, alignment: .bottomTrailing)
                     .foregroundColor(.orange)

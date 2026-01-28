@@ -43,7 +43,7 @@ struct CrosswordUtils {
                           timerWrapper: TimerWrapper?, managedObjectContext: NSManagedObjectContext)
     -> Void {
         crossword.entry![tag] = crossword.solution![tag]
-        crossword.helpTracking![tag] = true
+        crossword.helpTracking?[tag] = true
         if (crossword.entry == crossword.solution) {
             CrosswordUtils.solutionHandler(crossword: crossword, shouldAddStatistics: true,
                                            userSettings: userSettings, focusedTag: focusedTag,
