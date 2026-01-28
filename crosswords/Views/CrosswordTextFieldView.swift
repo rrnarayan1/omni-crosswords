@@ -17,6 +17,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @ObservedObject var userSettings: UserSettings
 
     @Binding var focusedTag: Int
+    @Binding var isErrorTrackingEnabled: Bool
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
@@ -110,7 +111,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 return
             }
             
-            if (self.parent.crossword.entry![focusedTag] != "") {
+            if (!self.parent.crossword.entry![focusedTag].isEmpty) {
                 self.parent.crossword.entry![focusedTag] = ""
                 self.parent.forceUpdate.toggle()
                 self.saveGame()
@@ -190,6 +191,10 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 } else {
                     self.parent.crossword.entry![focusedTag] = string.uppercased()
                     self.moveFocusToNextField()
+                    if (self.parent.isErrorTrackingEnabled
+                        && self.parent.crossword.solution![focusedTag] != string.uppercased()) {
+                        self.parent.crossword.helpTracking?[focusedTag] = true
+                    }
                 }
                 self.saveGame()
             }

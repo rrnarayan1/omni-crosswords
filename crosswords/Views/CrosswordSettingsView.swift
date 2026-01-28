@@ -17,17 +17,23 @@ struct CrosswordSettingsView: View {
     let copyright: String
     let isSolved: Bool
     let isSolutionAvailable: Bool
-    
-    @Binding var errorTracking: Bool
+
     let showSolution: () -> Void
     let getProgressPercentage: () -> CGFloat
     let markAsSolved: () -> Void
+    @Binding var errorTracking: Bool
+    let errorTrackingEnablementSideEffect: () -> Void
 
     var body: some View {
         VStack(alignment: .center) {
             VStack {
                 Toggle(isOn: self.$errorTracking) {
                     Text("Error Tracking")
+                }
+                .onChange(of: self.errorTracking) {_, newErrorTracking in
+                    if (newErrorTracking) {
+                        self.errorTrackingEnablementSideEffect()
+                    }
                 }
                 .disabled(!self.isSolutionAvailable)
                 .frame(width: 200)
@@ -64,7 +70,7 @@ struct CrosswordSettingsView: View {
             .padding([.bottom], 30)
             Text("Title: " + self.title)
             Text("Author: " + self.author)
-            if (self.notes != "") {
+            if (!self.notes.isEmpty) {
                 Text("Notes: " + self.notes)
             }
             Text(self.copyright)

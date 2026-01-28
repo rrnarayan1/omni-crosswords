@@ -16,12 +16,14 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
     let isSolved: Bool
     let outletName: String
     let isSolutionAvailable: Bool
-    
-    let isErrorTrackingEnabled: Binding<Bool>
-    let showSolution: () -> Void
+
     let showSettings: () -> Void
+    let showSolution: () -> Void
     let getProgressPercentage: () -> CGFloat
     let markAsSolved: () -> Void
+    let isErrorTrackingEnabled: Binding<Bool>
+    let errorTrackingEnablementSideEffect: () -> Void
+
     @State var showShareSheet: Bool = false
     @State var showCrosswordSettings: Bool = false
 
@@ -62,10 +64,12 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
                 CrosswordSettingsView(title: self.title, author: self.author, notes: self.notes,
                                       copyright: self.copyright, isSolved: self.isSolved,
                                       isSolutionAvailable: self.isSolutionAvailable,
-                                      errorTracking: self.isErrorTrackingEnabled,
                                       showSolution: self.showSolution,
                                       getProgressPercentage: self.getProgressPercentage,
-                                      markAsSolved: self.markAsSolved)
+                                      markAsSolved: self.markAsSolved,
+                                      errorTracking: self.isErrorTrackingEnabled,
+                                      errorTrackingEnablementSideEffect:
+                                        self.errorTrackingEnablementSideEffect)
             }
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))

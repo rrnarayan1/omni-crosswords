@@ -30,7 +30,7 @@ struct SettingsView: View {
                     SubscriptionsView(userSettings: self.userSettings)
                 }
             }
-            .padding(.trailing, 10)
+            .padding(.trailing, 5)
         }
         .frame(width: min(UIScreen.screenWidth * 0.9, 450))
         .navigationBarTitle("Settings")
@@ -53,37 +53,41 @@ struct TogglesSettingsView: View {
     @ObservedObject var userSettings: UserSettings
 
     var body: some View {
-        Toggle(isOn: $userSettings.showSolved) {
+        Toggle(isOn: self.$userSettings.showSolved) {
             Text("Show solved puzzles in list")
         }
 
-        Toggle(isOn: $userSettings.skipCompletedCells) {
+        Toggle(isOn: self.$userSettings.skipCompletedCells) {
             Text("Skip completed cells")
         }
-        .onChange(of: userSettings.skipCompletedCells) {_, newSkipCompletedCells in
+        .onChange(of: self.userSettings.skipCompletedCells) {_, newSkipCompletedCells in
             // if they don't want to skip completed cells anymore, looping back must be set to false
             if (!newSkipCompletedCells) {
-                userSettings.loopBackInsideUncompletedWord = false
+                self.userSettings.loopBackInsideUncompletedWord = false
             }
         }
 
-        Toggle(isOn: $userSettings.loopBackInsideUncompletedWord) {
+        Toggle(isOn: self.$userSettings.loopBackInsideUncompletedWord) {
             Text("Loop back inside uncompleted word")
-        }.disabled(!userSettings.skipCompletedCells)
+        }.disabled(!self.userSettings.skipCompletedCells)
 
-        Toggle(isOn: $userSettings.defaultErrorTracking) {
+        Toggle(isOn: self.$userSettings.defaultErrorTracking) {
             Text("Error tracking on by default")
         }
 
-        Toggle(isOn: $userSettings.showTimer) {
+        Toggle(isOn: self.$userSettings.showHelpIndicators) {
+            Text("Show help indicators")
+        }
+
+        Toggle(isOn: self.$userSettings.showTimer) {
             Text("Show timer")
         }
 
-        Toggle(isOn: $userSettings.spaceTogglesDirection) {
+        Toggle(isOn: self.$userSettings.spaceTogglesDirection) {
             Text("Space bar toggles direction")
         }
         
-        Toggle(isOn: $userSettings.useEmailAddressKeyboard) {
+        Toggle(isOn: self.$userSettings.useEmailAddressKeyboard) {
             Text("Use alternate keyboard type")
         }
     }
@@ -95,11 +99,11 @@ struct PickerViews: View {
     
     var body: some View {
         VStack {
-            Picker("Color scheme override", selection: $selectedAppearance) {
+            Picker("Color scheme override", selection: self.$selectedAppearance) {
                 Text("System Default").tag(0)
                 Text("Light Mode").tag(1)
                 Text("Dark Mode").tag(2)
-            }.onChange(of: selectedAppearance) {
+            }.onChange(of: self.selectedAppearance) {
                 ColorSchemeUtil().overrideDisplayMode()
             }
             .pickerStyle(.segmented)
@@ -107,7 +111,7 @@ struct PickerViews: View {
             HStack {
                 Text("Clue cycle control placement")
                 Spacer()
-                Picker("Clue cycle control placement", selection: $userSettings.clueCyclePlacement) {
+                Picker("Clue cycle control placement", selection: self.$userSettings.clueCyclePlacement) {
                     Text("Left").tag(0)
                     Text("Split").tag(1)
                     Text("Right").tag(2)
@@ -118,7 +122,8 @@ struct PickerViews: View {
             HStack {
                 Text("Auto-delete puzzles after")
                 Spacer()
-                Picker("Auto-delete puzzles after", selection: $userSettings.daysToWaitBeforeDeleting) {
+                Picker("Auto-delete puzzles after",
+                       selection: self.$userSettings.daysToWaitBeforeDeleting) {
                     ForEach((3..<22)) { i in
                         Text(String(i)+" days").tag(String(i))
                     }
@@ -130,7 +135,7 @@ struct PickerViews: View {
             HStack {
                 Text("Clue font size")
                 Spacer()
-                Picker("Clue font size", selection: $userSettings.clueSize) {
+                Picker("Clue font size", selection: self.$userSettings.clueSize) {
                     ForEach((13..<21)) { flavor in
                         Text(String(flavor)+" pt").tag(Int(flavor))
                     }
@@ -141,7 +146,7 @@ struct PickerViews: View {
             HStack {
                 Text("Zoom magnification level")
                 Spacer()
-                Picker("Zoom magnification level", selection: $userSettings.zoomMagnificationLevel) {
+                Picker("Zoom magnification level", selection: self.$userSettings.zoomMagnificationLevel) {
                     Text("1.25x").tag(Float(1.25))
                     Text("1.5x").tag(Float(1.5))
                     Text("2x").tag(Float(2.0))

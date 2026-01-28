@@ -53,7 +53,7 @@ class DataUtils {
                 crossword.entry![i] = "."
             }
         }
-
+        crossword.helpTracking = Array(repeating: false, count: symbols!.count)
     }
 
     static func jsonToCrossword(crossword: Crossword, data: CrosswordResponse) -> Void {
@@ -97,6 +97,7 @@ class DataUtils {
                 crossword.entry![i] = "."
             }
         }
+        crossword.helpTracking = Array(repeating: false, count: data.symbols.count)
     }
 
     static func buildSampleCrossword(crossword: Crossword, resourceName: String) -> Void {
@@ -146,6 +147,7 @@ class DataUtils {
                         crossword.entry![i] = "."
                     }
                 }
+                crossword.helpTracking = Array(repeating: false, count: symbols.count)
             } catch {
                 print(error.localizedDescription)
             }

@@ -14,8 +14,7 @@ struct CrosswordUtils {
     static func getCrosswordProgress(_ crossword: Crossword) -> CGFloat {
         let fillableSquaresCount = CrosswordUtils.getFillableCellsCount(crossword.entry!)
         let filledSquaresCount = CrosswordUtils.getFilledCellsCount(crossword.entry!)
-        let retval = CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
-        return retval
+        return CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
     }
 
     static func getFilledCellsCount(_ crosswordEntry: Array<String>) -> Int {
@@ -44,12 +43,14 @@ struct CrosswordUtils {
                           timerWrapper: TimerWrapper?, managedObjectContext: NSManagedObjectContext)
     -> Void {
         crossword.entry![tag] = crossword.solution![tag]
+        crossword.helpTracking![tag] = true
         if (crossword.entry == crossword.solution) {
             CrosswordUtils.solutionHandler(crossword: crossword, shouldAddStatistics: true,
                                            userSettings: userSettings, focusedTag: focusedTag,
                                            becomeFirstResponder: becomeFirstResponder,
                                            isHighlighted: isHighlighted, timerWrapper: timerWrapper,
                                            managedObjectContext: managedObjectContext)
+            return
         } else if (focusedTag.wrappedValue == tag) {
             ChangeFocusUtils.moveFocusToNextFieldAndCheck(focusedTag: focusedTag,
                                                           crossword: crossword,
@@ -60,6 +61,7 @@ struct CrosswordUtils {
             ChangeFocusUtils.changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross,
                                          focusedTag: focusedTag, isHighlighted: isHighlighted)
         }
+        CrosswordUtils.saveGame(crossword: crossword, userSettings: userSettings)
     }
 
     static func solutionHandler(crossword: Crossword, shouldAddStatistics: Bool = true,

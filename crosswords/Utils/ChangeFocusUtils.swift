@@ -135,7 +135,7 @@ struct ChangeFocusUtils {
                                                          : false
 
         if (tag >= crossword.symbols!.count || crossword.tagToCluesMap?[tag] == nil
-            || crossword.tagToCluesMap?[tag].count == 0 || crossword.entry![tag] != ""
+            || crossword.tagToCluesMap?[tag].count == 0 || !crossword.entry![tag].isEmpty
             || tag % Int(crossword.length) == 0) {
             // the cell at the tag is not a valid empty square
             if (userSettings.skipCompletedCells && !crossword.solved) {
@@ -166,7 +166,7 @@ struct ChangeFocusUtils {
                             : ChangeFocusUtils.getPreviousClueID(tag: oldTag, crossword: crossword,
                                                                  goingAcross: goingAcross)
                         possibleTag = crossword.clueToTagsMap![possibleNextClueId]!.min()!
-                    } else if (crossword.entry![possibleTag] == "") {
+                    } else if (crossword.entry![possibleTag].isEmpty) {
                         // if the possibleTag is empty, go there
                         ChangeFocusUtils.changeFocus(tag: possibleTag, crossword: crossword,
                                                      goingAcross: goingAcross, focusedTag: focusedTag,

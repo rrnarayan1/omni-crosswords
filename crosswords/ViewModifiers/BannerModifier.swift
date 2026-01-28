@@ -15,7 +15,7 @@ struct BannerModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         VStack {
-            if (self.data.title != "") {
+            if (!self.data.title.isEmpty) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(self.data.title)

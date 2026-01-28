@@ -13,6 +13,7 @@ struct CrosswordCellView: View, Equatable {
 
     var value: String
     var correctValue: String?
+    var receivedHelp: Bool
     var symbol: Int
     var tag: Int
     var onTap: (Int) -> Void
@@ -27,6 +28,7 @@ struct CrosswordCellView: View, Equatable {
         }
         if ((lhs.value != rhs.value) || (lhs.isFocused != rhs.isFocused)
             || (lhs.isHighlighted != rhs.isHighlighted)
+            || (lhs.receivedHelp != rhs.receivedHelp)
             || (lhs.isErrorTrackingEnabled != rhs.isErrorTrackingEnabled)
             || (lhs.boxWidth != rhs.boxWidth)) {
             return false
@@ -49,13 +51,22 @@ struct CrosswordCellView: View, Equatable {
                     .stroke(lineWidth: 0.5)
             }
         }
-        .overlay(
+        .overlay(alignment: .topLeading) {
             // clue number
-            Text(self.symbol % 1000 > 0 ? String(self.symbol % 1000) : "")
-                .font(.system(size: self.boxWidth/4))
-                .padding(self.boxWidth/30),
-            alignment: .topLeading
-        )
+            if (self.symbol % 1000 > 0) {
+                Text(String(self.symbol % 1000))
+                    .font(.system(size: self.boxWidth/4))
+                    .padding(self.boxWidth/30)
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if (self.isEditable() && self.receivedHelp) {
+                Ramp()
+                    .frame(width: self.boxWidth/5, height: self.boxWidth/5, alignment: .bottomTrailing)
+                    .foregroundColor(.orange)
+                    .padding(self.boxWidth/30)
+            }
+        }
         .onTapGesture {
             self.onTap(self.tag)
         }
@@ -74,7 +85,8 @@ struct CrosswordCellView: View, Equatable {
         if (!self.isEditable()) {
             // Block cell
             return UIColor.black
-        } else if (self.isErrorTrackingEnabled && self.value != "" && self.value != self.correctValue) {
+        } else if (self.isErrorTrackingEnabled && !self.value.isEmpty
+                   && self.value != self.correctValue) {
             // Error tracking is enabled and cell is incorrect
             if (self.isHighlighted) {
                 if (self.isFocused) {

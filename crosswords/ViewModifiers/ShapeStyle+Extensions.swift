@@ -16,3 +16,20 @@ extension ShapeStyle where Self == Color {
         )
     }
 }
+
+struct Ramp: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+
+        // Start at Top Right
+        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
+        // Down to Bottom Left
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        // Left to Bottom Right
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        // Close back to top
+        path.closeSubpath()
+
+        return path
+    }
+}

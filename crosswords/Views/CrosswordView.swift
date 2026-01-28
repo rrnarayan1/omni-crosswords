@@ -84,8 +84,8 @@ struct CrosswordView: View {
                                       currentClue: CrosswordUtils.getClue(focusedTag: self.focusedTag,
                                                                           crossword: self.crossword,
                                                                           goingAcross: self.goingAcross),
-                                      doErrorTracking: self.isErrorTrackingEnabled,
                                       userSettings: self.userSettings,
+                                      isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                       focusedTag: self.$focusedTag,
                                       highlighted: self.$highlighted,
                                       goingAcross: self.$goingAcross,
@@ -176,11 +176,11 @@ struct CrosswordView: View {
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                self.getTrailingToolbarView()
-            }.hideSharedBackgroundIfAvailable()
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 CrosswordViewLeadingToolbarView(goBack: self.goBack)
+            }.hideSharedBackgroundIfAvailable()
+            ToolbarItem(placement: .topBarTrailing) {
+                self.getTrailingToolbarView()
             }.hideSharedBackgroundIfAvailable()
         }
         // custom back button added in leading toolbar view
@@ -197,13 +197,15 @@ struct CrosswordView: View {
                                                 isSolutionAvailable:
                                                     CrosswordUtils.isSolutionAvailable(crossword:
                                                                                     self.crossword),
-                                                isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                                showSolution: self.showSolution,
                                                 showSettings: self.showSettings,
+                                                showSolution: self.showSolution,
                                                 getProgressPercentage: {() -> CGFloat in
                                                     CrosswordUtils.getCrosswordProgress(self.crossword)
                                                 },
-                                                markAsSolved: self.markAsSolved)
+                                                markAsSolved: self.markAsSolved,
+                                                isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                                                errorTrackingEnablementSideEffect:
+                                                    self.errorTrackingEnablementSideEffect)
     }
 
     func getInitialBoxWidth() -> CGFloat {
@@ -232,6 +234,14 @@ struct CrosswordView: View {
     }
     
     func showSolution() -> Void {
+        for tag in (0..<self.crossword.entry!.count) {
+            if (self.crossword.helpTracking![tag]) {
+                continue
+            }
+            if (self.crossword.entry![tag] != self.crossword.solution![tag]) {
+                self.crossword.helpTracking![tag] = true
+            }
+        }
         self.crossword.entry = self.crossword.solution
         self.forceUpdate.toggle()
         CrosswordUtils.solutionHandler(crossword: self.crossword, shouldAddStatistics: false,
@@ -239,6 +249,20 @@ struct CrosswordView: View {
                                        becomeFirstResponder: self.$becomeFirstResponder,
                                        isHighlighted: self.$highlighted, timerWrapper: nil,
                                        managedObjectContext: self.managedObjectContext)
+    }
+
+    func errorTrackingEnablementSideEffect() -> Void {
+        for tag in (0..<self.crossword.entry!.count) {
+            if (self.crossword.helpTracking![tag]) {
+                continue
+            }
+            if (!self.crossword.entry![tag].isEmpty
+                && self.crossword.entry![tag] != self.crossword.solution![tag]) {
+                self.crossword.helpTracking![tag] = true
+            }
+        }
+        self.forceUpdate.toggle()
+        CrosswordUtils.saveGame(crossword: self.crossword, userSettings: self.userSettings)
     }
 
     func markAsSolved() -> Void {
@@ -301,17 +325,17 @@ struct CrosswordGridView: View {
     var crossword: Crossword
     var boxWidth: CGFloat
     var currentClue: String
-    var doErrorTracking: Bool
 
     @ObservedObject var userSettings: UserSettings
 
+    @Binding var isErrorTrackingEnabled: Bool
     @Binding var focusedTag: Int
     @Binding var highlighted: Array<Int>
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var isRebusMode: Bool
-    
+
     var body: some View {
         let rows: [Int] = Array(0...Int(self.crossword.height)-1)
         let cols: [Int] = Array(0...Int(self.crossword.length)-1)
@@ -326,6 +350,7 @@ struct CrosswordGridView: View {
             }
             CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue,
                                    userSettings: self.userSettings, focusedTag: self.$focusedTag,
+                                   isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                    highlighted: self.$highlighted, goingAcross: self.$goingAcross,
                                    forceUpdate: self.$forceUpdate,
                                    becomeFirstResponder: self.$becomeFirstResponder,
@@ -333,18 +358,20 @@ struct CrosswordGridView: View {
                 .frame(width: 1, height: 1)
         }
     }
-    
+
     func makeCellView(rowNum: Int, colNum: Int) -> some View {
         let tag: Int = CrosswordUtils.getTagFromRowAndColNumbers(rowNum: rowNum, colNum: colNum,
                                                                  crossword: self.crossword)
         return CrosswordCellView(
             value: self.crossword.entry![tag],
             correctValue: self.crossword.solution?[safe: tag],
+            receivedHelp: self.userSettings.showHelpIndicators
+                ? self.crossword.helpTracking![tag] : false,
             symbol: self.crossword.symbols![tag],
             tag: tag,
             onTap: self.onTapCell,
             boxWidth: self.boxWidth,
-            isErrorTrackingEnabled: self.doErrorTracking,
+            isErrorTrackingEnabled: self.isErrorTrackingEnabled,
             isFocused: self.focusedTag == tag,
             isHighlighted: self.highlighted.contains(tag),
         )

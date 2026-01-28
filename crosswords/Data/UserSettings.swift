@@ -113,6 +113,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var showHelpIndicators: Bool {
+        didSet {
+            UserDefaults.standard.set(zoomMagnificationLevel, forKey: "showHelpIndicators")
+        }
+    }
+
     @Published var user: User?
     @Published var useLocalMode: Bool
 
@@ -141,5 +147,7 @@ class UserSettings: ObservableObject {
         self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
         self.zoomMagnificationLevel = UserDefaults.standard.object(forKey: "zoomMagnificationLevel")
             as? Float ?? 2.0
+        self.showHelpIndicators = UserDefaults.standard.object(forKey: "showHelpIndicators")
+            as? Bool ?? true
     }
 }
