@@ -32,27 +32,8 @@ class DataUtils {
         crossword.addedTime = Date().timeIntervalSince1970
         crossword.versionId = data.get("version") == nil ? 0 : data.get("version") as! Int16
 
-
-        crossword.clueToTagsMap = [:]
-        for tag in 0..<tagToCluesList!.count {
-            for dir in ["A", "D"] {
-                if (tagToCluesList![tag].count > 0) {
-                    let clue = tagToCluesList![tag][dir]
-                    if let nnClue = clue {
-                        if crossword.clueToTagsMap?[nnClue] == nil {
-                            crossword.clueToTagsMap?[nnClue] = []
-                        }
-                        crossword.clueToTagsMap?[nnClue]!.append(tag)
-                    }
-                }
-            }
-        }
-        crossword.entry = Array(repeating: "", count: symbols!.count)
-        for i in 0..<symbols!.count {
-            if (symbols![i] == -1) {
-                crossword.entry![i] = "."
-            }
-        }
+        crossword.clueToTagsMap = DataUtils.buildClueToTagsMap(tagToCluesList: tagToCluesList!)
+        crossword.entry = DataUtils.buildStarterEntry(symbols: symbols!)
         crossword.helpTracking = Array(repeating: false, count: symbols!.count)
     }
 
@@ -68,7 +49,8 @@ class DataUtils {
         crossword.id = data.crossword_outlet_name+String(data.solution.joined(separator: ",").hashValue)
         crossword.clues = data.clues
         crossword.solution = data.solution
-        crossword.symbols = data.symbols
+        let symbols = data.symbols
+        crossword.symbols = symbols
         let tagToCluesList = data.tag_to_clue_map
         crossword.tagToCluesMap = tagToCluesList
         crossword.solved = false
@@ -77,27 +59,9 @@ class DataUtils {
         crossword.versionId = 0
 
 
-        crossword.clueToTagsMap = [:]
-        for tag in 0..<tagToCluesList.count {
-            for dir in ["A", "D"] {
-                if (tagToCluesList[tag].count > 0) {
-                    let clue = tagToCluesList[tag][dir]
-                    if let nnClue = clue {
-                        if crossword.clueToTagsMap?[nnClue] == nil {
-                            crossword.clueToTagsMap?[nnClue] = []
-                        }
-                        crossword.clueToTagsMap?[nnClue]!.append(tag)
-                    }
-                }
-            }
-        }
-        crossword.entry = Array(repeating: "", count: data.symbols.count)
-        for i in 0..<data.symbols.count {
-            if (data.symbols[i] == -1) {
-                crossword.entry![i] = "."
-            }
-        }
-        crossword.helpTracking = Array(repeating: false, count: data.symbols.count)
+        crossword.clueToTagsMap = DataUtils.buildClueToTagsMap(tagToCluesList: tagToCluesList)
+        crossword.entry = DataUtils.buildStarterEntry(symbols: symbols)
+        crossword.helpTracking = Array(repeating: false, count: symbols.count)
     }
 
     static func buildSampleCrossword(crossword: Crossword, resourceName: String) -> Void {
@@ -127,26 +91,8 @@ class DataUtils {
                 crossword.addedTime = Date().timeIntervalSince1970
                 crossword.versionId = 0
 
-                crossword.clueToTagsMap = [:]
-                for tag in 0..<tagToCluesList.count {
-                    for dir in ["A", "D"] {
-                        if (tagToCluesList[tag].count > 0 ) {
-                            let clue = tagToCluesList[tag][dir]
-                            if let nnClue = clue {
-                                if crossword.clueToTagsMap?[nnClue] == nil {
-                                    crossword.clueToTagsMap?[nnClue] = []
-                                }
-                                crossword.clueToTagsMap?[nnClue]!.append(tag)
-                            }
-                        }
-                    }
-                }
-                crossword.entry = Array(repeating: "", count: symbols.count)
-                for i in 0..<symbols.count {
-                    if (symbols[i] == -1) {
-                        crossword.entry![i] = "."
-                    }
-                }
+                crossword.clueToTagsMap = DataUtils.buildClueToTagsMap(tagToCluesList: tagToCluesList)
+                crossword.entry = DataUtils.buildStarterEntry(symbols: symbols)
                 crossword.helpTracking = Array(repeating: false, count: symbols.count)
             } catch {
                 print(error.localizedDescription)
@@ -160,5 +106,34 @@ class DataUtils {
         solvedCrossword.solveTime = crossword.solvedTime
         solvedCrossword.outletName = crossword.outletName
         solvedCrossword.numClues = Int32(crossword.clues!.count)
+    }
+
+    private static func buildStarterEntry(symbols: Array<Int>) -> Array<String> {
+        var entry = Array(repeating: "", count: symbols.count)
+        for i in 0..<symbols.count {
+            if (symbols[i] == -1) {
+                entry[i] = "."
+            }
+        }
+        return entry
+    }
+
+    private static func buildClueToTagsMap(tagToCluesList: Array<Dictionary<String, String>>)
+    -> Dictionary<String, Array<Int>> {
+        var clueToTagsMap: Dictionary<String, Array<Int>> = [:]
+        for tag in 0..<tagToCluesList.count {
+            for dir in ["A", "D"] {
+                if (tagToCluesList[tag].count > 0) {
+                    let clue: String? = tagToCluesList[tag][dir]
+                    if (clue != nil) {
+                        if clueToTagsMap[clue!] == nil {
+                            clueToTagsMap[clue!] = []
+                        }
+                        clueToTagsMap[clue!]?.append(tag)
+                    }
+                }
+            }
+        }
+        return clueToTagsMap
     }
 }

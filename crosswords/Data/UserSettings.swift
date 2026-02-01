@@ -115,7 +115,7 @@ class UserSettings: ObservableObject {
 
     @Published var showHelpIndicators: Bool {
         didSet {
-            UserDefaults.standard.set(zoomMagnificationLevel, forKey: "showHelpIndicators")
+            UserDefaults.standard.set(showHelpIndicators, forKey: "showHelpIndicators")
         }
     }
 

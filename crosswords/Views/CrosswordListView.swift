@@ -105,8 +105,14 @@ struct CrosswordListView: View {
         if (!self.refreshEnabled) {
             return
         }
+
+//        let lastRefreshTime: Date = Date(timeIntervalSince1970: self.userSettings.lastRefreshTime)
+//
+//        if (!Date().haveMinutesElapsed(timeInMinutes: 5, date: lastRefreshTime)) {
+//            return
+//        }
         self.refreshEnabled = false
-        //self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
+//        self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
 
         self.refreshQueue.async() {
             if (self.userSettings.useLocalMode) {
@@ -130,9 +136,9 @@ struct CrosswordListView: View {
             GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
 
             let lastDate: Date
-            if self.crosswords.count == 0 {
+            if (self.crosswords.count == 0) {
                 // pull for the last 7 days
-                lastDate = Date.init(timeInterval: -604800, since: Date())
+                lastDate = Date().subtractWeeks(1)
             } else {
                 // crosswords are sorted by date desc, so pull the first one
                 lastDate = self.crosswords[0].date!
@@ -180,7 +186,8 @@ struct CrosswordListView: View {
                             continue
                         }
                         let crossword = self.crosswords.first(where: {
-                            $0.id == document.documentID && ($0.versionId < document.get("version") as! Int16)
+                            $0.id == document.documentID
+                            && ($0.versionId < document.get("version") as! Int16)
                         })
                         if (crossword == nil) {
                             continue

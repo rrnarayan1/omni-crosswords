@@ -20,6 +20,11 @@ struct TimeUtils {
 }
 
 extension Date {
+
+    func haveMinutesElapsed(timeInMinutes: Int, date: Date) -> Bool {
+        return self > Date.init(timeInterval: TimeInterval(timeInMinutes*60), since: date)
+    }
+
     func startOfYear() -> Date {
         return Calendar.current.date(from: Calendar.current
             .dateComponents([.year],from: Calendar.current.startOfDay(for: self)))!
