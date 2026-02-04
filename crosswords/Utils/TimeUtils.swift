@@ -21,8 +21,8 @@ struct TimeUtils {
 
 extension Date {
 
-    func haveMinutesElapsed(timeInMinutes: Int, date: Date) -> Bool {
-        return self > Date.init(timeInterval: TimeInterval(timeInMinutes*60), since: date)
+    func haveMinutesElapsed(timeInMinutes: Int, pastDate: Date) -> Bool {
+        return self > Date.init(timeInterval: TimeInterval(timeInMinutes*60), since: pastDate)
     }
 
     func startOfYear() -> Date {

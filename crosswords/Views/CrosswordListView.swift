@@ -106,13 +106,13 @@ struct CrosswordListView: View {
             return
         }
 
-//        let lastRefreshTime: Date = Date(timeIntervalSince1970: self.userSettings.lastRefreshTime)
-//
-//        if (!Date().haveMinutesElapsed(timeInMinutes: 5, date: lastRefreshTime)) {
-//            return
-//        }
+        let lastRefreshTime: Date = Date(timeIntervalSince1970: self.userSettings.lastRefreshTime)
+
+        if (!Date().haveMinutesElapsed(timeInMinutes: 5, pastDate: lastRefreshTime)) {
+            return
+        }
         self.refreshEnabled = false
-//        self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
+        self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
 
         self.refreshQueue.async() {
             if (self.userSettings.useLocalMode) {
