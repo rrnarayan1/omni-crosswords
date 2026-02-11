@@ -355,7 +355,24 @@ struct CrosswordGridView: View {
                                    forceUpdate: self.$forceUpdate,
                                    becomeFirstResponder: self.$becomeFirstResponder,
                                    isRebusMode: self.$isRebusMode)
-                .frame(width: 1, height: 1)
+            .onKeyPress(phases: .down) { press in
+                if (press.key == .tab) {
+                    if (press.modifiers.contains(.shift)) {
+                        ChangeFocusUtils.goToPreviousClue(focusedTag: self.$focusedTag,
+                                                          crossword: self.crossword,
+                                                          userSettings: self.userSettings,
+                                                          goingAcross: self.$goingAcross,
+                                                          isHighlighted: self.$highlighted)
+                        return .ignored
+                    }
+                    ChangeFocusUtils.goToNextClue(focusedTag: self.$focusedTag, crossword: self.crossword,
+                                                  userSettings: self.userSettings,
+                                                  goingAcross: self.$goingAcross,
+                                                  isHighlighted: self.$highlighted)
+                }
+                return .ignored
+            }
+            .frame(width: 1, height: 1)
         }
     }
 
