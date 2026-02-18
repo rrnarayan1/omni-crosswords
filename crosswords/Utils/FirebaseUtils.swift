@@ -7,6 +7,7 @@
 //
 
 import FirebaseAuth
+import FirebaseFirestore
 
 struct FirebaseUtils {
 
@@ -23,4 +24,71 @@ struct FirebaseUtils {
             }
         }
     }
+
+    static func getNewCrosswords<T>(lastDate: Date, subscriptions: Array<String>,
+                                    handler: FirebaseHandler<T>) {
+        let db = Firestore.firestore()
+        let docRef: Query = db.collection("crosswords")
+            .whereField("date", isGreaterThanOrEqualTo: lastDate)
+            .whereField("crossword_outlet_name", in: subscriptions)
+            .limit(to: 100)
+
+        docRef.getDocuments {(querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    handler.documentHandler(document, handler.data)
+                }
+            }
+            if (handler.completionHandler != nil) {
+                handler.completionHandler!(handler.data)
+            }
+        }
+    }
+
+    static func getNewAlerts<T>(lastAlertId: Int, handler: FirebaseHandler<T>){
+        let db = Firestore.firestore()
+        let alertDocRef: Query = db.collection("alerts")
+            .whereField("id", isGreaterThan: lastAlertId)
+            .order(by: "id", descending: true)
+        alertDocRef.getDocuments {(querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                if (querySnapshot!.documents.count > 0) {
+                    let document = querySnapshot!.documents[0]
+                    handler.documentHandler(document, handler.data)
+                }
+            }
+        }
+        if (handler.completionHandler != nil) {
+            handler.completionHandler!(handler.data)
+        }
+    }
+
+    static func getNewOverwrites<T>(handler: FirebaseHandler<T>){
+        let db = Firestore.firestore()
+        let overwrittenCrosswords: Query = db.collection("crosswords")
+            .whereField("version", isGreaterThan: 0)
+            .limit(to: 100)
+        overwrittenCrosswords.getDocuments {(querySnapshot, error) in
+            if let error = error {
+                print("Error getting documents: \(error)")
+            } else {
+                for document in querySnapshot!.documents {
+                    handler.documentHandler(document, handler.data)
+                }
+            }
+        }
+        if (handler.completionHandler != nil) {
+            handler.completionHandler!(handler.data)
+        }
+    }
+}
+
+struct FirebaseHandler<T> {
+    let data: T
+    let documentHandler: (QueryDocumentSnapshot, T) -> Void
+    let completionHandler: ((T) -> Void)?
 }

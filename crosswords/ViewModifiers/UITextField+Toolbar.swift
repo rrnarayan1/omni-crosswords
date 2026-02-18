@@ -116,12 +116,10 @@ extension UITextField {
 
             let previousButton = UIButton.systemButton(with: self.previousImage, target: coordinator,
                                                        action: #selector(coordinator.goToPreviousClue))
-            previousButton.backgroundColor = UIColor.green
             let previousButtonWithSize = UIButtonWithSize(button: previousButton, width: 25, height: 33)
 
             let nextButton = UIButton.systemButton(with: self.nextImage, target: coordinator,
                                                    action: #selector(coordinator.goToNextClue))
-            nextButton.backgroundColor = UIColor.orange
             let nextButtonWithSize = UIButtonWithSize(button: nextButton, width: 25, height: 33)
 
             let toggleButton = UIButton.systemButton(with: self.toggleImage, target: coordinator,

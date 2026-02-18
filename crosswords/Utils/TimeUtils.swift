@@ -30,6 +30,11 @@ extension Date {
             .dateComponents([.year],from: Calendar.current.startOfDay(for: self)))!
     }
 
+    func subtractDays(_ numDays: Int) -> Date {
+        return Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .day,
+                                                                      value: -1 * numDays, to: self)!)
+    }
+
     func subtractMonths(_ numMonths: Int) -> Date {
         return Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .month,
                                                                       value: -1 * numMonths, to: self)!)

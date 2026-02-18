@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import FirebaseCore
 import FirebaseFirestore
 
 struct CrosswordListView: View {
@@ -147,88 +146,73 @@ struct CrosswordListView: View {
             let shownCrosswordIds: Array<String> = self.crosswords.map {$0.id!}
             var allCrosswords: Array<Crossword> = Array(self.crosswords)
             allCrosswords.append(contentsOf: self.hiddenCrosswords)
-            let allCrosswordIds: Array<String> = allCrosswords.map {$0.id!}
 
-            let db = Firestore.firestore()
-            let docRef: Query = db.collection("crosswords")
-                .whereField("date", isGreaterThanOrEqualTo: lastDate)
-                .whereField("crossword_outlet_name", in: self.userSettings.subscriptions)
-                .limit(to: 100)
+            let lastAlertId = self.userSettings.lastAlertId
 
-            let alertDocRef: Query = db.collection("alerts")
-                .whereField("id", isGreaterThan: self.userSettings.lastAlertId)
-                .order(by: "id", descending: true)
-
-            let overwrittenCrosswords: Query = db.collection("crosswords")
-                .whereField("version", isGreaterThan: 0)
-                .limit(to: 100)
-
-            alertDocRef.getDocuments {(querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    if (querySnapshot!.documents.count > 0) {
-                        let document = querySnapshot!.documents[0]
-                        self.bannerData.title = document.get("title") as! String
-                        self.bannerData.detail = document.get("message") as! String
-                        self.bannerData.bannerId = document.get("id") as! Int
-                    }
-                }
-            }
-            
-            overwrittenCrosswords.getDocuments {(querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        // if we aren't showing it, it doesn't need to be overwritten
-                        if (!shownCrosswordIds.contains(document.documentID)) {
-                            continue
-                        }
-                        let crossword = self.crosswords.first(where: {
-                            $0.id == document.documentID
-                            && ($0.versionId < document.get("version") as! Int16)
-                        })
-                        if (crossword == nil) {
-                            continue
-                        }
-                        DataUtils.jsonToCrossword(crossword: crossword!, data: document)
-                        do {
-                            try self.managedObjectContext.save()
-                        } catch {
-                            print(error.localizedDescription)
-                        }
-                    }
-                }
-            }
-
-            docRef.getDocuments {(querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        // if it's hidden, then we don't need to save it
-                        if (allCrosswordIds.contains(document.documentID)) {
-                            continue
-                        }
-                        let crossword = Crossword(context: self.managedObjectContext)
-                        // Cause duplicate crosswords
-//                        let crossword1 = Crossword(context: self.managedObjectContext)
-//                        jsonToCrossword(crossword: crossword1, data: document)
-                        do {
-                            DataUtils.jsonToCrossword(crossword: crossword, data: document)
-                            try self.managedObjectContext.save()
-                        } catch {
-                            print(error.localizedDescription)
-                        }
-                    }
-                }
-                self.checkForDeletions(allCrosswords: allCrosswords)
-                GameCenterUtils.maybeSyncSavedGames(userSettings: self.userSettings,
-                                                    crosswords: allCrosswords)
-                self.refreshEnabled = true
-            }
+            FirebaseUtils.getNewAlerts(lastAlertId: lastAlertId, handler: FirebaseHandler(data: lastAlertId,
+                                                        documentHandler: self.newAlertHandler,
+                                                        completionHandler: nil))
+            FirebaseUtils.getNewOverwrites(handler: FirebaseHandler(data: shownCrosswordIds,
+                                                                    documentHandler: self.overwrittenCrosswordHandler,
+                                                                    completionHandler: nil))
+            FirebaseUtils.getNewCrosswords(lastDate: lastDate, subscriptions: self.userSettings.subscriptions,
+                                           handler: FirebaseHandler(data: allCrosswords,
+                                                                documentHandler: self.newCrosswordHandler,
+                                                                completionHandler:
+                                                                    self.newCrosswordFetchCompletionHandler))
         }
+    }
+
+    func newCrosswordHandler(document: QueryDocumentSnapshot, allCrosswords: Array<Crossword>) -> Void {
+        let allCrosswordIds = allCrosswords.map {$0.id}
+        if (allCrosswordIds.contains(document.documentID)) {
+            return
+        }
+        let crossword = Crossword(context: self.managedObjectContext)
+        // Cause duplicate crosswords
+//         let crossword1 = Crossword(context: self.managedObjectContext)
+//         jsonToCrossword(crossword: crossword1, data: document)
+        do {
+            DataUtils.jsonToCrossword(crossword: crossword, data: document)
+            try self.managedObjectContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    func newAlertHandler(document: QueryDocumentSnapshot, _: Int) -> Void {
+        self.bannerData.title = document.get("title") as! String
+        self.bannerData.detail = document.get("message") as! String
+        self.bannerData.bannerId = document.get("id") as! Int
+    }
+
+    func overwrittenCrosswordHandler(document: QueryDocumentSnapshot, shownCrosswordIds: Array<String>) {
+        // if it's not shown, don't need to change it
+        if (!shownCrosswordIds.contains(document.documentID)) {
+            return
+        }
+
+        let crosswordToOverwrite = self.crosswords.first(where: {
+            $0.id == document.documentID && ($0.versionId < document.get("version") as! Int16)
+        })
+
+        if (crosswordToOverwrite == nil) {
+            return
+        }
+
+        DataUtils.jsonToCrossword(crossword: crosswordToOverwrite!, data: document)
+        do {
+            try self.managedObjectContext.save()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    func newCrosswordFetchCompletionHandler(allCrosswords: Array<Crossword>) -> Void {
+        self.checkForDeletions(allCrosswords: allCrosswords)
+        GameCenterUtils.maybeSyncSavedGames(userSettings: self.userSettings,
+                                            crosswords: allCrosswords)
+        self.refreshEnabled = true
     }
 
     func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {
@@ -236,12 +220,11 @@ struct CrosswordListView: View {
         if (daysAgoToDelete == -1) {
             return
         }
-        let timeToGoBack: Double = Double(-1 * daysAgoToDelete * 86400)
-        let lastDate = Date.init(timeInterval: timeToGoBack, since: Date())
+        let deleteBeforeDate = Date().subtractDays(daysAgoToDelete)
 
         for crossword in allCrosswords {
             // deletes old crosswords
-            if (crossword.date == nil || crossword.date! < lastDate) {
+            if (crossword.date == nil || crossword.date! < deleteBeforeDate) {
                 self.deleteGame(crossword: crossword)
             }
             // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
