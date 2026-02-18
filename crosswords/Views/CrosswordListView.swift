@@ -41,8 +41,7 @@ struct CrosswordListView: View {
     var body: some View {
         NavigationStack(path: self.$selectedCrossword) {
             if (self.userSettings.user == nil && !self.userSettings.useLocalMode) {
-                Image(systemName: "circle.dotted")
-                    .font(.system(size: 20))
+                ProgressView()
                     .onAppear(perform: {
                         FirebaseUtils.checkFirebaseUser(userSettings: self.userSettings)
                     })
@@ -154,7 +153,8 @@ struct CrosswordListView: View {
                                                         documentHandler: self.newAlertHandler,
                                                         completionHandler: nil))
             FirebaseUtils.getNewOverwrites(handler: FirebaseHandler(data: shownCrosswordIds,
-                                                                    documentHandler: self.overwrittenCrosswordHandler,
+                                                                    documentHandler:
+                                                                        self.overwrittenCrosswordHandler,
                                                                     completionHandler: nil))
             FirebaseUtils.getNewCrosswords(lastDate: lastDate, subscriptions: self.userSettings.subscriptions,
                                            handler: FirebaseHandler(data: allCrosswords,

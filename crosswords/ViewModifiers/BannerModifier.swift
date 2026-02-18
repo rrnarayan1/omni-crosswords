@@ -27,7 +27,6 @@ struct BannerModifier: ViewModifier {
                         Image(systemName: "xmark.circle")
                             .font(.system(size: 18))
                     }
-                    
                 }
                 .foregroundColor(Color.white)
                 .padding(12)
