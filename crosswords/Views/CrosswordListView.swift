@@ -22,7 +22,10 @@ struct CrosswordListView: View {
     let refreshQueue = DispatchQueue(label: "refresh")
     
     @FetchRequest(entity: Crossword.entity(),
-                  sortDescriptors: [NSSortDescriptor(keyPath: \Crossword.date, ascending: false)],
+                  sortDescriptors: [
+                    NSSortDescriptor(keyPath: \Crossword.date, ascending: false),
+                    NSSortDescriptor(keyPath: \Crossword.outletName, ascending: true)
+                  ],
                   predicate: NSPredicate(format: "isHidden == false"))
     var crosswords: FetchedResults<Crossword>
 
@@ -80,8 +83,6 @@ struct CrosswordListView: View {
                     self.refreshCrosswords()
                  }
                 .onAppear(perform: {
-                    // when a file is opened and then the upload page is closed, we don't need
-                    // to keep the reference to the originally opened file
                     if (self.selectedCrossword.isEmpty) {
                         self.refreshCrosswords()
                     }
