@@ -56,6 +56,7 @@
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
 		F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* DataUtils.swift */; };
 		F396923F2F20785900BBBDB3 /* TimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F396923E2F20785500BBBDB3 /* TimeUtils.swift */; };
+		F3B1F0C02F65F38800612BA4 /* OnKeyPressUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F0BF2F65F37100612BA4 /* OnKeyPressUtils.swift */; };
 		F3B1F8832F285A3C0052682B /* GameCenterUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8822F285A370052682B /* GameCenterUtils.swift */; };
 		F3B1F8852F287F3C0052682B /* FirebaseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8842F287F350052682B /* FirebaseUtils.swift */; };
 		F3B1F8872F28805D0052682B /* CrosswordListViewToolbarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1F8862F28804E0052682B /* CrosswordListViewToolbarView.swift */; };
@@ -114,6 +115,7 @@
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
 		F38D69BC2EE4D10A001E6096 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		F396923E2F20785500BBBDB3 /* TimeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtils.swift; sourceTree = "<group>"; };
+		F3B1F0BF2F65F37100612BA4 /* OnKeyPressUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnKeyPressUtils.swift; sourceTree = "<group>"; };
 		F3B1F8822F285A370052682B /* GameCenterUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameCenterUtils.swift; sourceTree = "<group>"; };
 		F3B1F8842F287F350052682B /* FirebaseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUtils.swift; sourceTree = "<group>"; };
 		F3B1F8862F28804E0052682B /* CrosswordListViewToolbarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordListViewToolbarView.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				1C59BF50278B6E3A0076F371 /* GameCenterListener.swift */,
 				F3B1F8822F285A370052682B /* GameCenterUtils.swift */,
 				1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */,
+				F3B1F0BF2F65F37100612BA4 /* OnKeyPressUtils.swift */,
 				F396923E2F20785500BBBDB3 /* TimeUtils.swift */,
 			);
 			path = Utils;
@@ -360,6 +363,7 @@
 				F3B1F8872F28805D0052682B /* CrosswordListViewToolbarView.swift in Sources */,
 				F352635E2F12EADC0049F0B6 /* Constants.swift in Sources */,
 				F35263632F1307150049F0B6 /* ShapeStyle+Extensions.swift in Sources */,
+				F3B1F0C02F65F38800612BA4 /* OnKeyPressUtils.swift in Sources */,
 				1CBED35327BE10750051E83C /* ColorSchemeUtil.swift in Sources */,
 				1C73206A24C4F44000240AF8 /* SceneDelegate.swift in Sources */,
 				F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */,
@@ -547,7 +551,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.10;
+				MARKETING_VERSION = 1.8.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
@@ -572,7 +576,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.8.10;
+				MARKETING_VERSION = 1.8.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.RohanNarayan.omniCrosswords;
 				PRODUCT_NAME = OmniCrosswords;
 				SWIFT_VERSION = 5.0;
