@@ -16,6 +16,7 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
     let isSolved: Bool
     let outletName: String
     let isSolutionAvailable: Bool
+    let solvedTime: Int
 
     let showSettings: () -> Void
     let showSolution: () -> Void
@@ -36,10 +37,10 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
         return true
     }
     
-    func shareSheet(isSolved: Bool, outletName: String) -> [Any] {
+    func shareSheet(isSolved: Bool, outletName: String, solvedTime: Int) -> [Any] {
         var shareMessage: String
         if (isSolved) {
-            shareMessage = "I solved the " + outletName + " crossword"
+            shareMessage = "I solved the " + outletName + " crossword in " + TimeUtils.toDisplayTime(solvedTime)
             shareMessage += ". Download OmniCrosswords and have fun with me!"
         } else {
             shareMessage = "I'm in the middle of solving the " + outletName + " crossword"
@@ -82,7 +83,7 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
             .sheet(isPresented: self.$showShareSheet,
                    onDismiss: {self.showShareSheet = false},
                    content: {ActivityView(activityItems:
-                                            self.shareSheet(isSolved: isSolved, outletName: outletName))}
+                                            self.shareSheet(isSolved: isSolved, outletName: outletName, solvedTime: solvedTime))}
             )
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))

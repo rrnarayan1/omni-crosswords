@@ -197,6 +197,7 @@ struct CrosswordView: View {
                                                 isSolutionAvailable:
                                                     CrosswordUtils.isSolutionAvailable(crossword:
                                                                                     self.crossword),
+                                                solvedTime: Int(self.crossword.solvedTime),
                                                 showSettings: self.showSettings,
                                                 showSolution: self.showSolution,
                                                 getProgressPercentage: {() -> CGFloat in
