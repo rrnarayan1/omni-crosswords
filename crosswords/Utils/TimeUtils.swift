@@ -17,6 +17,14 @@ struct TimeUtils {
         let secString: String = numSec < 10 ? "0"+String(numSec) : String(numSec)
         return String(numMin) + ":" + secString
     }
+
+    // returns as mm/dd/yyyy
+    static func toSmallDateFormat(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
+        formatter.dateStyle = .short
+        return formatter.string(from: date)
+    }
 }
 
 extension Date {

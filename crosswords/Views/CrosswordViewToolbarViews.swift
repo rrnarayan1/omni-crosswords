@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct CrosswordViewTrailingToolbarView: View, Equatable {
-    let title: String
+    let crosswordTitle: String
     let author: String
     let notes: String
     let copyright: String
@@ -20,6 +20,7 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
     let showSettings: () -> Void
     let showSolution: () -> Void
     let getProgressPercentage: () -> CGFloat
+    let getShareMessage: () -> String
     let markAsSolved: () -> Void
     let isErrorTrackingEnabled: Binding<Bool>
     let errorTrackingEnablementSideEffect: () -> Void
@@ -35,19 +36,6 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
         }
         return true
     }
-    
-    func shareSheet(isSolved: Bool, outletName: String) -> [Any] {
-        var shareMessage: String
-        if (isSolved) {
-            shareMessage = "I solved the " + outletName + " crossword"
-            shareMessage += ". Download OmniCrosswords and have fun with me!"
-        } else {
-            shareMessage = "I'm in the middle of solving the " + outletName + " crossword"
-            shareMessage += ". Download OmniCrosswords and help me out!"
-        }
-        let items: [Any] = [shareMessage, URL(string: "https://apps.apple.com/us/app/omni-crosswords/id1530129670")!]
-        return items
-    }
 
     var body: some View {
         HStack {
@@ -61,7 +49,7 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
                 Image(systemName: "slider.horizontal.3")
             }
             .navigationDestination(isPresented: self.$showCrosswordSettings) {
-                CrosswordSettingsView(title: self.title, author: self.author, notes: self.notes,
+                CrosswordSettingsView(title: self.crosswordTitle, author: self.author, notes: self.notes,
                                       copyright: self.copyright, isSolved: self.isSolved,
                                       isSolutionAvailable: self.isSolutionAvailable,
                                       showSolution: self.showSolution,
@@ -74,16 +62,9 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
 
-            Button {
-                self.showShareSheet = true
-            } label: {
-                Image(systemName: "square.and.arrow.up")
+            ShareLink(item: self.getShareMessage()) {
+                Label("", systemImage: "square.and.arrow.up")
             }
-            .sheet(isPresented: self.$showShareSheet,
-                   onDismiss: {self.showShareSheet = false},
-                   content: {ActivityView(activityItems:
-                                            self.shareSheet(isSolved: isSolved, outletName: outletName))}
-            )
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
         }

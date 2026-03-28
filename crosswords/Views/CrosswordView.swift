@@ -42,14 +42,11 @@ struct CrosswordView: View {
     
     var displayTitle: String {
         let date = self.crossword.date ?? Date.init(timeIntervalSinceNow: TimeInterval(0))
-        let formatter = DateFormatter()
-        formatter.timeZone = TimeZone(abbreviation: "UTC")
-        formatter.dateStyle = .short
         var prefix: String = ""
         if (self.crossword.solved) {
             prefix = "Solved: "
         }
-        return prefix + self.crossword.outletName! + " - " + formatter.string(from: date)
+        return prefix + self.crossword.outletName! + " - " + TimeUtils.toSmallDateFormat(date)
     }
 
     init(crossword: Crossword, userSettings: UserSettings) {
@@ -188,7 +185,7 @@ struct CrosswordView: View {
     }
 
     func getTrailingToolbarView() -> CrosswordViewTrailingToolbarView {
-        return CrosswordViewTrailingToolbarView(title: self.crossword.title!,
+        return CrosswordViewTrailingToolbarView(crosswordTitle: self.crossword.title!,
                                                 author: self.crossword.author!,
                                                 notes: self.crossword.notes!,
                                                 copyright: self.crossword.copyright!,
@@ -202,10 +199,38 @@ struct CrosswordView: View {
                                                 getProgressPercentage: {() -> CGFloat in
                                                     CrosswordUtils.getCrosswordProgress(self.crossword)
                                                 },
+                                                getShareMessage: self.getShareMessage,
                                                 markAsSolved: self.markAsSolved,
                                                 isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                                                 errorTrackingEnablementSideEffect:
                                                     self.errorTrackingEnablementSideEffect)
+    }
+
+    func getShareMessage() -> String {
+        var shareMessageLines: Array<String> = Array()
+        let title = self.crossword.outletName! + " " + TimeUtils.toSmallDateFormat(self.crossword.date!)
+        shareMessageLines.append("🧩 \(title)")
+        if (!self.crossword.solved) {
+            let progressBarSize = 6
+            var progressBar = String(repeating: "░", count: progressBarSize)
+            let filledSize = Int(Double(progressBarSize) * CrosswordUtils.getCrosswordProgress(self.crossword))
+            let filledInBar = String(repeating: "█", count: filledSize)
+
+            let range = progressBar.startIndex..<progressBar.index(progressBar.startIndex, offsetBy: filledSize)
+            progressBar.replaceSubrange(range, with: filledInBar)
+            shareMessageLines.append("⏳ Progress: [\(progressBar)]")
+        }
+        if (self.crossword.solvedTime > 0) {
+            let prefix: String = self.crossword.solved ? "⏱️ Solve Time: " : "⏱️ Time: "
+            shareMessageLines.append(prefix + TimeUtils.toDisplayTime(Int(self.crossword.solvedTime)))
+        }
+        let helpUsed: Int? = CrosswordUtils.getHelpUsed(self.crossword)
+        if (helpUsed != nil) {
+            shareMessageLines.append("💡 Help Used: \(helpUsed!)")
+        }
+        shareMessageLines.append("🔲 Omni Crosswords")
+
+        return shareMessageLines.joined(separator: "\n")
     }
 
     func getInitialBoxWidth() -> CGFloat {

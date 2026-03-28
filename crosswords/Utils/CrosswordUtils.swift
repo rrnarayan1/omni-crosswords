@@ -17,6 +17,10 @@ struct CrosswordUtils {
         return CGFloat(filledSquaresCount)/CGFloat(fillableSquaresCount)
     }
 
+    static func getHelpUsed(_ crossword: Crossword) -> Int? {
+        return crossword.helpTracking?.reduce(0) {partialResult, el in el ? partialResult + 1 : partialResult}
+    }
+
     static func getFilledCellsCount(_ crosswordEntry: Array<String>) -> Int {
         return crosswordEntry.filter({ (entry) -> Bool in
             entry != "." && !entry.isEmpty
