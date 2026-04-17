@@ -148,7 +148,7 @@ struct ChangeFocusUtils {
                         || crossword.tagToCluesMap?[possibleTag] == nil
                         || crossword.tagToCluesMap?[possibleTag].count == 0
                         || ((possibleTag + 1) % Int(crossword.length) == 0 && !checkCluesForwards)
-                        || (possibleTag % Int(crossword.length) == 0 && loopBackInsideCurrentWord)
+                        || (possibleTag % Int(crossword.length) == 0 && goingAcross.wrappedValue && loopBackInsideCurrentWord)
                     ) {
                         // if we're checking the end, start checking again from the start
                         // if we're at a block, start checking the next clue
