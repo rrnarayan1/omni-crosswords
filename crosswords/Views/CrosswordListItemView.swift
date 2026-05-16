@@ -13,6 +13,7 @@ struct CrosswordListItemView: View {
     var progressPercentage: CGFloat
     var outletName: String
     var isSolved: Bool
+    var solvedWithoutHelp: Bool
     var solvedTime: Int
     @ObservedObject var userSettings: UserSettings
 
@@ -23,11 +24,17 @@ struct CrosswordListItemView: View {
             if (self.isSolved) {
                 if (self.userSettings.showTimer && self.solvedTime > 0) {
                     Text(TimeUtils.toDisplayTime(self.solvedTime))
-                        .foregroundColor(.green)
+                        .foregroundColor(Color(self.showSolvedWithoutHelp() ? Constants.gold : UIColor.systemGreen))
                 }
-                Image(systemName: "checkmark.circle")
-                    .foregroundColor(Color(UIColor.systemGreen))
-                    .font(.system(size: Constants.listIconSize))
+                if (self.showSolvedWithoutHelp()) {
+                    Image(systemName: "star.circle")
+                        .foregroundColor(Color(Constants.gold))
+                        .font(.system(size: Constants.listIconSize))
+                } else {
+                    Image(systemName: "checkmark.circle")
+                        .foregroundColor(Color(UIColor.systemGreen))
+                        .font(.system(size: Constants.listIconSize))
+                }
             }
             else if (self.progressPercentage > 0) {
                 if (self.userSettings.showTimer && self.solvedTime > 0) {
@@ -52,6 +59,10 @@ struct CrosswordListItemView: View {
         }
     }
     
+    func showSolvedWithoutHelp() -> Bool {
+        return self.userSettings.showHelpIndicators && self.solvedWithoutHelp
+    }
+
     func getCrosswordListTitle() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EE M/d/yy"

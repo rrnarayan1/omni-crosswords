@@ -33,6 +33,10 @@ struct CrosswordUtils {
         }).count
     }
 
+    static func solvedWithoutHelp(crossword: Crossword) -> Bool {
+        return crossword.solved && getHelpUsed(crossword) == 0
+    }
+
     static func isSolutionAvailable(crossword: Crossword) -> Bool {
         if (crossword.solution == nil || crossword.solution!.isEmpty) {
             return false

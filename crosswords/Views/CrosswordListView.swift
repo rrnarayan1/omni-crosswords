@@ -56,6 +56,8 @@ struct CrosswordListView: View {
                                                 CrosswordUtils.getCrosswordProgress(crossword),
                                               outletName: crossword.outletName!,
                                               isSolved: crossword.solved,
+                                              solvedWithoutHelp:
+                                                CrosswordUtils.solvedWithoutHelp(crossword: crossword),
                                               solvedTime: Int(crossword.solvedTime),
                                               userSettings: self.userSettings)
                     }.swipeActions {
