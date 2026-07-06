@@ -184,9 +184,15 @@ struct CrosswordListView: View {
     }
 
     func newAlertHandler(document: QueryDocumentSnapshot, _: Int) -> Void {
-        self.bannerData.title = document.get("title") as! String
-        self.bannerData.detail = document.get("message") as! String
-        self.bannerData.bannerId = document.get("id") as! Int
+        // If they haven't seen an alert before, don't show an alert and set the lastAlertId to be the current one
+        let bannerId = document.get("id") as! Int
+        if (self.userSettings.lastAlertId != 0) {
+            self.bannerData.title = document.get("title") as! String
+            self.bannerData.detail = document.get("message") as! String
+            self.bannerData.bannerId = bannerId
+        } else {
+            self.userSettings.lastAlertId = bannerId
+        }
     }
 
     func overwrittenCrosswordHandler(document: QueryDocumentSnapshot, shownCrosswordIds: Array<String>) {
