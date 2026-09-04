@@ -120,6 +120,17 @@ struct PickerViews: View {
             }
             
             HStack {
+                Text("Tap clue behavior")
+                Spacer()
+                Picker("Tap clue behavior", selection: self.$userSettings.tapClueTitleBehavior) {
+                    Text("Nothing").tag(0)
+                    Text("Toggle Direction").tag(1)
+                    Text("Next clue").tag(2)
+                }
+                .pickerStyle(.menu)
+            }
+
+            HStack {
                 Text("Auto-delete puzzles after")
                 Spacer()
                 Picker("Auto-delete puzzles after",

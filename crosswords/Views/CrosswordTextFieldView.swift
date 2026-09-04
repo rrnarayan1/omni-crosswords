@@ -99,6 +99,18 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                                      managedObjectContext: self.parent.managedObjectContext)
         }
 
+        @objc func tapClue(textField: NoActionTextField) {
+            let tapClueTitleBehavior = self.parent.userSettings.tapClueTitleBehavior
+            switch (tapClueTitleBehavior) {
+            case 1:
+                pressToggleButton(textField: textField)
+            case 2:
+                goToNextClue(textField: textField)
+            default:
+                return
+            }
+        }
+
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             self.parent.isRebusMode = false
             self.moveFocusToNextField()

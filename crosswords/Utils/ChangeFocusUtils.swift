@@ -69,12 +69,10 @@ struct ChangeFocusUtils {
     private static func setHighlighting(focusedTag: Int, crossword: Crossword, goingAcross: Bool,
                                         isHighlighted: Binding<Array<Int>>) {
         var newHighlighted = Array<Int>()
-        // newHighlighted.append(focusedTag)
 
-        let directionalLetter: String = goingAcross ? "A" : "D"
-        let clue: String = (crossword.tagToCluesMap?[focusedTag][directionalLetter])!
+        let clueId = CrosswordUtils.getClueID(tag: focusedTag, crossword: crossword, goingAcross: goingAcross)
 
-        let clueTags: Array<Int> = (crossword.clueToTagsMap?[clue])!
+        let clueTags: Array<Int> = (crossword.clueToTagsMap?[clueId])!
         for tag in clueTags {
             newHighlighted.append(tag)
         }

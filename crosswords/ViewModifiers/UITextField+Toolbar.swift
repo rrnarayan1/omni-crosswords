@@ -90,6 +90,11 @@ extension UITextField {
         clueTitleLabel.allowsEditingTextAttributes = false
         clueTitleLabel.isSelectable = false
         
+        let tapGesture = UITapGestureRecognizer(target: coordinator, action: #selector(coordinator.tapClue))
+        tapGesture.numberOfTapsRequired = 1
+        tapGesture.numberOfTouchesRequired = 1
+        clueTitleLabel.addGestureRecognizer(tapGesture)
+
         let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width,
                                                  relatedBy: .equal, toItem: nil,
                                                  attribute: .notAnAttribute, multiplier: 1.0,

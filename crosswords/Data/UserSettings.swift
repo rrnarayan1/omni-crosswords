@@ -119,6 +119,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var tapClueTitleBehavior: Int {
+        didSet {
+            UserDefaults.standard.set(tapClueTitleBehavior, forKey: "tapClueTitleBehavior")
+        }
+    }
+
     @Published var user: User?
     @Published var useLocalMode: Bool
 
@@ -149,5 +155,6 @@ class UserSettings: ObservableObject {
             as? Float ?? 2.0
         self.showHelpIndicators = UserDefaults.standard.object(forKey: "showHelpIndicators")
             as? Bool ?? true
+        self.tapClueTitleBehavior = UserDefaults.standard.integer(forKey: "tapClueTitleBehavior")
     }
 }
