@@ -124,6 +124,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             }
             
             if (!self.parent.crossword.entry![focusedTag].isEmpty) {
+                // current cell has an entry, just clear it and stay here
                 self.parent.crossword.entry![focusedTag] = ""
                 self.parent.forceUpdate.toggle()
                 self.saveGame()
@@ -146,11 +147,8 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                                                  focusedTag: self.parent.$focusedTag,
                                                  isHighlighted: self.parent.$highlighted)
                 } else {
-                    // cannot move backwards, just find some cell to go to
-                    ChangeFocusUtils.goToLeftCell(focusedTag: self.parent.$focusedTag,
-                                                  crossword: self.parent.crossword,
-                                                  goingAcross: self.parent.$goingAcross,
-                                                  isHighlighted: self.parent.$highlighted)
+                    // Cannot backspace, so just go back
+                    ChangeFocusUtils.goBackOneSpace(focusedTag: self.parent.$focusedTag, crossword: self.parent.crossword, goingAcross: self.parent.$goingAcross, isHighlighted: self.parent.$highlighted)
                 }
             }
         }

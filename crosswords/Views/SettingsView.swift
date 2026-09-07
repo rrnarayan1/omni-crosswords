@@ -120,9 +120,9 @@ struct PickerViews: View {
             }
             
             HStack {
-                Text("Tap clue behavior")
+                Text("Tap clue action")
                 Spacer()
-                Picker("Tap clue behavior", selection: self.$userSettings.tapClueTitleBehavior) {
+                Picker("Tap clue action", selection: self.$userSettings.tapClueTitleBehavior) {
                     Text("Nothing").tag(0)
                     Text("Toggle Direction").tag(1)
                     Text("Next clue").tag(2)

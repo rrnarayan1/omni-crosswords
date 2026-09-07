@@ -109,16 +109,18 @@ struct ChangeFocusUtils {
                                                   focusedTag: focusedTag, isHighlighted: isHighlighted,
                                                   checkCluesForwards: false, checkLoopingBack: false)
     }
-
-    static func goToLeftCell(focusedTag: Binding<Int>, crossword: Crossword,
-                             goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
-        for tag in (0..<focusedTag.wrappedValue).reversed() {
-            if (crossword.symbols![tag] != -1) {
-                ChangeFocusUtils.changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross,
-                                             focusedTag: focusedTag, isHighlighted: isHighlighted)
-                return
-            }
-        }
+    
+    /**
+     Goes to the last cell of the previous clue - does not apply any checks to skip completed cells
+     */
+    static func goBackOneSpace(focusedTag: Binding<Int>, crossword: Crossword,
+                                 goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
+        let prevClueId: String = ChangeFocusUtils.getPreviousClueID(tag: focusedTag.wrappedValue,
+                                                                    crossword: crossword,
+                                                                    goingAcross: goingAcross)
+        let prevClueLastTag: Int = crossword.clueToTagsMap![prevClueId]!.max()!
+        ChangeFocusUtils.changeFocus(tag: prevClueLastTag, crossword: crossword, goingAcross: goingAcross,
+                                     focusedTag: focusedTag, isHighlighted: isHighlighted)
     }
 
     private static func moveFocusToFieldAndCheck(tag: Int, crossword: Crossword,
@@ -244,6 +246,16 @@ struct ChangeFocusUtils {
 
 // MARK: - Unused. May be used again in future, so keeping for now
 /*
+func goToLeftCell(focusedTag: Binding<Int>, crossword: Crossword,
+                          goingAcross: Binding<Bool>, isHighlighted: Binding<Array<Int>>) {
+     for tag in (0..<focusedTag.wrappedValue).reversed() {
+         if (crossword.symbols![tag] != -1) {
+             ChangeFocusUtils.changeFocus(tag: tag, crossword: crossword, goingAcross: goingAcross,
+                                          focusedTag: focusedTag, isHighlighted: isHighlighted)
+             return
+         }
+     }
+ }
 
 func goToRightCell(tag: Int, crossword: Crossword, goingAcross: Binding<Bool>, focusedTag: Binding<Int>, isHighlighted: Binding<Array<Int>>) {
     for i in (tag+1..<crossword.symbols!.count) {
