@@ -109,7 +109,7 @@ struct ChangeFocusUtils {
                                                   focusedTag: focusedTag, isHighlighted: isHighlighted,
                                                   checkCluesForwards: false, checkLoopingBack: false)
     }
-    
+
     /**
      Goes to the last cell of the previous clue - does not apply any checks to skip completed cells
      */

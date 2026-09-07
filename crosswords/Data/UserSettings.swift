@@ -125,6 +125,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var pictureInPictureMode: Bool {
+        didSet {
+            UserDefaults.standard.set(pictureInPictureMode, forKey: "pictureInPictureMode")
+        }
+    }
+
     @Published var user: User?
     @Published var useLocalMode: Bool
 
@@ -156,5 +162,6 @@ class UserSettings: ObservableObject {
         self.showHelpIndicators = UserDefaults.standard.object(forKey: "showHelpIndicators")
             as? Bool ?? true
         self.tapClueTitleBehavior = UserDefaults.standard.integer(forKey: "tapClueTitleBehavior")
+        self.pictureInPictureMode = UserDefaults.standard.bool(forKey: "pictureInPictureMode")
     }
 }

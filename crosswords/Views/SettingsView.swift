@@ -11,6 +11,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var userSettings: UserSettings
     @State var showSubscriptions = false
+    @State var showAdvancedSettings = false
 
     var body: some View {
         ScrollView {
@@ -28,6 +29,15 @@ struct SettingsView: View {
                 .buttonStyle(.bordered)
                 .navigationDestination(isPresented: self.$showSubscriptions) {
                     SubscriptionsView(userSettings: self.userSettings)
+                }
+
+                Button("Advanced Settings"){
+                    self.showAdvancedSettings.toggle()
+                }
+                .padding(.top)
+                .buttonStyle(.bordered)
+                .navigationDestination(isPresented: self.$showAdvancedSettings) {
+                    AdvancedSettingsView(userSettings: self.userSettings)
                 }
             }
             .padding(.trailing, 5)
@@ -85,10 +95,6 @@ struct TogglesSettingsView: View {
 
         Toggle(isOn: self.$userSettings.spaceTogglesDirection) {
             Text("Space bar toggles direction")
-        }
-        
-        Toggle(isOn: self.$userSettings.useEmailAddressKeyboard) {
-            Text("Use alternate keyboard type")
         }
     }
 }
@@ -232,6 +238,27 @@ struct SubscriptionsView: View {
     
     func hasSub(_ sub : String) -> Bool {
         return self.userSettings.subscriptions.contains(sub)
+    }
+}
+
+struct AdvancedSettingsView: View {
+    @ObservedObject var userSettings: UserSettings
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading) {
+                Toggle(isOn: self.$userSettings.useEmailAddressKeyboard) {
+                    Text("Use alternate keyboard type")
+                }
+
+                Toggle(isOn: self.$userSettings.pictureInPictureMode) {
+                    Text("Add picture-in-picture space")
+                }
+            }
+            .padding(.trailing, 5)
+        }
+        .frame(width: min(UIScreen.screenWidth * 0.9, 450))
+        .navigationBarTitle("Advanced Settings", displayMode: .inline)
     }
 }
 

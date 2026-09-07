@@ -11,6 +11,7 @@ import SwiftUI
 
 struct BannerModifier: ViewModifier {
     @Binding var data: BannerData
+    var hasOpenCrossword: Bool
     @ObservedObject var userSettings: UserSettings
 
     func body(content: Content) -> some View {
@@ -33,6 +34,10 @@ struct BannerModifier: ViewModifier {
                 .background(Color.blue)
                 .cornerRadius(8)
             }
+            else if (self.hasOpenCrossword && self.userSettings.pictureInPictureMode) {
+                Color.clear
+                    .frame(height: 150)
+            }
             content
         }
     }
@@ -44,7 +49,7 @@ struct BannerModifier: ViewModifier {
 }
 
 extension View {
-    func banner(data: Binding<BannerData>, userSettings: UserSettings) -> some View {
-        self.modifier(BannerModifier(data: data, userSettings: userSettings))
+    func banner(data: Binding<BannerData>, hasOpenCrossword: Bool, userSettings: UserSettings) -> some View {
+        self.modifier(BannerModifier(data: data, hasOpenCrossword: hasOpenCrossword, userSettings: userSettings))
     }
 }

@@ -99,7 +99,7 @@ struct CrosswordListView: View {
                 }
             }
         }
-        .banner(data: self.$bannerData, userSettings: self.userSettings)
+        .banner(data: self.$bannerData, hasOpenCrossword: !self.selectedCrossword.isEmpty, userSettings: self.userSettings)
     }
     
     func refreshCrosswords() -> Void {
