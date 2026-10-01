@@ -98,7 +98,7 @@ extension UITextField {
         let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width,
                                                  relatedBy: .equal, toItem: nil,
                                                  attribute: .notAnAttribute, multiplier: 1.0,
-                                                 constant: UIScreen.main.bounds.size.width-180)
+                                                 constant: UIScreen.main.bounds.size.width-210)
         let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height,
                                                   relatedBy: .equal, toItem: nil,
                                                   attribute: .notAnAttribute, multiplier: 1.0,
