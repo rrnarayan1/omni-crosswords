@@ -7,11 +7,13 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 import FirebaseFirestore
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
+    @State var pendingAuth = true
     @State var refreshEnabled = true
     @State var bannerData: BannerData = BannerData()
     @State var openedFileUrl: URL? = nil
@@ -40,10 +42,10 @@ struct CrosswordListView: View {
 
     var body: some View {
         NavigationStack(path: self.$selectedCrossword) {
-            if (self.userSettings.user == nil && !self.userSettings.useLocalMode) {
+            if (self.userSettings.user == nil && !self.userSettings.useLocalMode && self.pendingAuth) {
                 ProgressView()
                     .onAppear(perform: {
-                        FirebaseUtils.checkFirebaseUser(userSettings: self.userSettings)
+                        FirebaseUtils.checkFirebaseUser(completionHandler: self.authCompletionHandler)
                     })
             } else {
                 let filteredCrosswords = self.crosswords.filter {
@@ -132,7 +134,7 @@ struct CrosswordListView: View {
             }
 
             if (self.userSettings.user == nil) {
-                FirebaseUtils.checkFirebaseUser(userSettings: self.userSettings)
+                FirebaseUtils.checkFirebaseUser(completionHandler: self.authCompletionHandler)
             }
             GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
 
@@ -258,5 +260,10 @@ struct CrosswordListView: View {
         } catch {
             print(error.localizedDescription)
         }
+    }
+
+    func authCompletionHandler(firebaseUser: User) -> Void {
+        self.userSettings.user = firebaseUser
+        self.pendingAuth = false
     }
 }

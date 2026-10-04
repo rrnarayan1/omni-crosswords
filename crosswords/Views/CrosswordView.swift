@@ -103,7 +103,7 @@ struct CrosswordView: View {
                 }
             }
             //.background(.random)
-            .frame(width: UIScreen.screenWidth)
+            .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length))
 
             HStack {
                 if (self.focusedTag != -1) {
