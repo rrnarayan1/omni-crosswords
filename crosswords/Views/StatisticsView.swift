@@ -6,6 +6,7 @@
 //  Copyright © 2023 Rohan Narayan. All rights reserved.
 //
 
+import CoreData
 import SwiftUI
 
 struct StatisticsView: View {

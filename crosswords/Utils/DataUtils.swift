@@ -6,9 +6,9 @@
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
 
-import Foundation
 import FirebaseCore
 import FirebaseFirestore
+import Foundation
 
 class DataUtils {
     static func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {

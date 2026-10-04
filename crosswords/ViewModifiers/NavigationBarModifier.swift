@@ -5,8 +5,10 @@
 //  Created by Rohan Narayan on 9/3/20.
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
-import SwiftUI
+
 import Foundation
+import SwiftUI
+
 
 // source: https://filipmolcik.com/navigationview-dynamic-background-color-in-swiftui/
 

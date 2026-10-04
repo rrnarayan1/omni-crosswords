@@ -6,9 +6,10 @@
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
 
-import SwiftUI
+import CoreData
 import FirebaseAuth
 import FirebaseFirestore
+import SwiftUI
 
 struct CrosswordListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext

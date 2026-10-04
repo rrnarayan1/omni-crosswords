@@ -5,8 +5,9 @@
 //  Created by Rohan Narayan on 1/10/26.
 //  Copyright © 2026 Rohan Narayan. All rights reserved.
 //
-import SwiftUI
+
 import FirebaseAuth
+import SwiftUI
 
 class UserSettings: ObservableObject {
     @Published var showSolved: Bool {

@@ -6,8 +6,8 @@
 //  Copyright © 2023 Rohan Narayan. All rights reserved.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 
 struct CrosswordUtils {
 

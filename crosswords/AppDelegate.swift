@@ -6,10 +6,10 @@
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
 
-import UIKit
 import CoreData
 import Firebase
 import FirebaseAuth
+import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

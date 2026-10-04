@@ -6,10 +6,10 @@
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
 
-import UIKit
-import SwiftUI
-import CoreData
 import Combine
+import CoreData
+import SwiftUI
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
