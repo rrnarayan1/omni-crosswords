@@ -154,18 +154,34 @@ struct CrosswordListView: View {
 
             let lastAlertId = self.userSettings.lastAlertId
 
-            FirebaseUtils.getNewAlerts(lastAlertId: lastAlertId, handler: FirebaseHandler(data: lastAlertId,
-                                                        documentHandler: self.newAlertHandler,
-                                                        completionHandler: nil))
-            FirebaseUtils.getNewOverwrites(handler: FirebaseHandler(data: shownCrosswordIds,
-                                                                    documentHandler:
-                                                                        self.overwrittenCrosswordHandler,
-                                                                    completionHandler: nil))
-            FirebaseUtils.getNewCrosswords(lastDate: lastDate, subscriptions: self.userSettings.subscriptions,
-                                           handler: FirebaseHandler(data: allCrosswords,
-                                                                documentHandler: self.newCrosswordHandler,
-                                                                completionHandler:
-                                                                    self.newCrosswordFetchCompletionHandler))
+            FirebaseUtils.getNewAlerts(
+                lastAlertId: lastAlertId,
+                handler: FirebaseHandler(
+                    data: lastAlertId,
+                    documentHandler: self.newAlertHandler,
+                    completionHandler: nil,
+                    errorHandler: nil
+                )
+            )
+            FirebaseUtils.getNewOverwrites(
+                handler: FirebaseHandler(
+                    data: shownCrosswordIds,
+                    documentHandler: self.overwrittenCrosswordHandler,
+                    completionHandler: nil,
+                    errorHandler: nil
+                )
+            )
+            FirebaseUtils.getNewCrosswords(
+                lastDate: lastDate,
+                subscriptions: self.userSettings.subscriptions,
+                handler: FirebaseHandler(
+                    data: allCrosswords,
+                    documentHandler: self.newCrosswordHandler,
+                    completionHandler:
+                        self.newCrosswordFetchCompletionHandler,
+                    errorHandler: self.newCrosswordFetchErrorHandler
+                )
+            )
         }
     }
 
@@ -225,6 +241,15 @@ struct CrosswordListView: View {
         GameCenterUtils.maybeSyncSavedGames(userSettings: self.userSettings,
                                             crosswords: allCrosswords)
         self.refreshEnabled = true
+    }
+
+    func newCrosswordFetchErrorHandler(error: NSError) -> Void {
+        if (error.domain == FirestoreErrorDomain
+            && error.code == FirestoreErrorCode.permissionDenied.rawValue) {
+            // Trigger Spinner screen to trigger re-auth
+            self.userSettings.user = nil
+            self.pendingAuth = true
+        }
     }
 
     func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {

@@ -36,6 +36,9 @@ struct FirebaseUtils {
         docRef.getDocuments {(querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")
+                if (handler.errorHandler != nil) {
+                    handler.errorHandler!(error as NSError)
+                }
             } else {
                 for document in querySnapshot!.documents {
                     handler.documentHandler(document, handler.data)
@@ -91,4 +94,5 @@ struct FirebaseHandler<T> {
     let data: T
     let documentHandler: (QueryDocumentSnapshot, T) -> Void
     let completionHandler: ((T) -> Void)?
+    let errorHandler: ((NSError) -> Void)?
 }
