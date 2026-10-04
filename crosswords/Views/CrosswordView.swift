@@ -108,9 +108,12 @@ struct CrosswordView: View {
 
             HStack {
                 if (self.focusedTag != -1) {
-                    Button(action: {self.zoom()}) {
-                        Image(systemName: self.isZoomed ? "minus.magnifyingglass"
-                              : "plus.magnifyingglass")
+                    // If box width is the maximum, don't allow zoom
+                    if (self.getInitialBoxWidth() != CGFloat(Constants.maxInitialCellSize)) {
+                        Button(action: {self.zoom()}) {
+                            Image(systemName: self.isZoomed ? "minus.magnifyingglass"
+                                  : "plus.magnifyingglass")
+                        }
                     }
                     Button(action: {self.isRebusMode.toggle()}) {
                         Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
