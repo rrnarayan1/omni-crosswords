@@ -95,10 +95,16 @@ extension UITextField {
         tapGesture.numberOfTouchesRequired = 1
         clueTitleLabel.addGestureRecognizer(tapGesture)
 
+        let numButtonsInToolbar: Int = 4
+        let otherElementsInToolbar: CGFloat =
+            Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
+            + Constants.mandatedToolbarGroupPadding * 4
+            + Constants.crosswordToolbarPadding * 2
+
         let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width,
                                                  relatedBy: .equal, toItem: nil,
                                                  attribute: .notAnAttribute, multiplier: 1.0,
-                                                 constant: UIScreen.main.bounds.size.width-210)
+                                                 constant: UIScreen.main.bounds.size.width-otherElementsInToolbar)
         let heightConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .height,
                                                   relatedBy: .equal, toItem: nil,
                                                   attribute: .notAnAttribute, multiplier: 1.0,
@@ -110,7 +116,7 @@ extension UITextField {
             
             let clueTitle = UIBarButtonItem(customView: clueTitleLabel)
                 .hideSharedBackgroundIfAvailable()
-            
+
             let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
                                            target: nil,
                                            action: nil)
@@ -119,28 +125,58 @@ extension UITextField {
                                            action: nil)
             fixed.width = 5
 
-            let previousButton = UIButton.systemButton(with: self.previousImage, target: coordinator,
-                                                       action: #selector(coordinator.goToPreviousClue))
-            let previousButtonWithSize = UIButtonWithSize(button: previousButton, width: 25, height: 33)
+            let previousButton = UIButton.systemButton(
+                with: self.previousImage,
+                target: coordinator,
+                action: #selector(coordinator.goToPreviousClue)
+            )
+            let previousButtonWithSize = UIButtonWithSize(
+                button: previousButton,
+                width: Constants.crosswordToolbarIconSize,
+                height: 33
+            )
 
-            let nextButton = UIButton.systemButton(with: self.nextImage, target: coordinator,
-                                                   action: #selector(coordinator.goToNextClue))
-            let nextButtonWithSize = UIButtonWithSize(button: nextButton, width: 25, height: 33)
+            let nextButton = UIButton.systemButton(
+                with: self.nextImage,
+                target: coordinator,
+                action: #selector(coordinator.goToNextClue)
+            )
+            let nextButtonWithSize = UIButtonWithSize(
+                button: nextButton,
+                width: Constants.crosswordToolbarIconSize,
+                height: 33
+            )
 
-            let toggleButton = UIButton.systemButton(with: self.toggleImage, target: coordinator,
-                                                     action: #selector(coordinator.pressToggleButton))
-            let toggleButtonWithSize = UIButtonWithSize(button: toggleButton, width: 25, height: 25)
+            let toggleButton = UIButton.systemButton(
+                with: self.toggleImage,
+                target: coordinator,
+                action: #selector(coordinator.pressToggleButton)
+            )
+            let toggleButtonWithSize = UIButtonWithSize(
+                button: toggleButton,
+                width: Constants.crosswordToolbarIconSize,
+                height: 25
+            )
 
-            var solveButton = UIButton.systemButton(with: self.solveImage, target: coordinator,
-                                                    action: #selector(coordinator.solveCell))
+            var solveButton = UIButton.systemButton(
+                with: self.solveImage,
+                target: coordinator,
+                action: #selector(coordinator.solveCell)
+            )
 
             let emptyButton = UIButton()
 
-            if (!CrosswordUtils.isSolutionAvailable(crossword: coordinator.parent.crossword)) {
+            if (!CrosswordUtils.isSolutionAvailable(
+                crossword: coordinator.parent.crossword
+            )) {
                 solveButton = emptyButton
             }
 
-            let solveButtonWithSize = UIButtonWithSize(button: solveButton, width: 25, height: 25)
+            let solveButtonWithSize = UIButtonWithSize(
+                button: solveButton,
+                width: Constants.crosswordToolbarIconSize,
+                height: 25
+            )
 
             if #available(iOS 26.0, *) {
                 var leftContainerButton: UIBarButtonItem
@@ -198,7 +234,7 @@ extension UITextField {
 
     func createCustomButtonGroup(firstButton: UIButtonWithSize, secondButton: UIButtonWithSize)
     -> UIBarButtonItem {
-        let containerWidth = firstButton.width + secondButton.width + 10
+        let containerWidth = firstButton.width + secondButton.width + (Constants.crosswordToolbarPadding)
         let containerView = UIView(frame: CGRectMake(0, 0, containerWidth,
                                                      Double(Constants.keybordToolbarHeight)))
         containerView.widthAnchor.constraint(equalToConstant: containerWidth).isActive = true
