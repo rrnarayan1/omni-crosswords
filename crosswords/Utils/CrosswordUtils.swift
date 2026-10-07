@@ -52,6 +52,9 @@ struct CrosswordUtils {
     -> Void {
         crossword.entry![tag] = crossword.solution![tag]
         crossword.helpTracking?[tag] = true
+        if (timerWrapper != nil) {
+            crossword.solvedTime = Int16(timerWrapper!.count)
+        }
         if (crossword.entry == crossword.solution) {
             CrosswordUtils.solutionHandler(crossword: crossword, shouldAddStatistics: true,
                                            userSettings: userSettings, focusedTag: focusedTag,

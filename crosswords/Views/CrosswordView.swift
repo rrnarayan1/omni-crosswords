@@ -106,31 +106,21 @@ struct CrosswordView: View {
             //.background(.random)
             .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length))
 
-            HStack {
-                if (self.focusedTag != -1) {
-                    // If box width is the maximum, don't allow zoom
-                    if (self.getInitialBoxWidth() != CGFloat(Constants.maxInitialCellSize)) {
-                        Button(action: {self.zoom()}) {
-                            Image(systemName: self.isZoomed ? "minus.magnifyingglass"
-                                  : "plus.magnifyingglass")
-                        }
-                    }
-                    Button(action: {self.isRebusMode.toggle()}) {
-                        Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
-                    }
-                    if (self.userSettings.showTimer) {
-                        Button(action: {self.pause()}) {
-                            Image(systemName: "pause.fill")
-                        }
-                    }
-                }
-                Spacer()
-                if (self.userSettings.showTimer) {
-                    TimerView(isSolved: self.crossword.solved, solvedTime: Int(self.crossword.solvedTime),
-                              isPaused: self.isPaused)
-                }
+            if (self.focusedTag != -1) {
+                CrosswordFooter(
+                    allowZoom: self.getInitialBoxWidth() != CGFloat(Constants.maxInitialCellSize),
+                    zoom: self.zoom,
+                    isZoomed: self.isZoomed,
+                    isPaused: self.isPaused,
+                    pause: self.pause,
+                    solveCell: self.solveCell,
+                    isSolved: self.crossword.solved,
+                    solvedTime: Int(self.crossword.solvedTime),
+                    isRebusMode: self.$isRebusMode,
+                    userSettings: self.userSettings
+                )
+                .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
             }
-            .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
 
             Spacer()
 
@@ -328,6 +318,21 @@ struct CrosswordView: View {
         self.isPaused = true
     }
 
+    func solveCell(timerWrapper: TimerWrapper) -> Void {
+        self.isRebusMode = false
+        CrosswordUtils.solveCell(
+            tag: self.focusedTag,
+            crossword: self.crossword,
+            userSettings: self.userSettings,
+            focusedTag: self.$focusedTag,
+            becomeFirstResponder: self.$becomeFirstResponder,
+            goingAcross: self.$goingAcross,
+            isHighlighted: self.$highlighted,
+            timerWrapper: timerWrapper,
+            managedObjectContext: self.managedObjectContext
+        )
+    }
+
     @ViewBuilder
     func maybePauseScreen() -> some View {
         if (self.isPaused) {
@@ -433,4 +438,49 @@ struct CrosswordGridView: View {
                                          isHighlighted: self.$highlighted)
         }
     }
+}
+
+struct CrosswordFooter: View {
+    var allowZoom: Bool
+    var zoom: () -> Void
+    var isZoomed: Bool
+    var isPaused: Bool
+    var pause: () -> Void
+    var solveCell: (TimerWrapper) -> Void
+    var isSolved: Bool
+    var solvedTime: Int
+
+    @EnvironmentObject var timerWrapper: TimerWrapper
+    @Binding var isRebusMode: Bool
+    @ObservedObject var userSettings: UserSettings
+
+    var body: some View {
+        HStack {
+            // If box width is the maximum, don't allow zoom
+            if (self.allowZoom) {
+                Button(action: {self.zoom()}) {
+                    Image(systemName: self.isZoomed ? "minus.magnifyingglass"
+                          : "plus.magnifyingglass")
+                }
+            }
+            Button(action: {self.isRebusMode.toggle()}) {
+                Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
+            }
+            if (self.userSettings.showTimer) {
+                Button(action: {self.pause()}) {
+                    Image(systemName: "pause.fill")
+                }
+            }
+            if (!self.userSettings.actionButtonsInToolbar) {
+                Button(action: {self.solveCell(self.timerWrapper)}) {
+                    Image(systemName: "lifepreserver")
+                }
+            }
+            Spacer()
+            if (self.userSettings.showTimer) {
+                TimerView(isSolved: self.isSolved, solvedTime: self.solvedTime, isPaused: self.isPaused)
+            }
+        }
+    }
+
 }
