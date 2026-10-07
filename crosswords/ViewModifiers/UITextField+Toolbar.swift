@@ -95,10 +95,20 @@ extension UITextField {
         tapGesture.numberOfTouchesRequired = 1
         clueTitleLabel.addGestureRecognizer(tapGesture)
 
-        let numButtonsInToolbar: Int = 4
-        let otherElementsInToolbar: CGFloat =
+        let actionButtonsInToolbar = coordinator.parent.userSettings.actionButtonsInToolbar
+        let clueCyclePlacement = coordinator.parent.userSettings.clueCyclePlacement
+
+        let numButtonsInToolbar: Int = actionButtonsInToolbar ? 4 : 2
+        // only 1 group iff action buttons are not in toolbar and clue cycle is not split
+        let numButtonGroups: Int =
+            !actionButtonsInToolbar && clueCyclePlacement != 1 ? 1 : 2
+        let toolbarButtonSize: CGFloat =
             Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
-            + Constants.mandatedToolbarGroupPadding * 4
+        let mandatedToolbarGroupPadding: CGFloat =
+            Constants.mandatedToolbarGroupPadding * CGFloat(numButtonGroups * 2)
+        let otherElementsInToolbar: CGFloat =
+            toolbarButtonSize
+            + mandatedToolbarGroupPadding
             + Constants.crosswordToolbarPadding * 2
 
         let widthConstraint = NSLayoutConstraint(item: clueTitleLabel, attribute: .width,
@@ -123,7 +133,7 @@ extension UITextField {
             let fixed = UIBarButtonItem(barButtonSystemItem: .fixedSpace,
                                            target: nil,
                                            action: nil)
-            fixed.width = 5
+            fixed.width = Constants.crosswordToolbarPadding
 
             let previousButton = UIButton.systemButton(
                 with: self.previousImage,
@@ -133,7 +143,7 @@ extension UITextField {
             let previousButtonWithSize = UIButtonWithSize(
                 button: previousButton,
                 width: Constants.crosswordToolbarIconSize,
-                height: 33
+                height: Constants.crosswordToolbarIconSize * 1.32
             )
 
             let nextButton = UIButton.systemButton(
@@ -144,18 +154,13 @@ extension UITextField {
             let nextButtonWithSize = UIButtonWithSize(
                 button: nextButton,
                 width: Constants.crosswordToolbarIconSize,
-                height: 33
+                height: Constants.crosswordToolbarIconSize * 1.32
             )
 
-            let toggleButton = UIButton.systemButton(
+            var toggleButton = UIButton.systemButton(
                 with: self.toggleImage,
                 target: coordinator,
                 action: #selector(coordinator.pressToggleButton)
-            )
-            let toggleButtonWithSize = UIButtonWithSize(
-                button: toggleButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: 25
             )
 
             var solveButton = UIButton.systemButton(
@@ -172,17 +177,29 @@ extension UITextField {
                 solveButton = emptyButton
             }
 
+            if (!actionButtonsInToolbar) {
+                solveButton = emptyButton
+                toggleButton = emptyButton
+            }
+
             let solveButtonWithSize = UIButtonWithSize(
                 button: solveButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: 25
+                width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
+                height: Constants.crosswordToolbarIconSize
             )
+
+            let toggleButtonWithSize = UIButtonWithSize(
+                button: toggleButton,
+                width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
+                height: Constants.crosswordToolbarIconSize
+            )
+
 
             if #available(iOS 26.0, *) {
                 var leftContainerButton: UIBarButtonItem
                 var rightContainerButton: UIBarButtonItem
 
-                switch (coordinator.parent.userSettings.clueCyclePlacement) {
+                switch (clueCyclePlacement) {
                 case 1: // split
                     leftContainerButton = self.createCustomButtonGroup(firstButton:
                                                                         previousButtonWithSize,
@@ -207,7 +224,7 @@ extension UITextField {
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
             } else {
                 // for some reason in < iOS 18 the container groups don't work
-                switch (coordinator.parent.userSettings.clueCyclePlacement) {
+                switch (clueCyclePlacement) {
                 case 1: // split
                     return [UIBarButtonItem(customView: previousButton), flexible,
                             UIBarButtonItem(customView: solveButton), fixed, clueTitle,
@@ -234,6 +251,12 @@ extension UITextField {
 
     func createCustomButtonGroup(firstButton: UIButtonWithSize, secondButton: UIButtonWithSize)
     -> UIBarButtonItem {
+        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                       target: nil,
+                                       action: nil)
+        if ((firstButton.width + secondButton.width) == 0) {
+            return flexible
+        }
         let containerWidth = firstButton.width + secondButton.width + (Constants.crosswordToolbarPadding)
         let containerView = UIView(frame: CGRectMake(0, 0, containerWidth,
                                                      Double(Constants.keybordToolbarHeight)))

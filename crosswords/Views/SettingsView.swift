@@ -77,10 +77,6 @@ struct TogglesSettingsView: View {
             }
         }
 
-        Toggle(isOn: self.$userSettings.loopBackInsideUncompletedWord) {
-            Text("Loop back inside uncompleted word")
-        }.disabled(!self.userSettings.skipCompletedCells)
-
         Toggle(isOn: self.$userSettings.defaultErrorTracking) {
             Text("Error tracking on by default")
         }
@@ -95,6 +91,10 @@ struct TogglesSettingsView: View {
 
         Toggle(isOn: self.$userSettings.spaceTogglesDirection) {
             Text("Space bar toggles direction")
+        }
+
+        Toggle(isOn: self.$userSettings.actionButtonsInToolbar) {
+            Text("Action buttons in clue bar")
         }
     }
 }
@@ -254,6 +254,10 @@ struct AdvancedSettingsView: View {
                 Toggle(isOn: self.$userSettings.pictureInPictureMode) {
                     Text("Add picture-in-picture space")
                 }
+
+                Toggle(isOn: self.$userSettings.loopBackInsideUncompletedWord) {
+                    Text("Loop back inside uncompleted word")
+                }.disabled(!self.userSettings.skipCompletedCells)
             }
             .padding(.trailing, 5)
         }

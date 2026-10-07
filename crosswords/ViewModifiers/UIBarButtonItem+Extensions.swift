@@ -12,6 +12,9 @@ extension UIBarButtonItem {
     func hideSharedBackgroundIfAvailable() -> some UIBarButtonItem {
         if #available(iOS 26.0, *) {
             self.hidesSharedBackground = true
+            if #available(iOS 27.0, *) {
+                self.isPaddingRemoved = true
+            }
             return self
         } else {
             return self

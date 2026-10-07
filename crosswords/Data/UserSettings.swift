@@ -132,6 +132,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var actionButtonsInToolbar: Bool {
+        didSet {
+            UserDefaults.standard.set(actionButtonsInToolbar, forKey: "actionButtonsInToolbar")
+        }
+    }
+
     @Published var user: User?
     @Published var useLocalMode: Bool
 
@@ -164,5 +170,6 @@ class UserSettings: ObservableObject {
             as? Bool ?? true
         self.tapClueTitleBehavior = UserDefaults.standard.integer(forKey: "tapClueTitleBehavior")
         self.pictureInPictureMode = UserDefaults.standard.bool(forKey: "pictureInPictureMode")
+        self.actionButtonsInToolbar = UserDefaults.standard.bool(forKey: "actionButtonsInToolbar")
     }
 }
