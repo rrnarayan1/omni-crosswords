@@ -30,15 +30,15 @@ struct CrosswordSettingsView: View {
                 Toggle(isOn: self.$errorTracking) {
                     Text("Error Tracking")
                 }
-                .onChange(of: self.errorTracking) {_, newErrorTracking in
-                    if (newErrorTracking) {
+                .onChange(of: self.errorTracking) { _, newErrorTracking in
+                    if newErrorTracking {
                         self.errorTrackingEnablementSideEffect()
                     }
                 }
                 .disabled(!self.isSolutionAvailable)
                 .frame(width: 200)
-                
-                if (!self.isSolved && self.isSolutionAvailable) {
+
+                if !self.isSolved && self.isSolutionAvailable {
                     Button(action: {
                         self.showSolution()
                         self.dismiss()
@@ -50,7 +50,7 @@ struct CrosswordSettingsView: View {
                     .frame(width: 200)
                 }
 
-                if (!self.isSolutionAvailable && !self.isSolved) {
+                if !self.isSolutionAvailable && !self.isSolved {
                     Button(action: {
                         self.markAsSolved()
                         self.dismiss()
@@ -62,15 +62,14 @@ struct CrosswordSettingsView: View {
                     .buttonStyle(.bordered)
                     .frame(width: 200)
 
-                    Text("Error Tracking is disabled because the solution is not available. " +
-                         "Complete the puzzle to mark it as solved.")
-                    .multilineTextAlignment(.center)
+                    Text("Error Tracking is disabled because the solution is not available. " + "Complete the puzzle to mark it as solved.")
+                        .multilineTextAlignment(.center)
                 }
             }
             .padding([.bottom], 30)
             Text("Title: " + self.title)
             Text("Author: " + self.author)
-            if (!self.notes.isEmpty) {
+            if !self.notes.isEmpty {
                 Text("Notes: " + self.notes)
             }
             Text(self.copyright)

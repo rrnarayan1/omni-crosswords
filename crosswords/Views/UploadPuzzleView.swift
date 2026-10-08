@@ -25,11 +25,13 @@ struct UploadPuzzleView: View {
 
     var body: some View {
         VStack {
-            if (self.userSettings.useLocalMode) {
+            if self.userSettings.useLocalMode {
                 HStack {
                     Text("Local file to upload:")
-                    TextField("Local file to upload:", text: self.$localFileName,
-                              prompt: Text("sampleData"))
+                    TextField(
+                        "Local file to upload:", text: self.$localFileName,
+                        prompt: Text("sampleData")
+                    )
                     .border(.secondary)
                     .textFieldStyle(.roundedBorder)
                     .padding(.leading, 10)
@@ -43,16 +45,16 @@ struct UploadPuzzleView: View {
 
             }
 
-            if (!self.showError && self.showLoader) {
+            if !self.showError && self.showLoader {
                 ProgressView("Uploading...")
             } else {
-                if (self.showError) {
+                if self.showError {
                     Text("Something went wrong. Try again and check the formatting of your file")
                         .foregroundColor(.red)
                         .padding()
                 }
 
-                if (self.openedFileUrl == nil) {
+                if self.openedFileUrl == nil {
                     Button("Select .puz file") {
                         self.showFilePicker.toggle()
                     }
@@ -61,8 +63,10 @@ struct UploadPuzzleView: View {
                     Text("Your selected file: " + (self.openedFileUrl?.lastPathComponent ?? "none"))
                     HStack {
                         Text("Displayed Outlet Name:")
-                        TextField("Displayed Outlet Name:", text: self.$overridenOutletName,
-                                  prompt: Text("Custom"))
+                        TextField(
+                            "Displayed Outlet Name:", text: self.$overridenOutletName,
+                            prompt: Text("Custom")
+                        )
                         .border(.secondary)
                         .textFieldStyle(.roundedBorder)
                         .padding(.leading, 10)
@@ -113,8 +117,8 @@ struct UploadPuzzleView: View {
             guard self.userSettings.user != nil else {
                 return
             }
-            self.userSettings.user?.getIDToken(completion: {(result, err) in
-                if (err != nil || result == nil) {
+            self.userSettings.user?.getIDToken(completion: { (result, err) in
+                if err != nil || result == nil {
                     print("Error obtaining token for network request")
                     return
                 }
@@ -124,18 +128,18 @@ struct UploadPuzzleView: View {
     }
 
     // Show error
-    func uploadFileErrorHandler() -> Void {
+    func uploadFileErrorHandler() {
         self.openedFileUrl = nil
         self.showLoader = false
         self.showError = true
     }
 
     // Dismiss page, go back to list view
-    func uploadFileCompletionHandler() -> Void {
+    func uploadFileCompletionHandler() {
         self.dismiss()
     }
 
-    func uploadFile(fileUrl: URL) -> Void {
+    func uploadFile(fileUrl: URL) {
         do {
             // copy the file to a cache directory so that we can read it?
             guard fileUrl.startAccessingSecurityScopedResource() else {
@@ -143,7 +147,7 @@ struct UploadPuzzleView: View {
                 return self.uploadFileErrorHandler()
             }
 
-            let appCacheUrl =  FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+            let appCacheUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
             let copiedSelectedFile = appCacheUrl.appendingPathComponent(fileUrl.lastPathComponent)
 
             if let dataFromURL = NSData(contentsOf: fileUrl) {
@@ -159,7 +163,7 @@ struct UploadPuzzleView: View {
             let requestUrl = URL(string: "https://omni-crosswords-server-rtluzv2sqq-uc.a.run.app/parsePuzfile")!
             //let requestUrl = URL(string: "http://localhost:8080/parsePuzfile")!
             var request = URLRequest(url: requestUrl)
-            request.setValue("Bearer "+self.token, forHTTPHeaderField: "Authorization")
+            request.setValue("Bearer " + self.token, forHTTPHeaderField: "Authorization")
             request.httpMethod = "POST"
 
             // execute network request
@@ -167,7 +171,7 @@ struct UploadPuzzleView: View {
                 data, response, httpError in
                 do {
                     let httpResponse = response as? HTTPURLResponse
-                    if (httpError != nil) {
+                    if httpError != nil {
                         print(httpError!.localizedDescription)
                         return self.uploadFileErrorHandler()
                     }
@@ -182,7 +186,7 @@ struct UploadPuzzleView: View {
                             let crossword = Crossword(context: self.managedObjectContext)
                             DataUtils.jsonToCrossword(crossword: crossword, data: crosswordResponse)
                             crossword.isCustomUpload = true
-                            if (!self.overridenOutletName.isEmpty) {
+                            if !self.overridenOutletName.isEmpty {
                                 crossword.outletName = self.overridenOutletName
                             }
                             try self.managedObjectContext.save()
@@ -200,10 +204,11 @@ struct UploadPuzzleView: View {
         }
     }
 
-    func uploadLocalFile(localFileName: String) -> Void {
+    func uploadLocalFile(localFileName: String) {
         let crossword = Crossword(context: self.managedObjectContext)
-        DataUtils.buildSampleCrossword(crossword: crossword,
-                                       resourceName: localFileName)
+        DataUtils.buildSampleCrossword(
+            crossword: crossword,
+            resourceName: localFileName)
         do {
             try self.managedObjectContext.save()
         } catch {

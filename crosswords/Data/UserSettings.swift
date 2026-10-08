@@ -23,14 +23,14 @@ class UserSettings: ObservableObject {
     }
 
     func getDaysAgoToDelete() -> Int {
-        if (daysToWaitBeforeDeleting == "Never") {
+        if daysToWaitBeforeDeleting == "Never" {
             return -1
         } else {
             return Int(daysToWaitBeforeDeleting)!
         }
     }
 
-    @Published var subscriptions: Array<String> {
+    @Published var subscriptions: [String] {
         didSet {
             UserDefaults.standard.set(subscriptions, forKey: "subscriptions")
         }
@@ -146,13 +146,16 @@ class UserSettings: ObservableObject {
         self.useLocalMode = useLocalMode
         self.user = useLocalMode ? nil : FirebaseUtils.getFirebaseUser()
         self.showSolved = UserDefaults.standard.object(forKey: "showSolved") as? Bool ?? true
-        self.skipCompletedCells = UserDefaults.standard.object(forKey: "skipCompletedCells")
+        self.skipCompletedCells =
+            UserDefaults.standard.object(forKey: "skipCompletedCells")
             as? Bool ?? true
         self.defaultErrorTracking = UserDefaults.standard.bool(forKey: "defaultErrorTracking")
-        self.daysToWaitBeforeDeleting = UserDefaults.standard.object(
-            forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
-        self.subscriptions = UserDefaults.standard.object(forKey: "subscriptions")
-            as? Array<String> ?? Constants.allSubscriptions
+        self.daysToWaitBeforeDeleting =
+            UserDefaults.standard.object(
+                forKey: "daysToWaitBeforeDeleting") as? String ?? "14"
+        self.subscriptions =
+            UserDefaults.standard.object(forKey: "subscriptions")
+            as? [String] ?? Constants.allSubscriptions
         self.showTimer = UserDefaults.standard.object(forKey: "showTimer") as? Bool ?? true
         self.spaceTogglesDirection = UserDefaults.standard.bool(forKey: "spaceTogglesDirection")
         self.enableHapticFeedback = UserDefaults.standard.bool(forKey: "enableHapticFeedback")
@@ -164,9 +167,11 @@ class UserSettings: ObservableObject {
         self.clueSize = UserDefaults.standard.object(forKey: "clueSize") as? Int ?? 14
         self.useEmailAddressKeyboard = UserDefaults.standard.bool(forKey: "useEmailAddressKeyboard")
         self.clueCyclePlacement = UserDefaults.standard.integer(forKey: "clueCyclePlacement")
-        self.zoomMagnificationLevel = UserDefaults.standard.object(forKey: "zoomMagnificationLevel")
+        self.zoomMagnificationLevel =
+            UserDefaults.standard.object(forKey: "zoomMagnificationLevel")
             as? Float ?? 2.0
-        self.showHelpIndicators = UserDefaults.standard.object(forKey: "showHelpIndicators")
+        self.showHelpIndicators =
+            UserDefaults.standard.object(forKey: "showHelpIndicators")
             as? Bool ?? true
         self.tapClueTitleBehavior = UserDefaults.standard.integer(forKey: "tapClueTitleBehavior")
         self.pictureInPictureMode = UserDefaults.standard.bool(forKey: "pictureInPictureMode")

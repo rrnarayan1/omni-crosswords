@@ -16,27 +16,29 @@ struct FirebaseUtils {
     }
 
     static func checkFirebaseUser(completionHandler: @escaping ((User) -> Void)) {
-        if (FirebaseUtils.getFirebaseUser() == nil) {
-            Auth.auth().signInAnonymously {(authResult, error) in
-                if (error == nil && authResult?.user != nil) {
+        if FirebaseUtils.getFirebaseUser() == nil {
+            Auth.auth().signInAnonymously { (authResult, error) in
+                if error == nil && authResult?.user != nil {
                     completionHandler(authResult!.user)
                 }
             }
         }
     }
 
-    static func getNewCrosswords<T>(lastDate: Date, subscriptions: Array<String>,
-                                    handler: FirebaseHandler<T>) {
+    static func getNewCrosswords<T>(
+        lastDate: Date, subscriptions: [String],
+        handler: FirebaseHandler<T>
+    ) {
         let db = Firestore.firestore()
         let docRef: Query = db.collection("crosswords")
             .whereField("date", isGreaterThanOrEqualTo: lastDate)
             .whereField("crossword_outlet_name", in: subscriptions)
             .limit(to: 100)
 
-        docRef.getDocuments {(querySnapshot, error) in
+        docRef.getDocuments { (querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")
-                if (handler.errorHandler != nil) {
+                if handler.errorHandler != nil {
                     handler.errorHandler!(error as NSError)
                 }
             } else {
@@ -44,38 +46,38 @@ struct FirebaseUtils {
                     handler.documentHandler(document, handler.data)
                 }
             }
-            if (handler.completionHandler != nil) {
+            if handler.completionHandler != nil {
                 handler.completionHandler!(handler.data)
             }
         }
     }
 
-    static func getNewAlerts<T>(lastAlertId: Int, handler: FirebaseHandler<T>){
+    static func getNewAlerts<T>(lastAlertId: Int, handler: FirebaseHandler<T>) {
         let db = Firestore.firestore()
         let alertDocRef: Query = db.collection("alerts")
             .whereField("id", isGreaterThan: lastAlertId)
             .order(by: "id", descending: true)
-        alertDocRef.getDocuments {(querySnapshot, error) in
+        alertDocRef.getDocuments { (querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")
             } else {
-                if (querySnapshot!.documents.count > 0) {
+                if querySnapshot!.documents.count > 0 {
                     let document = querySnapshot!.documents[0]
                     handler.documentHandler(document, handler.data)
                 }
             }
         }
-        if (handler.completionHandler != nil) {
+        if handler.completionHandler != nil {
             handler.completionHandler!(handler.data)
         }
     }
 
-    static func getNewOverwrites<T>(handler: FirebaseHandler<T>){
+    static func getNewOverwrites<T>(handler: FirebaseHandler<T>) {
         let db = Firestore.firestore()
         let overwrittenCrosswords: Query = db.collection("crosswords")
             .whereField("version", isGreaterThan: 0)
             .limit(to: 100)
-        overwrittenCrosswords.getDocuments {(querySnapshot, error) in
+        overwrittenCrosswords.getDocuments { (querySnapshot, error) in
             if let error = error {
                 print("Error getting documents: \(error)")
             } else {
@@ -84,7 +86,7 @@ struct FirebaseUtils {
                 }
             }
         }
-        if (handler.completionHandler != nil) {
+        if handler.completionHandler != nil {
             handler.completionHandler!(handler.data)
         }
     }

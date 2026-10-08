@@ -14,7 +14,7 @@ class ColorSchemeUtil {
     func overrideDisplayMode() {
         var userInterfaceStyle: UIUserInterfaceStyle
 
-        switch (self.selectedAppearance) {
+        switch self.selectedAppearance {
         case 2:
             userInterfaceStyle = .dark
         case 1:
@@ -22,7 +22,7 @@ class ColorSchemeUtil {
         default:
             userInterfaceStyle = .unspecified
         }
-        
+
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         windowScene?.windows.first?.overrideUserInterfaceStyle = userInterfaceStyle
     }

@@ -19,7 +19,7 @@ struct CrosswordView: View {
     @StateObject var keyboardHeightHelper = KeyboardHeightHelper()
 
     @State var focusedTag: Int = -1
-    @State var highlighted: Array<Int> = Array()
+    @State var highlighted: [Int] = Array()
     @State var goingAcross: Bool = true
     @State var isErrorTrackingEnabled: Bool = false
     @State var forceUpdate = false
@@ -33,18 +33,18 @@ struct CrosswordView: View {
     // height of components. does not include keyboard height
     var componentHeights: CGFloat {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let window = windowScene?.windows.filter {$0.isKeyWindow}.first
+        let window = windowScene?.windows.filter { $0.isKeyWindow }.first
         let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        let crosswordHeight = self.getInitialBoxWidth()*CGFloat(self.crossword.height)
+        let crosswordHeight = self.getInitialBoxWidth() * CGFloat(self.crossword.height)
         let barHeights: CGFloat = CGFloat(Constants.keybordToolbarHeight) + statusBarHeight
 
         return barHeights + crosswordHeight - 10
     }
-    
+
     var displayTitle: String {
         let date = self.crossword.date ?? Date.init(timeIntervalSinceNow: TimeInterval(0))
         var prefix: String = ""
-        if (self.crossword.solved) {
+        if self.crossword.solved {
             prefix = "Solved: "
         }
         return prefix + self.crossword.outletName! + " - " + TimeUtils.toSmallDateFormat(date)
@@ -53,16 +53,17 @@ struct CrosswordView: View {
     init(crossword: Crossword, userSettings: UserSettings) {
         self.crossword = crossword
         self.userSettings = userSettings
-        self._isErrorTrackingEnabled = State(initialValue:
-                                                CrosswordUtils.isSolutionAvailable(crossword: crossword)
-                                             ? self.userSettings.defaultErrorTracking
-                                             : false)
+        self._isErrorTrackingEnabled = State(
+            initialValue:
+                CrosswordUtils.isSolutionAvailable(crossword: crossword)
+                ? self.userSettings.defaultErrorTracking
+                : false)
         self._boxWidth = State(initialValue: self.getInitialBoxWidth())
     }
 
     var body: some View {
         VStack {
-            if (self.horizontalSizeClass == .compact) {
+            if self.horizontalSizeClass == .compact {
                 HStack {
                     CrosswordViewLeadingToolbarView(goBack: self.goBack)
                         .padding(.leading)
@@ -78,35 +79,39 @@ struct CrosswordView: View {
 
             ScrollView([.horizontal, .vertical]) {
                 ScrollViewReader { scrollreader in
-                    CrosswordGridView(crossword: self.crossword, boxWidth: self.boxWidth,
-                                      currentClue: CrosswordUtils.getClue(focusedTag: self.focusedTag,
-                                                                          crossword: self.crossword,
-                                                                          goingAcross: self.goingAcross),
-                                      userSettings: self.userSettings,
-                                      isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                      focusedTag: self.$focusedTag,
-                                      highlighted: self.$highlighted,
-                                      goingAcross: self.$goingAcross,
-                                      forceUpdate: self.$forceUpdate,
-                                      becomeFirstResponder: self.$becomeFirstResponder,
-                                      isRebusMode: self.$isRebusMode)
-                    .onChange(of: self.focusedTag) {_, newFocusedTag in
-                        if (self.isZoomed) {
-                            scrollreader.scrollTo("cell"+String(newFocusedTag))
+                    CrosswordGridView(
+                        crossword: self.crossword, boxWidth: self.boxWidth,
+                        currentClue: CrosswordUtils.getClue(
+                            focusedTag: self.focusedTag,
+                            crossword: self.crossword,
+                            goingAcross: self.goingAcross),
+                        userSettings: self.userSettings,
+                        isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                        focusedTag: self.$focusedTag,
+                        highlighted: self.$highlighted,
+                        goingAcross: self.$goingAcross,
+                        forceUpdate: self.$forceUpdate,
+                        becomeFirstResponder: self.$becomeFirstResponder,
+                        isRebusMode: self.$isRebusMode
+                    )
+                    .onChange(of: self.focusedTag) { _, newFocusedTag in
+                        if self.isZoomed {
+                            scrollreader.scrollTo("cell" + String(newFocusedTag))
                             return
-                        } else if (newFocusedTag >= 0 && self.shouldScroll()) {
-                            let newRowNumber = CrosswordUtils.getRowNumberFromTag(tag: newFocusedTag,
-                                                                                  crossword:
-                                                                                    self.crossword)
-                            scrollreader.scrollTo("row"+String(newRowNumber), anchor: .center)
+                        } else if newFocusedTag >= 0 && self.shouldScroll() {
+                            let newRowNumber = CrosswordUtils.getRowNumberFromTag(
+                                tag: newFocusedTag,
+                                crossword:
+                                    self.crossword)
+                            scrollreader.scrollTo("row" + String(newRowNumber), anchor: .center)
                         }
                     }
                 }
             }
             //.background(.random)
-            .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length))
+            .frame(width: self.getInitialBoxWidth() * CGFloat(self.crossword.length))
 
-            if (self.focusedTag != -1) {
+            if self.focusedTag != -1 {
                 CrosswordFooter(
                     allowZoom: self.getInitialBoxWidth() != CGFloat(Constants.maxInitialCellSize),
                     zoom: self.zoom,
@@ -119,23 +124,23 @@ struct CrosswordView: View {
                     isRebusMode: self.$isRebusMode,
                     userSettings: self.userSettings
                 )
-                .frame(width: self.getInitialBoxWidth()*CGFloat(self.crossword.length), height: 10)
+                .frame(width: self.getInitialBoxWidth() * CGFloat(self.crossword.length), height: 10)
             }
 
             Spacer()
 
-            if (self.focusedTag == -1) {
-                VStack (alignment: .center){
+            if self.focusedTag == -1 {
+                VStack(alignment: .center) {
                     Text(self.crossword.title!)
                     Text(self.crossword.author!)
-                    if (self.crossword.notes != nil && !self.crossword.notes!.isEmpty) {
+                    if self.crossword.notes != nil && !self.crossword.notes!.isEmpty {
                         Text(self.crossword.notes!)
                     }
                     Text(self.crossword.copyright!)
                 }
                 .multilineTextAlignment(.center)
             }
-            if (ProcessInfo.processInfo.isiOSAppOnMac) {
+            if ProcessInfo.processInfo.isiOSAppOnMac {
                 // they have a hardware keyboard, so artificially create space at the bottom
                 // this is becuase the scrollview pushes the timer row to below the toolbar only on macOS
                 Divider()
@@ -143,26 +148,30 @@ struct CrosswordView: View {
             }
         }
         .overlay(alignment: .bottom, content: self.maybePauseScreen)
-        .gesture(DragGesture(minimumDistance: 30, coordinateSpace: .local)
-            .onEnded({ value in
-                if (value.translation.width < 0 && self.focusedTag != -1) {
-                    // left
-                    ChangeFocusUtils.goToPreviousClue(focusedTag: self.$focusedTag,
-                                                      crossword: self.crossword,
-                                                      userSettings: self.userSettings,
-                                                      goingAcross: self.$goingAcross,
-                                                      isHighlighted: self.$highlighted)
-                }
+        .gesture(
+            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                .onEnded({ value in
+                    if value.translation.width < 0 && self.focusedTag != -1 {
+                        // left
+                        ChangeFocusUtils.goToPreviousClue(
+                            focusedTag: self.$focusedTag,
+                            crossword: self.crossword,
+                            userSettings: self.userSettings,
+                            goingAcross: self.$goingAcross,
+                            isHighlighted: self.$highlighted)
+                    }
 
-                if (value.translation.width > 0 && self.focusedTag != -1) {
-                    // right
-                    ChangeFocusUtils.goToNextClue(focusedTag: self.$focusedTag,
-                                                  crossword: self.crossword,
-                                                  userSettings: self.userSettings,
-                                                  goingAcross: self.$goingAcross,
-                                                  isHighlighted: self.$highlighted)
-                }
-            }))
+                    if value.translation.width > 0 && self.focusedTag != -1 {
+                        // right
+                        ChangeFocusUtils.goToNextClue(
+                            focusedTag: self.$focusedTag,
+                            crossword: self.crossword,
+                            userSettings: self.userSettings,
+                            goingAcross: self.$goingAcross,
+                            isHighlighted: self.$highlighted)
+                    }
+                })
+        )
         .toolbar(self.horizontalSizeClass == .compact ? .hidden : .automatic)
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
@@ -179,32 +188,34 @@ struct CrosswordView: View {
     }
 
     func getTrailingToolbarView() -> CrosswordViewTrailingToolbarView {
-        return CrosswordViewTrailingToolbarView(crosswordTitle: self.crossword.title!,
-                                                author: self.crossword.author!,
-                                                notes: self.crossword.notes!,
-                                                copyright: self.crossword.copyright!,
-                                                isSolved: self.crossword.solved,
-                                                outletName: self.crossword.outletName!,
-                                                isSolutionAvailable:
-                                                    CrosswordUtils.isSolutionAvailable(crossword:
-                                                                                    self.crossword),
-                                                showSettings: self.showSettings,
-                                                showSolution: self.showSolution,
-                                                getProgressPercentage: {() -> CGFloat in
-                                                    CrosswordUtils.getCrosswordProgress(self.crossword)
-                                                },
-                                                getShareMessage: self.getShareMessage,
-                                                markAsSolved: self.markAsSolved,
-                                                isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                                errorTrackingEnablementSideEffect:
-                                                    self.errorTrackingEnablementSideEffect)
+        return CrosswordViewTrailingToolbarView(
+            crosswordTitle: self.crossword.title!,
+            author: self.crossword.author!,
+            notes: self.crossword.notes!,
+            copyright: self.crossword.copyright!,
+            isSolved: self.crossword.solved,
+            outletName: self.crossword.outletName!,
+            isSolutionAvailable:
+                CrosswordUtils.isSolutionAvailable(
+                    crossword:
+                        self.crossword),
+            showSettings: self.showSettings,
+            showSolution: self.showSolution,
+            getProgressPercentage: { () -> CGFloat in
+                CrosswordUtils.getCrosswordProgress(self.crossword)
+            },
+            getShareMessage: self.getShareMessage,
+            markAsSolved: self.markAsSolved,
+            isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+            errorTrackingEnablementSideEffect:
+                self.errorTrackingEnablementSideEffect)
     }
 
     func getShareMessage() -> String {
-        var shareMessageLines: Array<String> = Array()
+        var shareMessageLines: [String] = Array()
         let title = self.crossword.outletName! + " " + TimeUtils.toSmallDateFormat(self.crossword.date!)
         shareMessageLines.append("🧩 \(title)")
-        if (!self.crossword.solved) {
+        if !self.crossword.solved {
             let progressBarSize = 6
             var progressBar = String(repeating: "░", count: progressBarSize)
             let filledSize = Int(Double(progressBarSize) * CrosswordUtils.getCrosswordProgress(self.crossword))
@@ -214,12 +225,12 @@ struct CrosswordView: View {
             progressBar.replaceSubrange(range, with: filledInBar)
             shareMessageLines.append("⏳ Progress: [\(progressBar)]")
         }
-        if (self.crossword.solvedTime > 0) {
+        if self.crossword.solvedTime > 0 {
             let prefix: String = self.crossword.solved ? "⏱️ Solve Time: " : "⏱️ Time: "
             shareMessageLines.append(prefix + TimeUtils.toDisplayTime(Int(self.crossword.solvedTime)))
         }
         let helpUsed: Int? = CrosswordUtils.getHelpUsed(self.crossword)
-        if (helpUsed != nil) {
+        if helpUsed != nil {
             shareMessageLines.append("💡 Help Used: \(helpUsed!)")
         }
         shareMessageLines.append("🔲 Omni Crosswords")
@@ -229,54 +240,57 @@ struct CrosswordView: View {
 
     func getInitialBoxWidth() -> CGFloat {
         let maxInitialSize: CGFloat = CGFloat(Constants.maxInitialCellSize)
-        let defaultSize: CGFloat = (UIScreen.screenWidth-5)/CGFloat(self.crossword.length)
+        let defaultSize: CGFloat = (UIScreen.screenWidth - 5) / CGFloat(self.crossword.length)
         return min(defaultSize, maxInitialSize)
     }
-    
-    func zoom() -> Void {
+
+    func zoom() {
         self.isZoomed.toggle()
         let initialWidth = self.getInitialBoxWidth()
-        self.boxWidth = self.isZoomed
+        self.boxWidth =
+            self.isZoomed
             ? initialWidth * CGFloat(self.userSettings.zoomMagnificationLevel)
             : initialWidth
     }
-    
+
     func shouldScroll() -> Bool {
-        let navigationBarHeight = self.horizontalSizeClass == .compact ?
-            Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
-        let componentHeights = self.componentHeights + navigationBarHeight
+        let navigationBarHeight = self.horizontalSizeClass == .compact ? Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
+        let componentHeights =
+            self.componentHeights + navigationBarHeight
             + self.keyboardHeightHelper.keyboardHeight
-//        print(componentHeights)
-//        print(UIScreen.main.bounds.size.height)
-//        print("")
+        //        print(componentHeights)
+        //        print(UIScreen.main.bounds.size.height)
+        //        print("")
         return componentHeights > UIScreen.main.bounds.size.height
     }
-    
-    func showSolution() -> Void {
+
+    func showSolution() {
         for tag in (0..<self.crossword.entry!.count) {
-            if (self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag]) {
+            if self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag] {
                 continue
             }
-            if (self.crossword.entry![tag] != self.crossword.solution![tag]) {
+            if self.crossword.entry![tag] != self.crossword.solution![tag] {
                 self.crossword.helpTracking![tag] = true
             }
         }
         self.crossword.entry = self.crossword.solution
         self.forceUpdate.toggle()
-        CrosswordUtils.solutionHandler(crossword: self.crossword, shouldAddStatistics: false,
-                                       userSettings: self.userSettings, focusedTag: self.$focusedTag,
-                                       becomeFirstResponder: self.$becomeFirstResponder,
-                                       isHighlighted: self.$highlighted, timerWrapper: nil,
-                                       managedObjectContext: self.managedObjectContext)
+        CrosswordUtils.solutionHandler(
+            crossword: self.crossword, shouldAddStatistics: false,
+            userSettings: self.userSettings, focusedTag: self.$focusedTag,
+            becomeFirstResponder: self.$becomeFirstResponder,
+            isHighlighted: self.$highlighted, timerWrapper: nil,
+            managedObjectContext: self.managedObjectContext)
     }
 
-    func errorTrackingEnablementSideEffect() -> Void {
+    func errorTrackingEnablementSideEffect() {
         for tag in (0..<self.crossword.entry!.count) {
-            if (self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag]) {
+            if self.crossword.helpTracking?[tag] == nil || self.crossword.helpTracking![tag] {
                 continue
             }
-            if (!self.crossword.entry![tag].isEmpty
-                && self.crossword.entry![tag] != self.crossword.solution![tag]) {
+            if !self.crossword.entry![tag].isEmpty
+                && self.crossword.entry![tag] != self.crossword.solution![tag]
+            {
                 self.crossword.helpTracking![tag] = true
             }
         }
@@ -284,41 +298,43 @@ struct CrosswordView: View {
         CrosswordUtils.saveGame(crossword: self.crossword, userSettings: self.userSettings)
     }
 
-    func markAsSolved() -> Void {
-        if (CrosswordUtils.isSolutionAvailable(crossword: self.crossword)
-            || CrosswordUtils.getCrosswordProgress(self.crossword) != 1.0) {
+    func markAsSolved() {
+        if CrosswordUtils.isSolutionAvailable(crossword: self.crossword)
+            || CrosswordUtils.getCrosswordProgress(self.crossword) != 1.0
+        {
             // should only call this method if the solution is not available and the crossword is complete
             return
         }
-        CrosswordUtils.solutionHandler(crossword: self.crossword, shouldAddStatistics: false,
-                                       shouldCheckSolution: false, userSettings: self.userSettings,
-                                       focusedTag: self.$focusedTag,
-                                       becomeFirstResponder: self.$becomeFirstResponder,
-                                       isHighlighted: self.$highlighted, timerWrapper: nil,
-                                       managedObjectContext: self.managedObjectContext)
+        CrosswordUtils.solutionHandler(
+            crossword: self.crossword, shouldAddStatistics: false,
+            shouldCheckSolution: false, userSettings: self.userSettings,
+            focusedTag: self.$focusedTag,
+            becomeFirstResponder: self.$becomeFirstResponder,
+            isHighlighted: self.$highlighted, timerWrapper: nil,
+            managedObjectContext: self.managedObjectContext)
     }
 
-    func showSettings() -> Void {
+    func showSettings() {
         self.becomeFirstResponder = false
         self.focusedTag = -1
         self.highlighted = Array()
     }
-    
-    func goBack() -> Void {
+
+    func goBack() {
         self.becomeFirstResponder = false
         DispatchQueue.main.async {
             self.dismiss()
         }
     }
 
-    func pause() -> Void {
+    func pause() {
         self.becomeFirstResponder = false
         self.focusedTag = -1
         self.highlighted = Array()
         self.isPaused = true
     }
 
-    func solveCell(timerWrapper: TimerWrapper) -> Void {
+    func solveCell(timerWrapper: TimerWrapper) {
         self.isRebusMode = false
         CrosswordUtils.solveCell(
             tag: self.focusedTag,
@@ -335,19 +351,21 @@ struct CrosswordView: View {
 
     @ViewBuilder
     func maybePauseScreen() -> some View {
-        if (self.isPaused) {
+        if self.isPaused {
             VStack {
                 Text(TimeUtils.toDisplayTime(Int(self.crossword.solvedTime)))
                     .font(.system(size: 30))
                     .padding(.bottom)
-                Button(action: {self.isPaused.toggle()}) {
+                Button(action: { self.isPaused.toggle() }) {
                     Image(systemName: "play.fill")
                         .font(.system(size: 30))
                         .tint(Color(UIColor.label))
                 }
             }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0,
-                   maxHeight: UIScreen.main.bounds.size.height-120)
+            .frame(
+                minWidth: 0, maxWidth: .infinity, minHeight: 0,
+                maxHeight: UIScreen.main.bounds.size.height - 120
+            )
             .background(.ultraThinMaterial)
         } else {
             EmptyView()
@@ -364,15 +382,15 @@ struct CrosswordGridView: View {
 
     @Binding var isErrorTrackingEnabled: Bool
     @Binding var focusedTag: Int
-    @Binding var highlighted: Array<Int>
+    @Binding var highlighted: [Int]
     @Binding var goingAcross: Bool
     @Binding var forceUpdate: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var isRebusMode: Bool
 
     var body: some View {
-        let rows: [Int] = Array(0...Int(self.crossword.height)-1)
-        let cols: [Int] = Array(0...Int(self.crossword.length)-1)
+        let rows: [Int] = Array(0...Int(self.crossword.height) - 1)
+        let cols: [Int] = Array(0...Int(self.crossword.length) - 1)
         return VStack(spacing: 0) {
             ForEach(rows, id: \.self) { rowNum in
                 HStack(spacing: 0) {
@@ -380,27 +398,31 @@ struct CrosswordGridView: View {
                         self.makeCellView(rowNum: rowNum, colNum: colNum)
                     }
                 }
-                .id("row"+String(rowNum))
+                .id("row" + String(rowNum))
             }
-            CrosswordTextFieldView(crossword: self.crossword, currentClue: self.currentClue,
-                                   userSettings: self.userSettings, focusedTag: self.$focusedTag,
-                                   isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                                   highlighted: self.$highlighted, goingAcross: self.$goingAcross,
-                                   forceUpdate: self.$forceUpdate,
-                                   becomeFirstResponder: self.$becomeFirstResponder,
-                                   isRebusMode: self.$isRebusMode)
+            CrosswordTextFieldView(
+                crossword: self.crossword, currentClue: self.currentClue,
+                userSettings: self.userSettings, focusedTag: self.$focusedTag,
+                isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                highlighted: self.$highlighted, goingAcross: self.$goingAcross,
+                forceUpdate: self.$forceUpdate,
+                becomeFirstResponder: self.$becomeFirstResponder,
+                isRebusMode: self.$isRebusMode
+            )
             .onKeyPress(phases: .down) { press in
-                return OnKeyPressUtils.onKeyPress(press: press, focusedTag: self.$focusedTag,
-                                                  crossword: self.crossword, userSettings: self.userSettings,
-                                                  goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+                return OnKeyPressUtils.onKeyPress(
+                    press: press, focusedTag: self.$focusedTag,
+                    crossword: self.crossword, userSettings: self.userSettings,
+                    goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
             }
             .frame(width: 1, height: 1)
         }
     }
 
     func makeCellView(rowNum: Int, colNum: Int) -> some View {
-        let tag: Int = CrosswordUtils.getTagFromRowAndColNumbers(rowNum: rowNum, colNum: colNum,
-                                                                 crossword: self.crossword)
+        let tag: Int = CrosswordUtils.getTagFromRowAndColNumbers(
+            rowNum: rowNum, colNum: colNum,
+            crossword: self.crossword)
         return CrosswordCellView(
             value: self.crossword.entry![tag],
             correctValue: self.crossword.solution?[safe: tag],
@@ -415,27 +437,29 @@ struct CrosswordGridView: View {
             isHighlighted: self.highlighted.contains(tag),
         )
         .equatable()
-        .frame(width: self.boxWidth, height: self.boxWidth).id("cell"+String(tag))
+        .frame(width: self.boxWidth, height: self.boxWidth).id("cell" + String(tag))
     }
-    
-    func onTapCell(tag: Int) -> Void {
-        if (self.crossword.entry![tag] == ".") {
+
+    func onTapCell(tag: Int) {
+        if self.crossword.entry![tag] == "." {
             return
         }
 
-        if (!self.becomeFirstResponder) {
+        if !self.becomeFirstResponder {
             self.becomeFirstResponder = true
         }
 
-        if (tag == self.focusedTag) {
-            ChangeFocusUtils.toggleDirection(focusedTag: tag, crossword: self.crossword,
-                                             goingAcross: self.$goingAcross,
-                                             isHighlighted: self.$highlighted)
+        if tag == self.focusedTag {
+            ChangeFocusUtils.toggleDirection(
+                focusedTag: tag, crossword: self.crossword,
+                goingAcross: self.$goingAcross,
+                isHighlighted: self.$highlighted)
         } else {
             self.isRebusMode = false
-            ChangeFocusUtils.changeFocus(tag: tag, crossword: self.crossword,
-                                         goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
-                                         isHighlighted: self.$highlighted)
+            ChangeFocusUtils.changeFocus(
+                tag: tag, crossword: self.crossword,
+                goingAcross: self.$goingAcross, focusedTag: self.$focusedTag,
+                isHighlighted: self.$highlighted)
         }
     }
 }
@@ -457,27 +481,29 @@ struct CrosswordFooter: View {
     var body: some View {
         HStack {
             // If box width is the maximum, don't allow zoom
-            if (self.allowZoom) {
-                Button(action: {self.zoom()}) {
-                    Image(systemName: self.isZoomed ? "minus.magnifyingglass"
-                          : "plus.magnifyingglass")
+            if self.allowZoom {
+                Button(action: { self.zoom() }) {
+                    Image(
+                        systemName: self.isZoomed
+                            ? "minus.magnifyingglass"
+                            : "plus.magnifyingglass")
                 }
             }
-            Button(action: {self.isRebusMode.toggle()}) {
+            Button(action: { self.isRebusMode.toggle() }) {
                 Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
             }
-            if (self.userSettings.showTimer) {
-                Button(action: {self.pause()}) {
+            if self.userSettings.showTimer {
+                Button(action: { self.pause() }) {
                     Image(systemName: "pause.fill")
                 }
             }
-            if (!self.userSettings.actionButtonsInToolbar) {
-                Button(action: {self.solveCell(self.timerWrapper)}) {
+            if !self.userSettings.actionButtonsInToolbar {
+                Button(action: { self.solveCell(self.timerWrapper) }) {
                     Image(systemName: "lifepreserver")
                 }
             }
             Spacer()
-            if (self.userSettings.showTimer) {
+            if self.userSettings.showTimer {
                 TimerView(isSolved: self.isSolved, solvedTime: self.solvedTime, isPaused: self.isPaused)
             }
         }

@@ -21,12 +21,12 @@ struct CrosswordListItemView: View {
         return HStack {
             Text(self.getCrosswordListTitle())
             Spacer()
-            if (self.isSolved) {
-                if (self.userSettings.showTimer && self.solvedTime > 0) {
+            if self.isSolved {
+                if self.userSettings.showTimer && self.solvedTime > 0 {
                     Text(TimeUtils.toDisplayTime(self.solvedTime))
                         .foregroundColor(Color(self.showSolvedWithoutHelp() ? Constants.gold : UIColor.systemGreen))
                 }
-                if (self.showSolvedWithoutHelp()) {
+                if self.showSolvedWithoutHelp() {
                     Image(systemName: "star.circle")
                         .foregroundColor(Color(Constants.gold))
                         .font(.system(size: Constants.listIconSize))
@@ -35,13 +35,12 @@ struct CrosswordListItemView: View {
                         .foregroundColor(Color(UIColor.systemGreen))
                         .font(.system(size: Constants.listIconSize))
                 }
-            }
-            else if (self.progressPercentage > 0) {
-                if (self.userSettings.showTimer && self.solvedTime > 0) {
+            } else if self.progressPercentage > 0 {
+                if self.userSettings.showTimer && self.solvedTime > 0 {
                     Text(TimeUtils.toDisplayTime(self.solvedTime))
                         .foregroundColor(.orange)
                 }
-                ZStack{
+                ZStack {
                     Circle()
                         .stroke(lineWidth: 5.0)
                         .opacity(0.3)
@@ -58,7 +57,7 @@ struct CrosswordListItemView: View {
             }
         }
     }
-    
+
     func showSolvedWithoutHelp() -> Bool {
         return self.userSettings.showHelpIndicators && self.solvedWithoutHelp
     }

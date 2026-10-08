@@ -23,17 +23,19 @@ struct CrosswordListView: View {
 
     var userSettings = UserSettings()
     let refreshQueue = DispatchQueue(label: "refresh")
-    
-    @FetchRequest(entity: Crossword.entity(),
-                  sortDescriptors: [
-                    NSSortDescriptor(keyPath: \Crossword.date, ascending: false),
-                    NSSortDescriptor(keyPath: \Crossword.outletName, ascending: true)
-                  ],
-                  predicate: NSPredicate(format: "isHidden == false"))
+
+    @FetchRequest(
+        entity: Crossword.entity(),
+        sortDescriptors: [
+            NSSortDescriptor(keyPath: \Crossword.date, ascending: false),
+            NSSortDescriptor(keyPath: \Crossword.outletName, ascending: true),
+        ],
+        predicate: NSPredicate(format: "isHidden == false"))
     var crosswords: FetchedResults<Crossword>
 
-    @FetchRequest(entity: Crossword.entity(), sortDescriptors: [],
-                  predicate: NSPredicate(format: "isHidden == true"))
+    @FetchRequest(
+        entity: Crossword.entity(), sortDescriptors: [],
+        predicate: NSPredicate(format: "isHidden == true"))
     var hiddenCrosswords: FetchedResults<Crossword>
 
     init(openedFileUrl: URL? = nil) {
@@ -43,7 +45,7 @@ struct CrosswordListView: View {
 
     var body: some View {
         NavigationStack(path: self.$selectedCrossword) {
-            if (self.userSettings.user == nil && !self.userSettings.useLocalMode && self.pendingAuth) {
+            if self.userSettings.user == nil && !self.userSettings.useLocalMode && self.pendingAuth {
                 ProgressView()
                     .onAppear(perform: {
                         FirebaseUtils.checkFirebaseUser(completionHandler: self.authCompletionHandler)
@@ -54,15 +56,16 @@ struct CrosswordListView: View {
                 }
                 List(filteredCrosswords, id: \.id) { crossword in
                     NavigationLink(value: crossword) {
-                        CrosswordListItemView(date: crossword.date!,
-                                              progressPercentage:
-                                                CrosswordUtils.getCrosswordProgress(crossword),
-                                              outletName: crossword.outletName!,
-                                              isSolved: crossword.solved,
-                                              solvedWithoutHelp:
-                                                CrosswordUtils.solvedWithoutHelp(crossword: crossword),
-                                              solvedTime: Int(crossword.solvedTime),
-                                              userSettings: self.userSettings)
+                        CrosswordListItemView(
+                            date: crossword.date!,
+                            progressPercentage:
+                                CrosswordUtils.getCrosswordProgress(crossword),
+                            outletName: crossword.outletName!,
+                            isSolved: crossword.solved,
+                            solvedWithoutHelp:
+                                CrosswordUtils.solvedWithoutHelp(crossword: crossword),
+                            solvedTime: Int(crossword.solvedTime),
+                            userSettings: self.userSettings)
                     }.swipeActions {
                         Button("Delete", systemImage: "trash.fill") {
                             crossword.isHidden = true
@@ -76,27 +79,29 @@ struct CrosswordListView: View {
                         .tint(.red)
                     }
                 }
-                .navigationDestination(for: Crossword.self) {crossword in
+                .navigationDestination(for: Crossword.self) { crossword in
                     CrosswordView(crossword: crossword, userSettings: self.userSettings)
                 }
                 .navigationDestination(isPresented: self.$uploadPageActive) {
-                    UploadPuzzleView(userSettings: self.userSettings,
-                                     openedFileUrl: self.openedFileUrl)
+                    UploadPuzzleView(
+                        userSettings: self.userSettings,
+                        openedFileUrl: self.openedFileUrl)
                 }
                 .refreshable {
                     self.refreshCrosswords()
-                 }
+                }
                 .onAppear(perform: {
-                    if (self.selectedCrossword.isEmpty) {
+                    if self.selectedCrossword.isEmpty {
                         self.refreshCrosswords()
                     }
                 })
                 .navigationBarTitle("Crosswords")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        CrosswordListViewToolbarView(userSettings: self.userSettings,
-                                                 refreshAction: self.refreshCrosswords,
-                                                 refreshEnabled: self.refreshEnabled
+                        CrosswordListViewToolbarView(
+                            userSettings: self.userSettings,
+                            refreshAction: self.refreshCrosswords,
+                            refreshEnabled: self.refreshEnabled
                         )
                     }
                 }
@@ -104,26 +109,27 @@ struct CrosswordListView: View {
         }
         .banner(data: self.$bannerData, hasOpenCrossword: !self.selectedCrossword.isEmpty, userSettings: self.userSettings)
     }
-    
-    func refreshCrosswords() -> Void {
-        if (!self.refreshEnabled) {
+
+    func refreshCrosswords() {
+        if !self.refreshEnabled {
             return
         }
 
-//        let lastRefreshTime: Date = Date(timeIntervalSince1970: self.userSettings.lastRefreshTime)
-//
-//        if (!Date().haveMinutesElapsed(timeInMinutes: 5, pastDate: lastRefreshTime)) {
-//            return
-//        }
+        //        let lastRefreshTime: Date = Date(timeIntervalSince1970: self.userSettings.lastRefreshTime)
+        //
+        //        if (!Date().haveMinutesElapsed(timeInMinutes: 5, pastDate: lastRefreshTime)) {
+        //            return
+        //        }
         self.refreshEnabled = false
         self.userSettings.lastRefreshTime = Date().timeIntervalSince1970
 
-        self.refreshQueue.async() {
-            if (self.userSettings.useLocalMode) {
-                if (self.crosswords.isEmpty) {
+        self.refreshQueue.async {
+            if self.userSettings.useLocalMode {
+                if self.crosswords.isEmpty {
                     let crossword = Crossword(context: self.managedObjectContext)
-                    DataUtils.buildSampleCrossword(crossword: crossword,
-                                                   resourceName: "sampleData")
+                    DataUtils.buildSampleCrossword(
+                        crossword: crossword,
+                        resourceName: "sampleData")
                     do {
                         try self.managedObjectContext.save()
                     } catch {
@@ -134,13 +140,13 @@ struct CrosswordListView: View {
                 return
             }
 
-            if (self.userSettings.user == nil) {
+            if self.userSettings.user == nil {
                 FirebaseUtils.checkFirebaseUser(completionHandler: self.authCompletionHandler)
             }
             GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
 
             let lastDate: Date
-            if (self.crosswords.count == 0) {
+            if self.crosswords.count == 0 {
                 // pull for the last 7 days
                 lastDate = Date().subtractWeeks(1)
             } else {
@@ -148,8 +154,8 @@ struct CrosswordListView: View {
                 lastDate = self.crosswords[0].date!
             }
 
-            let shownCrosswordIds: Array<String> = self.crosswords.map {$0.id!}
-            var allCrosswords: Array<Crossword> = Array(self.crosswords)
+            let shownCrosswordIds: [String] = self.crosswords.map { $0.id! }
+            var allCrosswords: [Crossword] = Array(self.crosswords)
             allCrosswords.append(contentsOf: self.hiddenCrosswords)
 
             let lastAlertId = self.userSettings.lastAlertId
@@ -185,15 +191,15 @@ struct CrosswordListView: View {
         }
     }
 
-    func newCrosswordHandler(document: QueryDocumentSnapshot, allCrosswords: Array<Crossword>) -> Void {
-        let allCrosswordIds = allCrosswords.map {$0.id}
-        if (allCrosswordIds.contains(document.documentID)) {
+    func newCrosswordHandler(document: QueryDocumentSnapshot, allCrosswords: [Crossword]) {
+        let allCrosswordIds = allCrosswords.map { $0.id }
+        if allCrosswordIds.contains(document.documentID) {
             return
         }
         let crossword = Crossword(context: self.managedObjectContext)
         // Cause duplicate crosswords
-//         let crossword1 = Crossword(context: self.managedObjectContext)
-//         jsonToCrossword(crossword: crossword1, data: document)
+        //         let crossword1 = Crossword(context: self.managedObjectContext)
+        //         jsonToCrossword(crossword: crossword1, data: document)
         do {
             DataUtils.jsonToCrossword(crossword: crossword, data: document)
             try self.managedObjectContext.save()
@@ -202,10 +208,10 @@ struct CrosswordListView: View {
         }
     }
 
-    func newAlertHandler(document: QueryDocumentSnapshot, _: Int) -> Void {
+    func newAlertHandler(document: QueryDocumentSnapshot, _: Int) {
         // If they haven't seen an alert before, don't show an alert and set the lastAlertId to be the current one
         let bannerId = document.get("id") as! Int
-        if (self.userSettings.lastAlertId != 0) {
+        if self.userSettings.lastAlertId != 0 {
             self.bannerData.title = document.get("title") as! String
             self.bannerData.detail = document.get("message") as! String
             self.bannerData.bannerId = bannerId
@@ -214,9 +220,9 @@ struct CrosswordListView: View {
         }
     }
 
-    func overwrittenCrosswordHandler(document: QueryDocumentSnapshot, shownCrosswordIds: Array<String>) {
+    func overwrittenCrosswordHandler(document: QueryDocumentSnapshot, shownCrosswordIds: [String]) {
         // if it's not shown, don't need to change it
-        if (!shownCrosswordIds.contains(document.documentID)) {
+        if !shownCrosswordIds.contains(document.documentID) {
             return
         }
 
@@ -224,7 +230,7 @@ struct CrosswordListView: View {
             $0.id == document.documentID && ($0.versionId < document.get("version") as! Int16)
         })
 
-        if (crosswordToOverwrite == nil) {
+        if crosswordToOverwrite == nil {
             return
         }
 
@@ -236,48 +242,51 @@ struct CrosswordListView: View {
         }
     }
 
-    func newCrosswordFetchCompletionHandler(allCrosswords: Array<Crossword>) -> Void {
+    func newCrosswordFetchCompletionHandler(allCrosswords: [Crossword]) {
         self.checkForDeletions(allCrosswords: allCrosswords)
-        GameCenterUtils.maybeSyncSavedGames(userSettings: self.userSettings,
-                                            crosswords: allCrosswords)
+        GameCenterUtils.maybeSyncSavedGames(
+            userSettings: self.userSettings,
+            crosswords: allCrosswords)
         self.refreshEnabled = true
     }
 
-    func newCrosswordFetchErrorHandler(error: NSError) -> Void {
-        if (error.domain == FirestoreErrorDomain
-            && error.code == FirestoreErrorCode.permissionDenied.rawValue) {
+    func newCrosswordFetchErrorHandler(error: NSError) {
+        if error.domain == FirestoreErrorDomain
+            && error.code == FirestoreErrorCode.permissionDenied.rawValue
+        {
             // Trigger Spinner screen to trigger re-auth
             self.userSettings.user = nil
             self.pendingAuth = true
         }
     }
 
-    func checkForDeletions(allCrosswords: Array<Crossword>) -> Void {
+    func checkForDeletions(allCrosswords: [Crossword]) {
         let daysAgoToDelete = self.userSettings.getDaysAgoToDelete()
-        if (daysAgoToDelete == -1) {
+        if daysAgoToDelete == -1 {
             return
         }
         let deleteBeforeDate = Date().subtractDays(daysAgoToDelete)
 
         for crossword in allCrosswords {
             // deletes old crosswords
-            if (crossword.date == nil || crossword.date! < deleteBeforeDate) {
+            if crossword.date == nil || crossword.date! < deleteBeforeDate {
                 self.deleteGame(crossword: crossword)
             }
             // deletes unsolved non-custom upload crosswords that aren't subscribed to anymore
-            else if (!self.userSettings.subscriptions.contains(crossword.outletName!)
-                     && !(crossword.outletName! == "Custom" || crossword.isCustomUpload)
-                     && !crossword.solved) {
+            else if !self.userSettings.subscriptions.contains(crossword.outletName!)
+                && !(crossword.outletName! == "Custom" || crossword.isCustomUpload)
+                && !crossword.solved
+            {
                 self.deleteGame(crossword: crossword)
             }
             // Commented out - this deletes the most recent day's crossword
-//            if crossword.date! > Date.init(timeInterval: -86400*2, since: Date()) {
-//                deleteGame(crossword: crossword)
-//            }
+            //            if crossword.date! > Date.init(timeInterval: -86400*2, since: Date()) {
+            //                deleteGame(crossword: crossword)
+            //            }
         }
     }
-    
-    func deleteGame(crossword: Crossword) -> Void {
+
+    func deleteGame(crossword: Crossword) {
         self.managedObjectContext.delete(crossword)
         GameCenterUtils.maybeDeleteGame(userSettings: self.userSettings, crosswordId: crossword.id!)
 
@@ -288,7 +297,7 @@ struct CrosswordListView: View {
         }
     }
 
-    func authCompletionHandler(firebaseUser: User) -> Void {
+    func authCompletionHandler(firebaseUser: User) {
         self.userSettings.user = firebaseUser
         self.pendingAuth = false
     }

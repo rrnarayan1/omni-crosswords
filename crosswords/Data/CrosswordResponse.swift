@@ -17,8 +17,8 @@ struct CrosswordResponse: Decodable {
     let height: Int
     let copyright: String
     let notes: String
-    let solution: Array<String>
-    let clues: Dictionary<String, String>
-    let tag_to_clue_map: Array<Dictionary<String, String>>
-    let symbols: Array<Int>
+    let solution: [String]
+    let clues: [String: String]
+    let tag_to_clue_map: [[String: String]]
+    let symbols: [Int]
 }

@@ -10,19 +10,23 @@ import SwiftUI
 
 struct OnKeyPressUtils {
 
-    static func onKeyPress(press: KeyPress, focusedTag: Binding<Int>, crossword: Crossword,
-                           userSettings: UserSettings, goingAcross: Binding<Bool>,
-                           isHighlighted: Binding<Array<Int>>) -> KeyPress.Result {
-        if (press.key == .tab) {
-            if (press.modifiers.contains(.shift)) {
-                ChangeFocusUtils.goToPreviousClue(focusedTag: focusedTag, crossword: crossword,
-                                                  userSettings: userSettings, goingAcross: goingAcross,
-                                                  isHighlighted: isHighlighted)
+    static func onKeyPress(
+        press: KeyPress, focusedTag: Binding<Int>, crossword: Crossword,
+        userSettings: UserSettings, goingAcross: Binding<Bool>,
+        isHighlighted: Binding<[Int]>
+    ) -> KeyPress.Result {
+        if press.key == .tab {
+            if press.modifiers.contains(.shift) {
+                ChangeFocusUtils.goToPreviousClue(
+                    focusedTag: focusedTag, crossword: crossword,
+                    userSettings: userSettings, goingAcross: goingAcross,
+                    isHighlighted: isHighlighted)
                 return .ignored
             }
-            ChangeFocusUtils.goToNextClue(focusedTag: focusedTag, crossword: crossword,
-                                          userSettings: userSettings, goingAcross: goingAcross,
-                                          isHighlighted: isHighlighted)
+            ChangeFocusUtils.goToNextClue(
+                focusedTag: focusedTag, crossword: crossword,
+                userSettings: userSettings, goingAcross: goingAcross,
+                isHighlighted: isHighlighted)
         }
         return .ignored
     }

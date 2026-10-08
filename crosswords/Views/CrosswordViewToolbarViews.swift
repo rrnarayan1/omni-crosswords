@@ -28,10 +28,12 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
     @State var showShareSheet: Bool = false
     @State var showCrosswordSettings: Bool = false
 
-    static func == (lhs: CrosswordViewTrailingToolbarView,
-                    rhs: CrosswordViewTrailingToolbarView) -> Bool {
+    static func == (
+        lhs: CrosswordViewTrailingToolbarView,
+        rhs: CrosswordViewTrailingToolbarView
+    ) -> Bool {
         // refresh the view if crossword is now solved
-        if (lhs.isSolved != rhs.isSolved) {
+        if lhs.isSolved != rhs.isSolved {
             return false
         }
         return true
@@ -49,15 +51,16 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
                 Image(systemName: "slider.horizontal.3")
             }
             .navigationDestination(isPresented: self.$showCrosswordSettings) {
-                CrosswordSettingsView(title: self.crosswordTitle, author: self.author, notes: self.notes,
-                                      copyright: self.copyright, isSolved: self.isSolved,
-                                      isSolutionAvailable: self.isSolutionAvailable,
-                                      showSolution: self.showSolution,
-                                      getProgressPercentage: self.getProgressPercentage,
-                                      markAsSolved: self.markAsSolved,
-                                      errorTracking: self.isErrorTrackingEnabled,
-                                      errorTrackingEnablementSideEffect:
-                                        self.errorTrackingEnablementSideEffect)
+                CrosswordSettingsView(
+                    title: self.crosswordTitle, author: self.author, notes: self.notes,
+                    copyright: self.copyright, isSolved: self.isSolved,
+                    isSolutionAvailable: self.isSolutionAvailable,
+                    showSolution: self.showSolution,
+                    getProgressPercentage: self.getProgressPercentage,
+                    markAsSolved: self.markAsSolved,
+                    errorTracking: self.isErrorTrackingEnabled,
+                    errorTrackingEnablementSideEffect:
+                        self.errorTrackingEnablementSideEffect)
             }
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
@@ -73,13 +76,15 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
 
 struct CrosswordViewLeadingToolbarView: View, Equatable {
     let goBack: () -> Void
-    
-    static func == (lhs: CrosswordViewLeadingToolbarView,
-                    rhs: CrosswordViewLeadingToolbarView) -> Bool {
+
+    static func == (
+        lhs: CrosswordViewLeadingToolbarView,
+        rhs: CrosswordViewLeadingToolbarView
+    ) -> Bool {
         // no need to refresh this view
         return true
     }
-    
+
     var body: some View {
         Button(action: {
             self.goBack()

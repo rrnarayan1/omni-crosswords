@@ -14,13 +14,16 @@ struct ActivityView: UIViewControllerRepresentable {
     var applicationActivities: [UIActivity]? = nil
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ActivityView>)
-    -> UIActivityViewController {
-        let controller = UIActivityViewController(activityItems: activityItems,
-                                                  applicationActivities: applicationActivities)
+        -> UIActivityViewController
+    {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities)
         return controller
     }
 
-    func updateUIViewController(_ uiViewController: UIActivityViewController,
-                                context: UIViewControllerRepresentableContext<ActivityView>) {}
+    func updateUIViewController(
+        _ uiViewController: UIActivityViewController,
+        context: UIViewControllerRepresentableContext<ActivityView>
+    ) {}
 }
-

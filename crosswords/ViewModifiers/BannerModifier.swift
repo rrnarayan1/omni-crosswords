@@ -16,7 +16,7 @@ struct BannerModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         VStack {
-            if (!self.data.title.isEmpty) {
+            if !self.data.title.isEmpty {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(self.data.title)
@@ -33,15 +33,14 @@ struct BannerModifier: ViewModifier {
                 .padding(12)
                 .background(Color.blue)
                 .cornerRadius(8)
-            }
-            else if (self.hasOpenCrossword && self.userSettings.pictureInPictureMode) {
+            } else if self.hasOpenCrossword && self.userSettings.pictureInPictureMode {
                 Color.clear
                     .frame(height: 150)
             }
             content
         }
     }
-    
+
     func closeBanner() {
         self.data.title = ""
         self.userSettings.lastAlertId = self.data.bannerId

@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 
-
 // source: https://filipmolcik.com/navigationview-dynamic-background-color-in-swiftui/
 
 struct NavigationBarModifier: ViewModifier {
@@ -32,7 +31,7 @@ struct NavigationBarModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        ZStack{
+        ZStack {
             content
             VStack {
                 GeometryReader { geometry in

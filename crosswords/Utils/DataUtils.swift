@@ -11,7 +11,7 @@ import FirebaseFirestore
 import Foundation
 
 class DataUtils {
-    static func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) -> Void {
+    static func jsonToCrossword(crossword: Crossword, data: DocumentSnapshot) {
         crossword.length = data.get("width") as! Int16
         crossword.height = data.get("height") as! Int16
         crossword.author = data.get("author") as? String
@@ -21,11 +21,11 @@ class DataUtils {
         crossword.title = data.get("title") as? String
         crossword.date = (data.get("date") as! Timestamp).dateValue()
         crossword.id = data.documentID
-        crossword.clues = data.get("clues") as? Dictionary<String, String>
-        crossword.solution = data.get("solution") as? Array<String>
-        let symbols = data.get("symbols") as? Array<Int>
+        crossword.clues = data.get("clues") as? [String: String]
+        crossword.solution = data.get("solution") as? [String]
+        let symbols = data.get("symbols") as? [Int]
         crossword.symbols = symbols
-        let tagToCluesList = data.get("tag_to_clue_map") as? Array<Dictionary<String, String>>
+        let tagToCluesList = data.get("tag_to_clue_map") as? [[String: String]]
         crossword.tagToCluesMap = tagToCluesList
         crossword.solved = false
         crossword.isHidden = false
@@ -37,7 +37,7 @@ class DataUtils {
         crossword.helpTracking = Array(repeating: false, count: symbols!.count)
     }
 
-    static func jsonToCrossword(crossword: Crossword, data: CrosswordResponse) -> Void {
+    static func jsonToCrossword(crossword: Crossword, data: CrosswordResponse) {
         crossword.length = Int16(data.width)
         crossword.height = Int16(data.height)
         crossword.author = data.author
@@ -46,7 +46,7 @@ class DataUtils {
         crossword.outletName = data.crossword_outlet_name
         crossword.title = data.title
         crossword.date = NSDate(timeIntervalSince1970: TimeInterval(data.date)) as Date?
-        crossword.id = data.crossword_outlet_name+String(data.solution.joined(separator: ",").hashValue)
+        crossword.id = data.crossword_outlet_name + String(data.solution.joined(separator: ",").hashValue)
         crossword.clues = data.clues
         crossword.solution = data.solution
         let symbols = data.symbols
@@ -58,15 +58,15 @@ class DataUtils {
         crossword.addedTime = Date().timeIntervalSince1970
         crossword.versionId = 0
 
-
         crossword.clueToTagsMap = DataUtils.buildClueToTagsMap(tagToCluesList: tagToCluesList)
         crossword.entry = DataUtils.buildStarterEntry(symbols: symbols)
         crossword.helpTracking = Array(repeating: false, count: symbols.count)
     }
 
-    static func buildSampleCrossword(crossword: Crossword, resourceName: String) -> Void {
+    static func buildSampleCrossword(crossword: Crossword, resourceName: String) {
         if let url = Bundle.main.url(forResource: resourceName, withExtension: "json"),
-           let data = try? Data(contentsOf: url) {
+            let data = try? Data(contentsOf: url)
+        {
             let decoder = JSONDecoder()
             do {
                 let jsonData = try decoder.decode(JsonSampleData.self, from: data)
@@ -100,7 +100,7 @@ class DataUtils {
         }
     }
 
-    static func buildSolvedCrossword(solvedCrossword: SolvedCrossword, crossword: Crossword) -> Void {
+    static func buildSolvedCrossword(solvedCrossword: SolvedCrossword, crossword: Crossword) {
         solvedCrossword.date = crossword.date
         solvedCrossword.id = crossword.id
         solvedCrossword.solveTime = crossword.solvedTime
@@ -108,24 +108,25 @@ class DataUtils {
         solvedCrossword.numClues = Int32(crossword.clues!.count)
     }
 
-    private static func buildStarterEntry(symbols: Array<Int>) -> Array<String> {
+    private static func buildStarterEntry(symbols: [Int]) -> [String] {
         var entry = Array(repeating: "", count: symbols.count)
         for i in 0..<symbols.count {
-            if (symbols[i] == -1) {
+            if symbols[i] == -1 {
                 entry[i] = "."
             }
         }
         return entry
     }
 
-    private static func buildClueToTagsMap(tagToCluesList: Array<Dictionary<String, String>>)
-    -> Dictionary<String, Array<Int>> {
-        var clueToTagsMap: Dictionary<String, Array<Int>> = [:]
+    private static func buildClueToTagsMap(tagToCluesList: [[String: String]])
+        -> [String: [Int]]
+    {
+        var clueToTagsMap: [String: [Int]] = [:]
         for tag in 0..<tagToCluesList.count {
             for dir in ["A", "D"] {
-                if (tagToCluesList[tag].count > 0) {
+                if tagToCluesList[tag].count > 0 {
                     let clue: String? = tagToCluesList[tag][dir]
-                    if (clue != nil) {
+                    if clue != nil {
                         if clueToTagsMap[clue!] == nil {
                             clueToTagsMap[clue!] = []
                         }

@@ -14,7 +14,7 @@ struct TimeUtils {
         let numMin = timeInSeconds / 60
         let numSec = timeInSeconds % 60
 
-        let secString: String = numSec < 10 ? "0"+String(numSec) : String(numSec)
+        let secString: String = numSec < 10 ? "0" + String(numSec) : String(numSec)
         return String(numMin) + ":" + secString
     }
 
@@ -30,27 +30,34 @@ struct TimeUtils {
 extension Date {
 
     func haveMinutesElapsed(timeInMinutes: Int, pastDate: Date) -> Bool {
-        return self > Date.init(timeInterval: TimeInterval(timeInMinutes*60), since: pastDate)
+        return self > Date.init(timeInterval: TimeInterval(timeInMinutes * 60), since: pastDate)
     }
 
     func startOfYear() -> Date {
-        return Calendar.current.date(from: Calendar.current
-            .dateComponents([.year],from: Calendar.current.startOfDay(for: self)))!
+        return Calendar.current.date(
+            from: Calendar.current
+                .dateComponents([.year], from: Calendar.current.startOfDay(for: self)))!
     }
 
     func subtractDays(_ numDays: Int) -> Date {
-        return Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .day,
-                                                                      value: -1 * numDays, to: self)!)
+        return Calendar.current.startOfDay(
+            for: Calendar.current.date(
+                byAdding: .day,
+                value: -1 * numDays, to: self)!)
     }
 
     func subtractMonths(_ numMonths: Int) -> Date {
-        return Calendar.current.startOfDay(for: Calendar.current.date(byAdding: .month,
-                                                                      value: -1 * numMonths, to: self)!)
+        return Calendar.current.startOfDay(
+            for: Calendar.current.date(
+                byAdding: .month,
+                value: -1 * numMonths, to: self)!)
     }
 
     func subtractWeeks(_ numWeeks: Int) -> Date {
-        return Calendar.current.startOfDay(for: (Calendar.current.date(byAdding: .weekOfYear,
-                                                                       value: -1 * numWeeks, to: self)!))
+        return Calendar.current.startOfDay(
+            for: (Calendar.current.date(
+                byAdding: .weekOfYear,
+                value: -1 * numWeeks, to: self)!))
     }
 
     func getDayOfWeek() -> Int {
@@ -68,9 +75,11 @@ extension Date {
         components.month = 7
         components.day = 31
         let date: Date = Calendar.current.date(from: components)!
-        let newDate: Date = Calendar.current.startOfDay(for: (Calendar.current.date(byAdding: .day,
-                                                                                    value: dayId,
-                                                                                    to: date)!))
+        let newDate: Date = Calendar.current.startOfDay(
+            for: (Calendar.current.date(
+                byAdding: .day,
+                value: dayId,
+                to: date)!))
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en-AI")
         dateFormatter.dateFormat = "EE"

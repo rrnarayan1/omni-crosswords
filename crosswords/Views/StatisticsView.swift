@@ -15,7 +15,7 @@ struct StatisticsView: View {
     @State var timeFilter: Date = Date().subtractWeeks(2)
     @State var outletNameFilter: String?
     @State var graphStatistic: SolvedCrosswordGraphStat = SolvedCrosswordGraphStat.NUM_PUZZLES
-    
+
     var body: some View {
         VStack(alignment: .center) {
             let date = Date()
@@ -34,29 +34,30 @@ struct StatisticsView: View {
                     }
                     .pickerStyle(.menu)
                 }
-                
+
                 Spacer()
-                
-                VStack (alignment: .trailing){
+
+                VStack(alignment: .trailing) {
                     Text("Outlet")
                         .bold()
                     Picker("Outlet Name", selection: self.$outletNameFilter) {
                         Text("All").tag(nil as String?)
-                        ForEach(self.userSettings.subscriptions, id: \.self) {subscription in
+                        ForEach(self.userSettings.subscriptions, id: \.self) { subscription in
                             Text(subscription).tag(subscription)
                         }
                     }
                     .pickerStyle(.menu)
                 }
             }
-            
-            SolvedCrosswordStatistics(afterDate: self.timeFilter, outletName: self.outletNameFilter,
-                                      graphStatEnum: self.graphStatistic)
+
+            SolvedCrosswordStatistics(
+                afterDate: self.timeFilter, outletName: self.outletNameFilter,
+                graphStatEnum: self.graphStatistic)
 
             Picker("Statistic", selection: self.$graphStatistic) {
                 Text("Num Puzzles").tag(SolvedCrosswordGraphStat.NUM_PUZZLES)
                 Text("Num Clues").tag(SolvedCrosswordGraphStat.NUM_CLUES)
-                if (self.userSettings.showTimer) {
+                if self.userSettings.showTimer {
                     Text("Avg Time").tag(SolvedCrosswordGraphStat.AVG_TIME)
                 }
             }

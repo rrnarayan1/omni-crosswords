@@ -15,8 +15,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
-               options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(
+        _ scene: UIScene, willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
@@ -25,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create the SwiftUI view and set the context as the value for the managedObjectContext environment keyPath.
         // Add `@Environment(\.managedObjectContext)` in the views that will need the context.
-        
+
         let crosswordListView = CrosswordListView()
             .environmentObject(TimerWrapper())
             .environment(\.managedObjectContext, context)
@@ -89,47 +91,47 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     lazy var persistentContainer: NSPersistentContainer = {
-      let container = NSPersistentContainer(name: "Crosswords")
-      container.loadPersistentStores { _, error in
-        if let error = error as NSError? {
-          // You should add your own error handling code here.
-          fatalError("Unresolved error \(error), \(error.userInfo)")
+        let container = NSPersistentContainer(name: "Crosswords")
+        container.loadPersistentStores { _, error in
+            if let error = error as NSError? {
+                // You should add your own error handling code here.
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
         }
-      }
-      return container
+        return container
     }()
-    
+
     func saveContext() {
-      let context = persistentContainer.viewContext
-      if context.hasChanges {
-        do {
-          try context.save()
-        } catch {
-          // The context couldn't be saved.
-          // You should add your own error handling here.
-          let nserror = error as NSError
-          fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                // The context couldn't be saved.
+                // You should add your own error handling here.
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
         }
-      }
     }
 }
 
 class TimerWrapper: ObservableObject {
-    var timer : Timer!
-    let didChange = PassthroughSubject<TimerWrapper,Never>()
+    var timer: Timer!
+    let didChange = PassthroughSubject<TimerWrapper, Never>()
     @Published var count = 0 {
         didSet {
             self.didChange.send(self)
         }
     }
-    func start(_ startTime:Int = 0) {
+    func start(_ startTime: Int = 0) {
         self.timer?.invalidate()
         self.count = startTime
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {[weak self] _ in
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             self?.count += 1
         }
     }
-    
+
     func stop() {
         self.timer?.invalidate()
     }

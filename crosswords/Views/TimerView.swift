@@ -18,14 +18,14 @@ struct TimerView: View {
     var body: some View {
         return Text(TimeUtils.toDisplayTime(self.isSolved ? self.solvedTime! : self.timerWrapper.count))
             .onAppear(perform: {
-                if (!self.isSolved) {
+                if !self.isSolved {
                     self.timerWrapper.start(Int(self.solvedTime ?? 0))
                 } else {
                     self.timerWrapper.stop()
                 }
             })
-            .onChange(of: self.isPaused) {_, newPausedValue in
-                if (newPausedValue) {
+            .onChange(of: self.isPaused) { _, newPausedValue in
+                if newPausedValue {
                     self.timerWrapper.stop()
                 } else {
                     self.timerWrapper.start(Int(self.solvedTime ?? 0))

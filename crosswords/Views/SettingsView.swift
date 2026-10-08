@@ -22,7 +22,7 @@ struct SettingsView: View {
 
                 GameCenterLoginView(userSettings: self.userSettings)
 
-                Button("Configure Puzzle Subscriptions"){
+                Button("Configure Puzzle Subscriptions") {
                     self.showSubscriptions.toggle()
                 }
                 .padding(.top)
@@ -31,7 +31,7 @@ struct SettingsView: View {
                     SubscriptionsView(userSettings: self.userSettings)
                 }
 
-                Button("Advanced Settings"){
+                Button("Advanced Settings") {
                     self.showAdvancedSettings.toggle()
                 }
                 .padding(.top)
@@ -70,9 +70,9 @@ struct TogglesSettingsView: View {
         Toggle(isOn: self.$userSettings.skipCompletedCells) {
             Text("Skip completed cells")
         }
-        .onChange(of: self.userSettings.skipCompletedCells) {_, newSkipCompletedCells in
+        .onChange(of: self.userSettings.skipCompletedCells) { _, newSkipCompletedCells in
             // if they don't want to skip completed cells anymore, looping back must be set to false
-            if (!newSkipCompletedCells) {
+            if !newSkipCompletedCells {
                 self.userSettings.loopBackInsideUncompletedWord = false
             }
         }
@@ -102,7 +102,7 @@ struct TogglesSettingsView: View {
 struct PickerViews: View {
     @ObservedObject var userSettings: UserSettings
     @AppStorage("selectedAppearance") var selectedAppearance = 0
-    
+
     var body: some View {
         VStack {
             Picker("Color scheme override", selection: self.$selectedAppearance) {
@@ -113,7 +113,7 @@ struct PickerViews: View {
                 ColorSchemeUtil().overrideDisplayMode()
             }
             .pickerStyle(.segmented)
-            
+
             HStack {
                 Text("Clue cycle control placement")
                 Spacer()
@@ -124,7 +124,7 @@ struct PickerViews: View {
                 }
                 .pickerStyle(.menu)
             }
-            
+
             HStack {
                 Text("Tap clue action")
                 Spacer()
@@ -139,10 +139,12 @@ struct PickerViews: View {
             HStack {
                 Text("Auto-delete puzzles after")
                 Spacer()
-                Picker("Auto-delete puzzles after",
-                       selection: self.$userSettings.daysToWaitBeforeDeleting) {
+                Picker(
+                    "Auto-delete puzzles after",
+                    selection: self.$userSettings.daysToWaitBeforeDeleting
+                ) {
                     ForEach((3..<22)) { i in
-                        Text(String(i)+" days").tag(String(i))
+                        Text(String(i) + " days").tag(String(i))
                     }
                     Text("Never (May cause issues with performance)").tag("Never")
                 }
@@ -154,7 +156,7 @@ struct PickerViews: View {
                 Spacer()
                 Picker("Clue font size", selection: self.$userSettings.clueSize) {
                     ForEach((13..<21)) { flavor in
-                        Text(String(flavor)+" pt").tag(Int(flavor))
+                        Text(String(flavor) + " pt").tag(Int(flavor))
                     }
                 }
                 .pickerStyle(.menu)
@@ -186,12 +188,12 @@ struct GameCenterLoginView: View {
                 Text("Game Center Sync")
             }
             .onChange(of: self.userSettings.shouldTryGameCenterLogin) { _, shouldTryLogin in
-                if (shouldTryLogin) {
+                if shouldTryLogin {
                     GameCenterUtils.maybeAuthenticate(userSettings: self.userSettings)
                 }
             }
 
-            if (self.userSettings.shouldTryGameCenterLogin) {
+            if self.userSettings.shouldTryGameCenterLogin {
                 Button("Game Center Diagnostics") {
                     self.showGameCenterDiagnostics.toggle()
                 }
@@ -213,11 +215,13 @@ struct SubscriptionsView: View {
                 HStack {
                     Text(subscription)
                     Spacer()
-                    Button(action: {self.toggleSubscription(subscription)}) {
-                        Image(systemName: self.hasSub(subscription)
-                              ? "checkmark.square" : "square")
-                            .foregroundColor(Color(UIColor.systemGray))
-                            .font(.system(size: 18))
+                    Button(action: { self.toggleSubscription(subscription) }) {
+                        Image(
+                            systemName: self.hasSub(subscription)
+                                ? "checkmark.square" : "square"
+                        )
+                        .foregroundColor(Color(UIColor.systemGray))
+                        .font(.system(size: 18))
                     }
                 }
                 .padding(5)
@@ -226,17 +230,17 @@ struct SubscriptionsView: View {
         .navigationBarTitle("Subscriptions", displayMode: .inline)
         .padding(30)
     }
-    
-    func toggleSubscription(_ sub: String) -> Void {
+
+    func toggleSubscription(_ sub: String) {
         let index = self.userSettings.subscriptions.lastIndex(of: sub)
-        if (index == nil) {
+        if index == nil {
             self.userSettings.subscriptions.append(sub)
         } else {
             self.userSettings.subscriptions.remove(at: index!)
         }
     }
-    
-    func hasSub(_ sub : String) -> Bool {
+
+    func hasSub(_ sub: String) -> Bool {
         return self.userSettings.subscriptions.contains(sub)
     }
 }
@@ -278,23 +282,24 @@ struct GameCenterDiagnosticsView: View {
             Text("Setting Enabled: \(shouldTryGameCenter ? "YES" : "NO")")
                 .foregroundStyle(shouldTryGameCenter ? .green : .red)
 
-            if (shouldTryGameCenter) {
+            if shouldTryGameCenter {
                 let isAuthenticated = GameCenterUtils.isAuthenticated()
                 Text("Game Center Authenticated: \(isAuthenticated ? "YES" : "NO")")
                     .foregroundStyle(isAuthenticated ? .green : .red)
 
-                if (isAuthenticated) {
+                if isAuthenticated {
                     Text("Fetch Game Center Games: \(self.fetchGamesError ?? "GOOD")")
                         .foregroundStyle(self.fetchGamesError == nil ? .green : .red)
                 }
             }
         }
         .onAppear {
-            GameCenterUtils.fetchGames(userSettings: self.userSettings,
-                                       completionHandler: {_ in self.fetchGamesError = nil},
-                                       errorHandler: {error in
-                                            self.fetchGamesError = error.localizedDescription
-                                       })
+            GameCenterUtils.fetchGames(
+                userSettings: self.userSettings,
+                completionHandler: { _ in self.fetchGamesError = nil },
+                errorHandler: { error in
+                    self.fetchGamesError = error.localizedDescription
+                })
         }
         .navigationTitle("Game Center Diagnostics")
         .navigationBarTitleDisplayMode(.inline)
