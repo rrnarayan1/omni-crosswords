@@ -28,10 +28,12 @@ struct CrosswordListItemView: View {
                 }
                 if self.showSolvedWithoutHelp() {
                     Image(systemName: "star.circle")
+                        .accessibilityLabel("Completed without help")
                         .foregroundColor(Color(Constants.gold))
                         .font(.system(size: Constants.listIconSize))
                 } else {
                     Image(systemName: "checkmark.circle")
+                        .accessibilityLabel("Completed")
                         .foregroundColor(Color(UIColor.systemGreen))
                         .font(.system(size: Constants.listIconSize))
                 }
@@ -54,6 +56,7 @@ struct CrosswordListItemView: View {
                         .rotationEffect(Angle(degrees: 270.0))
                         .frame(width: Constants.listIconSize, height: Constants.listIconSize)
                 }
+                .accessibilityLabel("In Progress")
             }
         }
     }

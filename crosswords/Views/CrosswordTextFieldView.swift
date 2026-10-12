@@ -15,7 +15,6 @@ struct CrosswordTextFieldView: UIViewRepresentable {
     @Environment(\.managedObjectContext) var managedObjectContext
 
     var crossword: Crossword
-    var currentClue: String
     var synthesizer: AVSpeechSynthesizer
     @ObservedObject var userSettings: UserSettings
 
@@ -51,8 +50,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 uiTextField.resignFirstResponder()
             }
         }
+        let clue: String = CrosswordUtils.getClue(
+            focusedTag: self.focusedTag,
+            crossword: self.crossword,
+            goingAcross: self.goingAcross)
 
-        uiTextField.changeToolbar(userSettings: self.userSettings, clueTitle: self.currentClue)
+        uiTextField.changeToolbar(userSettings: self.userSettings, clueTitle: clue)
     }
 
     func makeCoordinator() -> Coordinator {

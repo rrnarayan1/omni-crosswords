@@ -83,10 +83,6 @@ struct CrosswordView: View {
                 ScrollViewReader { scrollreader in
                     CrosswordGridView(
                         crossword: self.crossword, boxWidth: self.boxWidth,
-                        currentClue: CrosswordUtils.getClue(
-                            focusedTag: self.focusedTag,
-                            crossword: self.crossword,
-                            goingAcross: self.goingAcross),
                         synthesizer: self.synthesizer,
                         userSettings: self.userSettings,
                         isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
@@ -361,6 +357,7 @@ struct CrosswordView: View {
                     .padding(.bottom)
                 Button(action: { self.isPaused.toggle() }) {
                     Image(systemName: "play.fill")
+                        .accessibilityLabel("Resume")
                         .font(.system(size: 30))
                         .tint(Color(UIColor.label))
                 }
@@ -379,7 +376,6 @@ struct CrosswordView: View {
 struct CrosswordGridView: View {
     var crossword: Crossword
     var boxWidth: CGFloat
-    var currentClue: String
     var synthesizer: AVSpeechSynthesizer
 
     @ObservedObject var userSettings: UserSettings
@@ -405,7 +401,7 @@ struct CrosswordGridView: View {
                 .id("row" + String(rowNum))
             }
             CrosswordTextFieldView(
-                crossword: self.crossword, currentClue: self.currentClue,
+                crossword: self.crossword,
                 synthesizer: self.synthesizer,
                 userSettings: self.userSettings, focusedTag: self.$focusedTag,
                 isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
