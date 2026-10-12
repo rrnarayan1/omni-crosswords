@@ -215,20 +215,23 @@ extension UITextField {
 
             let solveButtonWithSize = UIButtonWithSize(
                 button: solveButton,
-                width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
-                height: Constants.crosswordToolbarIconSize
+                width: Constants.crosswordToolbarIconSize,
+                height: Constants.crosswordToolbarIconSize,
+                isHidden: !actionButtonsInToolbar
             )
 
             let toggleButtonWithSize = UIButtonWithSize(
                 button: toggleButton,
-                width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
-                height: Constants.crosswordToolbarIconSize
+                width: Constants.crosswordToolbarIconSize,
+                height: Constants.crosswordToolbarIconSize,
+                isHidden: !actionButtonsInToolbar
             )
 
             let speakButtonWithSize = UIButtonWithSize(
                 button: speakButton,
-                width: speakClueButtonEnabled ? Constants.crosswordToolbarIconSize : 0,
-                height: Constants.crosswordToolbarIconSize
+                width: Constants.crosswordToolbarIconSize,
+                height: Constants.crosswordToolbarIconSize,
+                isHidden: !speakClueButtonEnabled
             )
 
             if #available(iOS 26.0, *) {
@@ -304,7 +307,7 @@ extension UITextField {
             barButtonSystemItem: .flexibleSpace,
             target: nil,
             action: nil)
-        if (firstButton.width + secondButton.width) == 0 {
+        if firstButton.isHidden && secondButton.isHidden {
             return flexible
         }
         let containerWidth = firstButton.width + secondButton.width + (Constants.crosswordToolbarPadding)

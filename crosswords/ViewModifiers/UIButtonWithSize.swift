@@ -12,4 +12,5 @@ struct UIButtonWithSize {
     var button: UIButton
     var width: CGFloat
     var height: CGFloat
+    var isHidden: Bool = false
 }
