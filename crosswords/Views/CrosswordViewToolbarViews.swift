@@ -62,12 +62,14 @@ struct CrosswordViewTrailingToolbarView: View, Equatable {
                     errorTrackingEnablementSideEffect:
                         self.errorTrackingEnablementSideEffect)
             }
+            .accessibilityLabel("Crossword Settings")
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
 
             ShareLink(item: self.getShareMessage()) {
                 Label("", systemImage: "square.and.arrow.up")
             }
+            .accessibilityLabel("Share")
             .tint(Color(UIColor.label))
             .font(.system(size: Constants.crosswordToolbarButtonSize))
         }
@@ -90,6 +92,7 @@ struct CrosswordViewLeadingToolbarView: View, Equatable {
             self.goBack()
         }) {
             Image(systemName: "chevron.left")
+                .accessibilityLabel("Crosswords - Back")
         }
         .padding(0)
         .tint(Color(UIColor.label))

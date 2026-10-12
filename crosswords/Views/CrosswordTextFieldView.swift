@@ -6,6 +6,7 @@
 //  Copyright © 2021 Rohan Narayan. All rights reserved.
 //
 
+import AVFoundation
 import CoreData
 import SwiftUI
 
@@ -15,6 +16,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
 
     var crossword: Crossword
     var currentClue: String
+    var synthesizer: AVSpeechSynthesizer
     @ObservedObject var userSettings: UserSettings
 
     @Binding var focusedTag: Int
@@ -103,6 +105,14 @@ struct CrosswordTextFieldView: UIViewRepresentable {
                 isHighlighted: self.parent.$highlighted,
                 timerWrapper: self.parent.timerWrapper,
                 managedObjectContext: self.parent.managedObjectContext)
+        }
+
+        @objc func speakClue(textField: NoActionTextField) {
+            let clue = CrosswordUtils.getClue(
+                focusedTag: self.parent.focusedTag,
+                crossword: self.parent.crossword,
+                goingAcross: self.parent.goingAcross)
+            SpeechUtils.speakClue(synthesizer: self.parent.synthesizer, clue: clue)
         }
 
         @objc func tapClue(textField: NoActionTextField) {

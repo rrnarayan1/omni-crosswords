@@ -27,6 +27,10 @@ extension UITextField {
         return UIImage(systemName: "arrow.2.squarepath")!
     }
 
+    var speakImage: UIImage {
+        return UIImage(systemName: "speaker.3.fill")!
+    }
+
     func changeToolbar(userSettings: UserSettings, clueTitle: String) {
         guard let uiTextFieldToolbar = self.inputAccessoryView as? UIToolbar else {
             print("inputAccessoryView is nil or not a UIToolbar")
@@ -103,11 +107,13 @@ extension UITextField {
 
         let actionButtonsInToolbar = coordinator.parent.userSettings.actionButtonsInToolbar
         let clueCyclePlacement = coordinator.parent.userSettings.clueCyclePlacement
+        let speakClueButtonEnabled = coordinator.parent.userSettings.speakClueButton
 
-        let numButtonsInToolbar: Int = actionButtonsInToolbar ? 4 : 2
+        let numButtonsInToolbar: Int = actionButtonsInToolbar ? 4 : speakClueButtonEnabled ? 3 : 2
         // only 1 group iff action buttons are not in toolbar and clue cycle is not split
+        // and speak clue button not enabled
         let numButtonGroups: Int =
-            !actionButtonsInToolbar && clueCyclePlacement != 1 ? 1 : 2
+            !actionButtonsInToolbar && !speakClueButtonEnabled && clueCyclePlacement != 1 ? 1 : 2
         let toolbarButtonSize: CGFloat =
             Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
         let mandatedToolbarGroupPadding: CGFloat =
@@ -150,6 +156,7 @@ extension UITextField {
                 target: coordinator,
                 action: #selector(coordinator.goToPreviousClue)
             )
+            previousButton.accessibilityLabel = "Previous Clue"
             let previousButtonWithSize = UIButtonWithSize(
                 button: previousButton,
                 width: Constants.crosswordToolbarIconSize,
@@ -161,6 +168,7 @@ extension UITextField {
                 target: coordinator,
                 action: #selector(coordinator.goToNextClue)
             )
+            nextButton.accessibilityLabel = "Next Clue"
             let nextButtonWithSize = UIButtonWithSize(
                 button: nextButton,
                 width: Constants.crosswordToolbarIconSize,
@@ -172,12 +180,21 @@ extension UITextField {
                 target: coordinator,
                 action: #selector(coordinator.pressToggleButton)
             )
+            toggleButton.accessibilityLabel = "Toggle Direction"
+
+            var speakButton = UIButton.systemButton(
+                with: self.speakImage,
+                target: coordinator,
+                action: #selector(coordinator.speakClue)
+            )
+            speakButton.accessibilityLabel = "Speak Clue"
 
             var solveButton = UIButton.systemButton(
                 with: self.solveImage,
                 target: coordinator,
                 action: #selector(coordinator.solveCell)
             )
+            solveButton.accessibilityLabel = "Solve Cell"
 
             let emptyButton = UIButton()
 
@@ -192,6 +209,10 @@ extension UITextField {
                 toggleButton = emptyButton
             }
 
+            if !speakClueButtonEnabled {
+                speakButton = emptyButton
+            }
+
             let solveButtonWithSize = UIButtonWithSize(
                 button: solveButton,
                 width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
@@ -201,6 +222,12 @@ extension UITextField {
             let toggleButtonWithSize = UIButtonWithSize(
                 button: toggleButton,
                 width: actionButtonsInToolbar ? Constants.crosswordToolbarIconSize : 0,
+                height: Constants.crosswordToolbarIconSize
+            )
+
+            let speakButtonWithSize = UIButtonWithSize(
+                button: speakButton,
+                width: speakClueButtonEnabled ? Constants.crosswordToolbarIconSize : 0,
                 height: Constants.crosswordToolbarIconSize
             )
 
@@ -215,11 +242,11 @@ extension UITextField {
                             previousButtonWithSize,
                         secondButton: solveButtonWithSize)
                     rightContainerButton = self.createCustomButtonGroup(
-                        firstButton: toggleButtonWithSize,
+                        firstButton: speakClueButtonEnabled ? speakButtonWithSize : toggleButtonWithSize,
                         secondButton: nextButtonWithSize)
                 case 2:  // right
                     leftContainerButton = self.createCustomButtonGroup(
-                        firstButton: toggleButtonWithSize,
+                        firstButton: speakClueButtonEnabled ? speakButtonWithSize : toggleButtonWithSize,
                         secondButton: solveButtonWithSize)
                     rightContainerButton = self.createCustomButtonGroup(
                         firstButton:
@@ -233,7 +260,7 @@ extension UITextField {
                     rightContainerButton = self.createCustomButtonGroup(
                         firstButton: solveButtonWithSize,
                         secondButton:
-                            toggleButtonWithSize)
+                            speakClueButtonEnabled ? speakButtonWithSize : toggleButtonWithSize)
                 }
 
                 return [leftContainerButton, flexible, clueTitle, flexible, rightContainerButton]
@@ -244,12 +271,12 @@ extension UITextField {
                     return [
                         UIBarButtonItem(customView: previousButton), flexible,
                         UIBarButtonItem(customView: solveButton), fixed, clueTitle,
-                        UIBarButtonItem(customView: toggleButton), flexible,
+                        UIBarButtonItem(customView: speakClueButtonEnabled ? speakButton : toggleButton), flexible,
                         UIBarButtonItem(customView: nextButton),
                     ]
                 case 2:  // right
                     return [
-                        UIBarButtonItem(customView: toggleButton), fixed,
+                        UIBarButtonItem(customView: speakClueButtonEnabled ? speakButton : toggleButton), fixed,
                         UIBarButtonItem(customView: solveButton), flexible, clueTitle, flexible,
                         UIBarButtonItem(customView: previousButton), fixed,
                         UIBarButtonItem(customView: nextButton),
@@ -259,7 +286,7 @@ extension UITextField {
                         UIBarButtonItem(customView: previousButton), fixed,
                         UIBarButtonItem(customView: nextButton), flexible, clueTitle, flexible,
                         UIBarButtonItem(customView: solveButton), fixed,
-                        UIBarButtonItem(customView: toggleButton),
+                        UIBarButtonItem(customView: speakClueButtonEnabled ? speakButton : toggleButton),
                     ]
                 }
             }

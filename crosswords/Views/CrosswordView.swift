@@ -6,6 +6,7 @@
 //  Copyright © 2020 Rohan Narayan. All rights reserved.
 //
 
+import AVFoundation
 import CoreData
 import SwiftUI
 
@@ -17,6 +18,7 @@ struct CrosswordView: View {
     @ObservedObject var crossword: Crossword
     @ObservedObject var userSettings: UserSettings
     @StateObject var keyboardHeightHelper = KeyboardHeightHelper()
+    @State var synthesizer = AVSpeechSynthesizer()
 
     @State var focusedTag: Int = -1
     @State var highlighted: [Int] = Array()
@@ -85,6 +87,7 @@ struct CrosswordView: View {
                             focusedTag: self.focusedTag,
                             crossword: self.crossword,
                             goingAcross: self.goingAcross),
+                        synthesizer: self.synthesizer,
                         userSettings: self.userSettings,
                         isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                         focusedTag: self.$focusedTag,
@@ -92,7 +95,7 @@ struct CrosswordView: View {
                         goingAcross: self.$goingAcross,
                         forceUpdate: self.$forceUpdate,
                         becomeFirstResponder: self.$becomeFirstResponder,
-                        isRebusMode: self.$isRebusMode
+                        isRebusMode: self.$isRebusMode,
                     )
                     .onChange(of: self.focusedTag) { _, newFocusedTag in
                         if self.isZoomed {
@@ -377,6 +380,7 @@ struct CrosswordGridView: View {
     var crossword: Crossword
     var boxWidth: CGFloat
     var currentClue: String
+    var synthesizer: AVSpeechSynthesizer
 
     @ObservedObject var userSettings: UserSettings
 
@@ -402,6 +406,7 @@ struct CrosswordGridView: View {
             }
             CrosswordTextFieldView(
                 crossword: self.crossword, currentClue: self.currentClue,
+                synthesizer: self.synthesizer,
                 userSettings: self.userSettings, focusedTag: self.$focusedTag,
                 isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                 highlighted: self.$highlighted, goingAcross: self.$goingAcross,
@@ -486,20 +491,25 @@ struct CrosswordFooter: View {
                     Image(
                         systemName: self.isZoomed
                             ? "minus.magnifyingglass"
-                            : "plus.magnifyingglass")
+                            : "plus.magnifyingglass"
+                    )
+                    .accessibilityLabel(self.isZoomed ? "Zoom out" : "Zoom in")
                 }
             }
             Button(action: { self.isRebusMode.toggle() }) {
                 Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
+                    .accessibilityLabel(self.isRebusMode ? "Disable rebus mode" : "Enable rebus mode")
             }
             if self.userSettings.showTimer {
                 Button(action: { self.pause() }) {
                     Image(systemName: "pause.fill")
+                        .accessibilityLabel("Pause")
                 }
             }
             if !self.userSettings.actionButtonsInToolbar {
                 Button(action: { self.solveCell(self.timerWrapper) }) {
                     Image(systemName: "lifepreserver")
+                        .accessibilityLabel("Solve Cell")
                 }
             }
             Spacer()

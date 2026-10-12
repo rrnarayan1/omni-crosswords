@@ -72,6 +72,7 @@ struct StatisticsView: View {
                 HStack {
                     Link(destination: URL(string: "https://omnicrosswords.app")!) {
                         Image(systemName: "questionmark.circle")
+                            .accessibilityLabel("Support Link")
                     }
                 }
             }

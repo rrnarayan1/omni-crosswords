@@ -138,6 +138,12 @@ class UserSettings: ObservableObject {
         }
     }
 
+    @Published var speakClueButton: Bool {
+        didSet {
+            UserDefaults.standard.set(speakClueButton, forKey: "speakClueButton")
+        }
+    }
+
     @Published var user: User?
     @Published var useLocalMode: Bool
 
@@ -176,5 +182,6 @@ class UserSettings: ObservableObject {
         self.tapClueTitleBehavior = UserDefaults.standard.integer(forKey: "tapClueTitleBehavior")
         self.pictureInPictureMode = UserDefaults.standard.bool(forKey: "pictureInPictureMode")
         self.actionButtonsInToolbar = UserDefaults.standard.bool(forKey: "actionButtonsInToolbar")
+        self.speakClueButton = UserDefaults.standard.bool(forKey: "speakClueButton")
     }
 }

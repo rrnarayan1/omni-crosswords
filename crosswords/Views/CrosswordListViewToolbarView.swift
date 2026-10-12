@@ -19,6 +19,7 @@ struct CrosswordListViewToolbarView: View {
                 destination: StatisticsView(userSettings: self.userSettings)
             ) {
                 Image(systemName: "chart.bar.xaxis")
+                    .accessibilityLabel("Statistics")
                     .font(.system(size: Constants.crosswordListViewToolbarButtonSize))
             }
 
@@ -26,6 +27,7 @@ struct CrosswordListViewToolbarView: View {
                 destination: UploadPuzzleView(userSettings: self.userSettings)
             ) {
                 Image(systemName: "arrow.up.circle")
+                    .accessibilityLabel("Upload file")
                     .font(.system(size: Constants.crosswordListViewToolbarButtonSize))
             }
 
@@ -33,6 +35,7 @@ struct CrosswordListViewToolbarView: View {
                 destination: SettingsView(userSettings: self.userSettings)
             ) {
                 Image(systemName: "gearshape.fill")
+                    .accessibilityLabel("Settings")
                     .font(.system(size: Constants.crosswordListViewToolbarButtonSize))
             }
 
@@ -40,6 +43,7 @@ struct CrosswordListViewToolbarView: View {
                 self.refreshAction()
             }) {
                 Image(systemName: "arrow.triangle.2.circlepath")
+                    .accessibilityLabel("Refresh")
                     .font(.system(size: Constants.crosswordListViewToolbarButtonSize, weight: .bold))
             }.disabled(!self.refreshEnabled)
         }

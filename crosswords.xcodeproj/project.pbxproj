@@ -53,6 +53,7 @@
 		F35263692F20147C0049F0B6 /* ToolbarContent+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */; };
 		F352636B2F2014AD0049F0B6 /* UIBarButtonItem+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */; };
 		F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */; };
+		F373D99C307D664700031524 /* SpeechUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F373D99B307D660F00031524 /* SpeechUtils.swift */; };
 		F37987402A7231DB00B42844 /* CrosswordResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F379873F2A7231DB00B42844 /* CrosswordResponse.swift */; };
 		F38D69BD2EE4D10A001E6096 /* DataUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F38D69BC2EE4D10A001E6096 /* DataUtils.swift */; };
 		F396923F2F20785900BBBDB3 /* TimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F396923E2F20785500BBBDB3 /* TimeUtils.swift */; };
@@ -112,6 +113,7 @@
 		F35263682F20146E0049F0B6 /* ToolbarContent+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToolbarContent+Extensions.swift"; sourceTree = "<group>"; };
 		F352636A2F2014A30049F0B6 /* UIBarButtonItem+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extensions.swift"; sourceTree = "<group>"; };
 		F36CFAFD2A6E3ED400B6CF38 /* UploadPuzzleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPuzzleView.swift; sourceTree = "<group>"; };
+		F373D99B307D660F00031524 /* SpeechUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechUtils.swift; sourceTree = "<group>"; };
 		F379873F2A7231DB00B42844 /* CrosswordResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrosswordResponse.swift; sourceTree = "<group>"; };
 		F38D69BC2EE4D10A001E6096 /* DataUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataUtils.swift; sourceTree = "<group>"; };
 		F396923E2F20785500BBBDB3 /* TimeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeUtils.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 				F3B1F8822F285A370052682B /* GameCenterUtils.swift */,
 				1CBB3F5A2586DC8B00BD1B5A /* KeyboardHeightHelper.swift */,
 				F3B1F0BF2F65F37100612BA4 /* OnKeyPressUtils.swift */,
+				F373D99B307D660F00031524 /* SpeechUtils.swift */,
 				F396923E2F20785500BBBDB3 /* TimeUtils.swift */,
 			);
 			path = Utils;
@@ -385,6 +388,7 @@
 				F35263652F1307B60049F0B6 /* UserSettings.swift in Sources */,
 				F342061D2F25BA3B00C6E41D /* Collections+Extensions.swift in Sources */,
 				1CBB3F572584040000BD1B5A /* UITextField+Toolbar.swift in Sources */,
+				F373D99C307D664700031524 /* SpeechUtils.swift in Sources */,
 				1C08D87E24CB62ED006AF7A0 /* JsonSampleData.swift in Sources */,
 				F32398D92F2559F200EDED49 /* BannerData.swift in Sources */,
 				F36CFAFE2A6E3ED400B6CF38 /* UploadPuzzleView.swift in Sources */,

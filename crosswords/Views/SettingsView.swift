@@ -49,9 +49,11 @@ struct SettingsView: View {
                 HStack {
                     Link(destination: URL(string: "https://ko-fi.com/rrnarayan1")!) {
                         Image(systemName: "hands.clap.fill")
+                            .accessibilityLabel("Donate")
                     }
                     Link(destination: URL(string: "https://omnicrosswords.app")!) {
                         Image(systemName: "questionmark.circle")
+                            .accessibilityLabel("Support Link")
                     }
                 }
             }
@@ -220,6 +222,7 @@ struct SubscriptionsView: View {
                             systemName: self.hasSub(subscription)
                                 ? "checkmark.square" : "square"
                         )
+                        .accessibilityLabel(self.hasSub(subscription) ? "Enabled" : "Disabled")
                         .foregroundColor(Color(UIColor.systemGray))
                         .font(.system(size: 18))
                     }
@@ -262,6 +265,10 @@ struct AdvancedSettingsView: View {
                 Toggle(isOn: self.$userSettings.loopBackInsideUncompletedWord) {
                     Text("Loop back inside uncompleted word")
                 }.disabled(!self.userSettings.skipCompletedCells)
+
+                Toggle(isOn: self.$userSettings.speakClueButton) {
+                    Text("Speak clue button")
+                }
             }
             .padding(.trailing, 5)
         }
