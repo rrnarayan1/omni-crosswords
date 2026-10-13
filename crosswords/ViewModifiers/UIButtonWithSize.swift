@@ -13,4 +13,8 @@ struct UIButtonWithSize {
     var width: CGFloat
     var height: CGFloat
     var isHidden: Bool = false
+
+    func getWidth() -> CGFloat {
+        return isHidden ? 0.0 : width
+    }
 }

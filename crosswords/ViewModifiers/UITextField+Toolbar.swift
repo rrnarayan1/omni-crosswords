@@ -310,7 +310,8 @@ extension UITextField {
         if firstButton.isHidden && secondButton.isHidden {
             return flexible
         }
-        let containerWidth = firstButton.width + secondButton.width + (Constants.crosswordToolbarPadding)
+        let padding = (firstButton.isHidden || secondButton.isHidden) ? 0.0 : Constants.crosswordToolbarPadding
+        let containerWidth = firstButton.getWidth() + secondButton.getWidth() + padding
         let containerView = UIView(
             frame: CGRectMake(
                 0, 0, containerWidth,
@@ -322,7 +323,7 @@ extension UITextField {
         containerView.addSubview(secondButton.button)
 
         NSLayoutConstraint.activate([
-            firstButton.button.widthAnchor.constraint(equalToConstant: firstButton.width),
+            firstButton.button.widthAnchor.constraint(equalToConstant: firstButton.getWidth()),
             firstButton.button.heightAnchor.constraint(equalToConstant: firstButton.height),
             firstButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             firstButton.button.leadingAnchor.constraint(
@@ -330,7 +331,7 @@ extension UITextField {
                 constant: 0),
         ])
         NSLayoutConstraint.activate([
-            secondButton.button.widthAnchor.constraint(equalToConstant: secondButton.width),
+            secondButton.button.widthAnchor.constraint(equalToConstant: secondButton.getWidth()),
             secondButton.button.heightAnchor.constraint(equalToConstant: secondButton.height),
             secondButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             secondButton.button.leadingAnchor.constraint(
