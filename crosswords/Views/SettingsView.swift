@@ -42,7 +42,7 @@ struct SettingsView: View {
             }
             .padding(.trailing, 5)
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 450))
+        .fixedSize(horizontal: true, vertical: false)
         .navigationBarTitle("Settings")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -272,7 +272,7 @@ struct AdvancedSettingsView: View {
             }
             .padding(.trailing, 5)
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 450))
+        .fixedSize(horizontal: true, vertical: false)
         .navigationBarTitle("Advanced Settings", displayMode: .inline)
     }
 }

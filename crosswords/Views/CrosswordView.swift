@@ -65,7 +65,7 @@ struct CrosswordView: View {
 
     var body: some View {
         VStack {
-            if self.horizontalSizeClass == .compact {
+            if self.showCustomToolbar() {
                 HStack {
                     CrosswordViewLeadingToolbarView(goBack: self.goBack)
                         .padding(.leading)
@@ -73,8 +73,20 @@ struct CrosswordView: View {
                     Text(verbatim: self.displayTitle)
                         .bold()
                     Spacer()
-                    self.getTrailingToolbarView()
-                        .padding(.trailing)
+                    HStack {
+                        CrosswordSettingsToolbarButtonView(
+                            crosswordTitle: self.crossword.title!, author: self.crossword.author!, notes: self.crossword.notes!,
+                            copyright: self.crossword.copyright!, isSolved: self.crossword.solved, outletName: self.crossword.outletName!,
+                            isSolutionAvailable: CrosswordUtils.isSolutionAvailable(crossword: self.crossword), showSettings: self.showSettings,
+                            showSolution: self.showSolution,
+                            getProgressPercentage: { () -> CGFloat in
+                                CrosswordUtils.getCrosswordProgress(self.crossword)
+                            }, markAsSolved: self.markAsSolved, isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                            errorTrackingEnablementSideEffect: self.errorTrackingEnablementSideEffect)
+
+                        ShareCrosswordToolbarButtonView(getShareMessage: self.getShareMessage, isSolved: self.crossword.solved)
+                    }
+                    .padding(.trailing)
                 }
                 .background(self.crossword.solved ? .green : Color(UIColor.systemBackground))
             }
@@ -171,43 +183,37 @@ struct CrosswordView: View {
                     }
                 })
         )
-        .toolbar(self.horizontalSizeClass == .compact ? .hidden : .automatic)
+        .toolbar(self.showCustomToolbar() ? .hidden : .automatic)
         .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 CrosswordViewLeadingToolbarView(goBack: self.goBack)
-            }.hideSharedBackgroundIfAvailable()
-            ToolbarItem(placement: .topBarTrailing) {
-                self.getTrailingToolbarView()
-            }.hideSharedBackgroundIfAvailable()
+            }
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                CrosswordSettingsToolbarButtonView(
+                    crosswordTitle: self.crossword.title!, author: self.crossword.author!, notes: self.crossword.notes!,
+                    copyright: self.crossword.copyright!, isSolved: self.crossword.solved, outletName: self.crossword.outletName!,
+                    isSolutionAvailable: CrosswordUtils.isSolutionAvailable(crossword: self.crossword), showSettings: self.showSettings,
+                    showSolution: self.showSolution,
+                    getProgressPercentage: { () -> CGFloat in
+                        CrosswordUtils.getCrosswordProgress(self.crossword)
+                    }, markAsSolved: self.markAsSolved, isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                    errorTrackingEnablementSideEffect: self.errorTrackingEnablementSideEffect)
+
+                ShareCrosswordToolbarButtonView(getShareMessage: self.getShareMessage, isSolved: self.crossword.solved)
+            }
+            .hideSharedBackgroundIfAvailable()
         }
         // custom back button added in leading toolbar view
         .navigationBarBackButtonHidden(true)
     }
 
-    func getTrailingToolbarView() -> CrosswordViewTrailingToolbarView {
-        return CrosswordViewTrailingToolbarView(
-            crosswordTitle: self.crossword.title!,
-            author: self.crossword.author!,
-            notes: self.crossword.notes!,
-            copyright: self.crossword.copyright!,
-            isSolved: self.crossword.solved,
-            outletName: self.crossword.outletName!,
-            isSolutionAvailable:
-                CrosswordUtils.isSolutionAvailable(
-                    crossword:
-                        self.crossword),
-            showSettings: self.showSettings,
-            showSolution: self.showSolution,
-            getProgressPercentage: { () -> CGFloat in
-                CrosswordUtils.getCrosswordProgress(self.crossword)
-            },
-            getShareMessage: self.getShareMessage,
-            markAsSolved: self.markAsSolved,
-            isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-            errorTrackingEnablementSideEffect:
-                self.errorTrackingEnablementSideEffect)
+    func showCustomToolbar() -> Bool {
+        // If it's a phone (unless it's Duo), use the custom toolbar.
+        // For Duo, we want the toolbar buttons to appear on the side
+        return self.horizontalSizeClass == .compact && UIScreen.screenWidth > 600
     }
 
     func getShareMessage() -> String {
@@ -253,7 +259,7 @@ struct CrosswordView: View {
     }
 
     func shouldScroll() -> Bool {
-        let navigationBarHeight = self.horizontalSizeClass == .compact ? Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
+        let navigationBarHeight = self.showCustomToolbar() ? Constants.crosswordToolbarButtonSize : Constants.navigationBarHeight
         let componentHeights =
             self.componentHeights + navigationBarHeight
             + self.keyboardHeightHelper.keyboardHeight

@@ -99,7 +99,7 @@ struct UploadPuzzleView: View {
                 }
             }
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
+        .fixedSize(horizontal: true, vertical: false)
         .fileImporter(
             isPresented: self.$showFilePicker,
             allowedContentTypes: [.data],

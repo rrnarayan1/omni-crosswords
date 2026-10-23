@@ -76,7 +76,7 @@ struct CrosswordSettingsView: View {
 
             Spacer()
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
+        .fixedSize(horizontal: true, vertical: false)
         .navigationBarTitle("Crossword Settings")
         .padding([.top], 15)
     }
