@@ -61,28 +61,15 @@ extension Date {
     }
 
     func getDayOfWeek() -> Int {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en-AI")
-        dateFormatter.dateFormat = "e"
-        return Int(dateFormatter.string(from: self)) ?? 0
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .gmt
+        let standardWeekday = calendar.component(.weekday, from: self)
+        return (standardWeekday + 5) % 7 + 1
     }
 
     static func getDay(_ dayId: Int) -> String {
         // 1 is monday, 7 is sunday
-        var components = DateComponents()
-        // this is a sunday, so adding 1 day to it will give monday
-        components.year = 2022
-        components.month = 7
-        components.day = 31
-        let date: Date = Calendar.current.date(from: components)!
-        let newDate: Date = Calendar.current.startOfDay(
-            for: (Calendar.current.date(
-                byAdding: .day,
-                value: dayId,
-                to: date)!))
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en-AI")
-        dateFormatter.dateFormat = "EE"
-        return dateFormatter.string(from: newDate)
+        let dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        return dayNames[dayId - 1]
     }
 }
