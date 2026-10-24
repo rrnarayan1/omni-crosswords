@@ -190,6 +190,7 @@ struct CrosswordView: View {
             ToolbarItem(placement: .topBarLeading) {
                 CrosswordViewLeadingToolbarView(goBack: self.goBack)
             }
+            .hideSharedBackgroundIfAvailable()
 
             ToolbarItemGroup(placement: .topBarTrailing) {
                 CrosswordSettingsToolbarButtonView(
@@ -213,7 +214,7 @@ struct CrosswordView: View {
     func showCustomToolbar() -> Bool {
         // If it's a phone (unless it's Duo), use the custom toolbar.
         // For Duo, we want the toolbar buttons to appear on the side
-        return self.horizontalSizeClass == .compact && UIScreen.screenWidth > 600
+        return self.horizontalSizeClass == .compact && UIScreen.screenHeight > 700
     }
 
     func getShareMessage() -> String {

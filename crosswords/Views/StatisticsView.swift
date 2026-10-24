@@ -65,7 +65,7 @@ struct StatisticsView: View {
 
             Spacer()
         }
-        .frame(width: min(UIScreen.screenWidth * 0.9, 400))
+        .fixedSize(horizontal: true, vertical: false)
         .navigationBarTitle("Statistics")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

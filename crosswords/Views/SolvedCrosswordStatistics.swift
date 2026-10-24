@@ -33,7 +33,6 @@ struct SolvedCrosswordStatistics: View {
             predicate: predicateCompound)
         self.graphStat = graphStatEnum
     }
-    let colWidth = (UIScreen.main.bounds.size.width - 100) / 7
 
     var body: some View {
         VStack(alignment: .center) {
@@ -62,7 +61,6 @@ struct SolvedCrosswordStatistics: View {
                                 Spacer()
                                 Rectangle()
                                     .frame(
-                                        width: self.colWidth,
                                         height: proportionOfMax * Constants.statisticsPageMaxHeight
                                     )
                                     .foregroundColor(.blue)
@@ -83,7 +81,6 @@ struct SolvedCrosswordStatistics: View {
 
                         Text(Date.getDay(dayId))
                     }
-                    .frame(width: self.colWidth)
                 }
             }.frame(maxHeight: Constants.statisticsPageMaxHeight + 30)
         }
