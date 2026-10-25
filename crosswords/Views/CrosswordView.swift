@@ -95,7 +95,7 @@ struct CrosswordView: View {
                 ScrollViewReader { scrollreader in
                     CrosswordGridView(
                         crossword: self.crossword, boxWidth: self.boxWidth,
-                        synthesizer: self.synthesizer,
+                        getViewWidth: { self.viewWidth }, synthesizer: self.synthesizer,
                         userSettings: self.userSettings,
                         isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
                         focusedTag: self.$focusedTag,
@@ -398,6 +398,7 @@ struct CrosswordView: View {
 struct CrosswordGridView: View {
     var crossword: Crossword
     var boxWidth: CGFloat
+    var getViewWidth: () -> CGFloat
     var synthesizer: AVSpeechSynthesizer
 
     @ObservedObject var userSettings: UserSettings
@@ -422,23 +423,25 @@ struct CrosswordGridView: View {
                 }
                 .id("row" + String(rowNum))
             }
-            CrosswordTextFieldView(
-                crossword: self.crossword,
-                synthesizer: self.synthesizer,
-                userSettings: self.userSettings, focusedTag: self.$focusedTag,
-                isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
-                highlighted: self.$highlighted, goingAcross: self.$goingAcross,
-                forceUpdate: self.$forceUpdate,
-                becomeFirstResponder: self.$becomeFirstResponder,
-                isRebusMode: self.$isRebusMode
-            )
-            .onKeyPress(phases: .down) { press in
-                return OnKeyPressUtils.onKeyPress(
-                    press: press, focusedTag: self.$focusedTag,
-                    crossword: self.crossword, userSettings: self.userSettings,
-                    goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+            if self.focusedTag != -1 {
+                CrosswordTextFieldView(
+                    crossword: self.crossword,
+                    synthesizer: self.synthesizer, getViewWidth: self.getViewWidth,
+                    userSettings: self.userSettings, focusedTag: self.$focusedTag,
+                    isErrorTrackingEnabled: self.$isErrorTrackingEnabled,
+                    highlighted: self.$highlighted, goingAcross: self.$goingAcross,
+                    forceUpdate: self.$forceUpdate,
+                    becomeFirstResponder: self.$becomeFirstResponder,
+                    isRebusMode: self.$isRebusMode
+                )
+                .onKeyPress(phases: .down) { press in
+                    return OnKeyPressUtils.onKeyPress(
+                        press: press, focusedTag: self.$focusedTag,
+                        crossword: self.crossword, userSettings: self.userSettings,
+                        goingAcross: self.$goingAcross, isHighlighted: self.$highlighted)
+                }
+                .frame(width: 1, height: 1)
             }
-            .frame(width: 1, height: 1)
         }
     }
 

@@ -16,6 +16,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
 
     var crossword: Crossword
     var synthesizer: AVSpeechSynthesizer
+    var getViewWidth: () -> CGFloat
     @ObservedObject var userSettings: UserSettings
 
     @Binding var focusedTag: Int
@@ -28,6 +29,7 @@ struct CrosswordTextFieldView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> NoActionTextField {
         let textField = NoActionTextField(frame: .zero)
+        textField.currentViewWidth = self.getViewWidth()
         textField.delegate = context.coordinator
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .allCharacters
@@ -55,7 +57,12 @@ struct CrosswordTextFieldView: UIViewRepresentable {
             crossword: self.crossword,
             goingAcross: self.goingAcross)
 
-        uiTextField.changeToolbar(userSettings: self.userSettings, clueTitle: clue)
+        uiTextField.changeToolbar(
+            userSettings: self.userSettings, clueTitle: clue,
+            currentViewWidth: uiTextField.currentViewWidth, getViewWidth: self.getViewWidth)
+        if abs(uiTextField.currentViewWidth - self.getViewWidth()) > 1 {
+            uiTextField.currentViewWidth = self.getViewWidth()
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -281,4 +288,6 @@ class NoActionTextField: UITextField {
             delegate.didPressBackspace(self)
         }
     }
+
+    var currentViewWidth: CGFloat = 0.0
 }

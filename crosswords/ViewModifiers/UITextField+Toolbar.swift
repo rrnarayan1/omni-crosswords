@@ -31,7 +31,7 @@ extension UITextField {
         return UIImage(systemName: "speaker.3.fill")!
     }
 
-    func changeToolbar(userSettings: UserSettings, clueTitle: String) {
+    func changeToolbar(userSettings: UserSettings, clueTitle: String, currentViewWidth: CGFloat, getViewWidth: () -> CGFloat) {
         guard let uiTextFieldToolbar = self.inputAccessoryView as? UIToolbar else {
             print("inputAccessoryView is nil or not a UIToolbar")
             return
@@ -51,6 +51,12 @@ extension UITextField {
         } catch {
             print("Failure in creating attributed text: \(error)")
             return
+        }
+
+        if abs(currentViewWidth - getViewWidth()) > 1 {
+            let clueTitleWidth = self.getClueTitleWidth(viewWidth: getViewWidth(), userSettings: userSettings)
+            clueTitleLabel.removeConstraints(clueTitleLabel.constraints)
+            clueTitleLabel.addConstraints(self.getClueTitleConstraints(clueTitleLabel: clueTitleLabel, clueTitleWidth: clueTitleWidth))
         }
 
         if attributedText!.string.trimmingCharacters(in: .whitespaces)
@@ -86,11 +92,46 @@ extension UITextField {
         return attributedString
     }
 
+    func getClueTitleWidth(viewWidth: CGFloat, userSettings: UserSettings) -> CGFloat {
+        let actionButtonsInToolbar = userSettings.actionButtonsInToolbar
+        let clueCyclePlacement = userSettings.clueCyclePlacement
+        let speakClueButtonEnabled = userSettings.speakClueButton
+
+        let numButtonsInToolbar: Int = actionButtonsInToolbar ? 4 : speakClueButtonEnabled ? 3 : 2
+        // only 1 group iff action buttons are not in toolbar and clue cycle is not split
+        // and speak clue button not enabled
+        let numButtonGroups: Int =
+            !actionButtonsInToolbar && !speakClueButtonEnabled && clueCyclePlacement != 1 ? 1 : 2
+        let toolbarButtonSize: CGFloat =
+            Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
+        let mandatedToolbarGroupPadding: CGFloat =
+            Constants.mandatedToolbarGroupPadding * CGFloat(numButtonGroups * 2)
+        let otherElementsInToolbar: CGFloat =
+            toolbarButtonSize
+            + mandatedToolbarGroupPadding
+            + Constants.crosswordToolbarPadding * 2
+        return viewWidth - otherElementsInToolbar
+    }
+
+    func getClueTitleConstraints(clueTitleLabel: UITextView, clueTitleWidth: CGFloat) -> [NSLayoutConstraint] {
+        let widthConstraint = NSLayoutConstraint(
+            item: clueTitleLabel, attribute: .width,
+            relatedBy: .equal, toItem: nil,
+            attribute: .notAnAttribute, multiplier: 1.0,
+            constant: clueTitleWidth)
+        let heightConstraint = NSLayoutConstraint(
+            item: clueTitleLabel, attribute: .height,
+            relatedBy: .equal, toItem: nil,
+            attribute: .notAnAttribute, multiplier: 1.0,
+            constant: Double(Constants.keybordToolbarHeight))
+        return [widthConstraint, heightConstraint]
+    }
+
     func addToolbar(coordinator: CrosswordTextFieldView.Coordinator) {
         self.inputAccessoryView = UIToolbar(
             frame: CGRect(
                 x: 0.0, y: 0.0,
-                width: Double(UIScreen.screenWidth),
+                width: Double(coordinator.parent.getViewWidth()),
                 height: Double(Constants.keybordToolbarHeight)))
         let clueTitleLabel = UITextView()
 
@@ -109,32 +150,8 @@ extension UITextField {
         let clueCyclePlacement = coordinator.parent.userSettings.clueCyclePlacement
         let speakClueButtonEnabled = coordinator.parent.userSettings.speakClueButton
 
-        let numButtonsInToolbar: Int = actionButtonsInToolbar ? 4 : speakClueButtonEnabled ? 3 : 2
-        // only 1 group iff action buttons are not in toolbar and clue cycle is not split
-        // and speak clue button not enabled
-        let numButtonGroups: Int =
-            !actionButtonsInToolbar && !speakClueButtonEnabled && clueCyclePlacement != 1 ? 1 : 2
-        let toolbarButtonSize: CGFloat =
-            Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
-        let mandatedToolbarGroupPadding: CGFloat =
-            Constants.mandatedToolbarGroupPadding * CGFloat(numButtonGroups * 2)
-        let otherElementsInToolbar: CGFloat =
-            toolbarButtonSize
-            + mandatedToolbarGroupPadding
-            + Constants.crosswordToolbarPadding * 2
-
-        let widthConstraint = NSLayoutConstraint(
-            item: clueTitleLabel, attribute: .width,
-            relatedBy: .equal, toItem: nil,
-            attribute: .notAnAttribute, multiplier: 1.0,
-            constant: UIScreen.screenWidth - otherElementsInToolbar)
-        let heightConstraint = NSLayoutConstraint(
-            item: clueTitleLabel, attribute: .height,
-            relatedBy: .equal, toItem: nil,
-            attribute: .notAnAttribute, multiplier: 1.0,
-            constant: Double(Constants.keybordToolbarHeight))
-
-        clueTitleLabel.addConstraints([widthConstraint, heightConstraint])
+        let clueTitleWidth = self.getClueTitleWidth(viewWidth: coordinator.parent.getViewWidth(), userSettings: coordinator.parent.userSettings)
+        clueTitleLabel.addConstraints(self.getClueTitleConstraints(clueTitleLabel: clueTitleLabel, clueTitleWidth: clueTitleWidth))
 
         var configuredToolbarItems: [UIBarButtonItem] {
 
