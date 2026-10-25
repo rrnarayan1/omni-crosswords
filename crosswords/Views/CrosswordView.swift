@@ -27,6 +27,7 @@ struct CrosswordView: View {
     @State var forceUpdate = false
     @State var becomeFirstResponder: Bool = false
     @State var boxWidth: CGFloat = 0.0
+    @State var viewWidth: CGFloat = 0.0
 
     @State var isZoomed: Bool = false
     @State var isRebusMode: Bool = false
@@ -60,7 +61,6 @@ struct CrosswordView: View {
                 CrosswordUtils.isSolutionAvailable(crossword: crossword)
                 ? self.userSettings.defaultErrorTracking
                 : false)
-        self._boxWidth = State(initialValue: self.getInitialBoxWidth())
     }
 
     var body: some View {
@@ -91,7 +91,7 @@ struct CrosswordView: View {
                 .background(self.crossword.solved ? .green : Color(UIColor.systemBackground))
             }
 
-            ScrollView([.horizontal, .vertical]) {
+            ScrollView([.horizontal, .vertical], showsIndicators: false) {
                 ScrollViewReader { scrollreader in
                     CrosswordGridView(
                         crossword: self.crossword, boxWidth: self.boxWidth,
@@ -117,14 +117,15 @@ struct CrosswordView: View {
                             scrollreader.scrollTo("row" + String(newRowNumber), anchor: .center)
                         }
                     }
+                    .scrollTargetLayout()
                 }
             }
+            .safeAreaPadding(.horizontal, max(0, (self.viewWidth - self.boxWidth * CGFloat(self.crossword.length)) / 2))
+            .scrollBounceBehavior(.basedOnSize, axes: .horizontal)
             //.background(.random)
-            .frame(width: self.getInitialBoxWidth() * CGFloat(self.crossword.length))
 
             if self.focusedTag != -1 {
                 CrosswordFooter(
-                    allowZoom: self.getInitialBoxWidth() != CGFloat(Constants.maxInitialCellSize),
                     zoom: self.zoom,
                     isZoomed: self.isZoomed,
                     isPaused: self.isPaused,
@@ -135,7 +136,8 @@ struct CrosswordView: View {
                     isRebusMode: self.$isRebusMode,
                     userSettings: self.userSettings
                 )
-                .frame(width: self.getInitialBoxWidth() * CGFloat(self.crossword.length), height: 10)
+                .padding(.horizontal, 10)
+                .frame(height: 10)
             }
 
             Spacer()
@@ -184,7 +186,7 @@ struct CrosswordView: View {
                 })
         )
         .toolbar(self.showCustomToolbar() ? .hidden : .automatic)
-        .navigationBarTitle(Text(verbatim: displayTitle), displayMode: .inline)
+        .navigationBarTitle(Text(verbatim: self.displayTitle), displayMode: .inline)
         .navigationBarColor(self.crossword.solved ? .systemGreen : .systemBackground)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -206,6 +208,19 @@ struct CrosswordView: View {
                 ShareCrosswordToolbarButtonView(getShareMessage: self.getShareMessage, isSolved: self.crossword.solved)
             }
             .hideSharedBackgroundIfAvailable()
+        }
+        .background {
+            Color.clear
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.width
+                } action: { newValue in
+                    if self.viewWidth != newValue {
+                        self.viewWidth = newValue
+                    }
+                    if !self.isZoomed {
+                        self.boxWidth = self.getInitialBoxWidth()
+                    }
+                }
         }
         // custom back button added in leading toolbar view
         .navigationBarBackButtonHidden(true)
@@ -246,7 +261,7 @@ struct CrosswordView: View {
 
     func getInitialBoxWidth() -> CGFloat {
         let maxInitialSize: CGFloat = CGFloat(Constants.maxInitialCellSize)
-        let defaultSize: CGFloat = (UIScreen.screenWidth - 5) / CGFloat(self.crossword.length)
+        let defaultSize: CGFloat = self.viewWidth / CGFloat(self.crossword.length)
         return min(defaultSize, maxInitialSize)
     }
 
@@ -267,7 +282,7 @@ struct CrosswordView: View {
         //        print(componentHeights)
         //        print(UIScreen.main.bounds.size.height)
         //        print("")
-        return componentHeights > UIScreen.main.bounds.size.height
+        return componentHeights > UIScreen.screenHeight
     }
 
     func showSolution() {
@@ -371,7 +386,7 @@ struct CrosswordView: View {
             }
             .frame(
                 minWidth: 0, maxWidth: .infinity, minHeight: 0,
-                maxHeight: UIScreen.main.bounds.size.height - 120
+                maxHeight: UIScreen.screenHeight - 120
             )
             .background(.ultraThinMaterial)
         } else {
@@ -473,7 +488,6 @@ struct CrosswordGridView: View {
 }
 
 struct CrosswordFooter: View {
-    var allowZoom: Bool
     var zoom: () -> Void
     var isZoomed: Bool
     var isPaused: Bool
@@ -488,17 +502,15 @@ struct CrosswordFooter: View {
 
     var body: some View {
         HStack {
-            // If box width is the maximum, don't allow zoom
-            if self.allowZoom {
-                Button(action: { self.zoom() }) {
-                    Image(
-                        systemName: self.isZoomed
-                            ? "minus.magnifyingglass"
-                            : "plus.magnifyingglass"
-                    )
-                    .accessibilityLabel(self.isZoomed ? "Zoom out" : "Zoom in")
-                }
+            Button(action: { self.zoom() }) {
+                Image(
+                    systemName: self.isZoomed
+                        ? "minus.magnifyingglass"
+                        : "plus.magnifyingglass"
+                )
+                .accessibilityLabel(self.isZoomed ? "Zoom out" : "Zoom in")
             }
+
             Button(action: { self.isRebusMode.toggle() }) {
                 Image(systemName: self.isRebusMode ? "r.square.fill" : "r.square")
                     .accessibilityLabel(self.isRebusMode ? "Disable rebus mode" : "Enable rebus mode")

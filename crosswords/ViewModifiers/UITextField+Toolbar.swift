@@ -90,7 +90,7 @@ extension UITextField {
         self.inputAccessoryView = UIToolbar(
             frame: CGRect(
                 x: 0.0, y: 0.0,
-                width: Double(UIScreen.main.bounds.size.width),
+                width: Double(UIScreen.screenWidth),
                 height: Double(Constants.keybordToolbarHeight)))
         let clueTitleLabel = UITextView()
 
@@ -127,7 +127,7 @@ extension UITextField {
             item: clueTitleLabel, attribute: .width,
             relatedBy: .equal, toItem: nil,
             attribute: .notAnAttribute, multiplier: 1.0,
-            constant: UIScreen.main.bounds.size.width - otherElementsInToolbar)
+            constant: UIScreen.screenWidth - otherElementsInToolbar)
         let heightConstraint = NSLayoutConstraint(
             item: clueTitleLabel, attribute: .height,
             relatedBy: .equal, toItem: nil,
