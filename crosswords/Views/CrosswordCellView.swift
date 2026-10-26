@@ -50,6 +50,7 @@ struct CrosswordCellView: View, Equatable {
                 // 10000 means cell should be shaded
                 Circle()
                     .stroke(lineWidth: 0.5)
+                    .frame(width: self.boxWidth * 0.9)
             }
         }
         .overlay(alignment: .topLeading) {

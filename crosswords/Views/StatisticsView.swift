@@ -65,7 +65,9 @@ struct StatisticsView: View {
 
             Spacer()
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .containerRelativeFrame(.horizontal) { length, axis in
+            return min(length, 600)
+        }
         .navigationBarTitle("Statistics")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

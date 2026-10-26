@@ -214,7 +214,7 @@ struct CrosswordView: View {
                 .onGeometryChange(for: CGFloat.self) { proxy in
                     proxy.size.width
                 } action: { newValue in
-                    if self.viewWidth != newValue {
+                    if abs(self.viewWidth - newValue) > 1 {
                         self.viewWidth = newValue
                     }
                     if !self.isZoomed {
