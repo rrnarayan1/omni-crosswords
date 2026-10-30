@@ -137,7 +137,6 @@ struct CrosswordView: View {
                     userSettings: self.userSettings
                 )
                 .padding(.horizontal, 10)
-                .frame(height: 10)
             }
 
             Spacer()
