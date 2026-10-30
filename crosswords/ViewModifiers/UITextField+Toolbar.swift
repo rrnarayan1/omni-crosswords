@@ -103,7 +103,7 @@ extension UITextField {
         let numButtonGroups: Int =
             !actionButtonsInToolbar && !speakClueButtonEnabled && clueCyclePlacement != 1 ? 1 : 2
         let toolbarButtonSize: CGFloat =
-            Constants.crosswordToolbarIconSize * CGFloat(numButtonsInToolbar)
+            Constants.keyboardToolbarIconSize * CGFloat(numButtonsInToolbar)
         let mandatedToolbarGroupPadding: CGFloat =
             Constants.mandatedToolbarGroupPadding * CGFloat(numButtonGroups * 2)
         let otherElementsInToolbar: CGFloat =
@@ -176,8 +176,6 @@ extension UITextField {
             previousButton.accessibilityLabel = "Previous Clue"
             let previousButtonWithSize = UIButtonWithSize(
                 button: previousButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: Constants.crosswordToolbarIconSize * 1.32
             )
 
             let nextButton = UIButton.systemButton(
@@ -188,8 +186,6 @@ extension UITextField {
             nextButton.accessibilityLabel = "Next Clue"
             let nextButtonWithSize = UIButtonWithSize(
                 button: nextButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: Constants.crosswordToolbarIconSize * 1.32
             )
 
             var toggleButton = UIButton.systemButton(
@@ -232,22 +228,16 @@ extension UITextField {
 
             let solveButtonWithSize = UIButtonWithSize(
                 button: solveButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: Constants.crosswordToolbarIconSize,
                 isHidden: !actionButtonsInToolbar
             )
 
             let toggleButtonWithSize = UIButtonWithSize(
                 button: toggleButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: Constants.crosswordToolbarIconSize,
                 isHidden: !actionButtonsInToolbar
             )
 
             let speakButtonWithSize = UIButtonWithSize(
                 button: speakButton,
-                width: Constants.crosswordToolbarIconSize,
-                height: Constants.crosswordToolbarIconSize,
                 isHidden: !speakClueButtonEnabled
             )
 
@@ -341,7 +331,7 @@ extension UITextField {
 
         NSLayoutConstraint.activate([
             firstButton.button.widthAnchor.constraint(equalToConstant: firstButton.getWidth()),
-            firstButton.button.heightAnchor.constraint(equalToConstant: firstButton.height),
+            firstButton.button.heightAnchor.constraint(equalToConstant: CGFloat(Constants.keybordToolbarHeight)),
             firstButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             firstButton.button.leadingAnchor.constraint(
                 equalTo: containerView.leadingAnchor,
@@ -349,11 +339,11 @@ extension UITextField {
         ])
         NSLayoutConstraint.activate([
             secondButton.button.widthAnchor.constraint(equalToConstant: secondButton.getWidth()),
-            secondButton.button.heightAnchor.constraint(equalToConstant: secondButton.height),
+            secondButton.button.heightAnchor.constraint(equalToConstant: CGFloat(Constants.keybordToolbarHeight)),
             secondButton.button.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             secondButton.button.leadingAnchor.constraint(
                 equalTo: containerView.leadingAnchor,
-                constant: containerWidth / 2),
+                constant: firstButton.getWidth() + padding),
         ])
         return UIBarButtonItem(customView: containerView)
             .hideSharedBackgroundIfAvailable()

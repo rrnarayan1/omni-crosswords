@@ -10,12 +10,12 @@ import SwiftUI
 enum Constants {
 
     static let keybordToolbarHeight: Int = 40
+    static let keyboardToolbarIconSize: CGFloat = 25.0
     static let navigationBarHeight: CGFloat = 45.0
     static let maxInitialCellSize: Int = 40
     static let crosswordToolbarButtonSize: CGFloat = 16.0
     static let crosswordListViewToolbarButtonSize: CGFloat = 18.0
     static let listIconSize: CGFloat = 20.0
-    static let crosswordToolbarIconSize: CGFloat = 25.0
     static let mandatedToolbarGroupPadding: CGFloat = 25.0
     static let crosswordToolbarPadding: CGFloat = 5.0
     static let statisticsPageMaxHeight: CGFloat = 200.0

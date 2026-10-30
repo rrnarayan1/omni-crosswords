@@ -10,8 +10,7 @@ import UIKit
 
 struct UIButtonWithSize {
     var button: UIButton
-    var width: CGFloat
-    var height: CGFloat
+    var width: CGFloat = Constants.keyboardToolbarIconSize
     var isHidden: Bool = false
 
     func getWidth() -> CGFloat {
