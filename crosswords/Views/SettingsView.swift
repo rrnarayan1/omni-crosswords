@@ -42,7 +42,10 @@ struct SettingsView: View {
             }
             .padding(.trailing, 5)
         }
-        .fixedSize(horizontal: true, vertical: false)
+        .padding(.horizontal, 8)
+        .containerRelativeFrame(.horizontal) { length, axis in
+            return min(length, 600)
+        }
         .navigationBarTitle("Settings")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -148,9 +151,14 @@ struct PickerViews: View {
                     ForEach((3..<22)) { i in
                         Text(String(i) + " days").tag(String(i))
                     }
-                    Text("Never (May cause issues with performance)").tag("Never")
+                    Text("Never").tag("Never")
                 }
                 .pickerStyle(.menu)
+            }
+
+            if self.userSettings.daysToWaitBeforeDeleting == "Never" {
+                Text("Never deleting puzzles can cause performance issues")
+                    .foregroundStyle(.orange)
             }
 
             HStack {
