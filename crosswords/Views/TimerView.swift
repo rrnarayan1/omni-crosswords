@@ -24,6 +24,9 @@ struct TimerView: View {
                     self.timerWrapper.stop()
                 }
             })
+            .onDisappear(perform: {
+                self.timerWrapper.stop()
+            })
             .onChange(of: self.isPaused) { _, newPausedValue in
                 if newPausedValue {
                     self.timerWrapper.stop()
