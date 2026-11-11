@@ -76,8 +76,7 @@ struct CrosswordSettingsView: View {
 
             Spacer()
         }
-        .fixedSize(horizontal: true, vertical: false)
         .navigationBarTitle("Crossword Settings")
-        .padding([.top], 15)
+        .padding([.top, .horizontal], 15)
     }
 }
