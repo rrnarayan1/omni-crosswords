@@ -349,9 +349,12 @@ struct CrosswordView: View {
 
     func pause() {
         self.becomeFirstResponder = false
-        self.focusedTag = -1
-        self.highlighted = Array()
         self.isPaused = true
+    }
+
+    func unpause() {
+        self.isPaused = false
+        self.becomeFirstResponder = true
     }
 
     func solveCell(timerWrapper: TimerWrapper) {
@@ -376,7 +379,7 @@ struct CrosswordView: View {
                 Text(TimeUtils.toDisplayTime(Int(self.crossword.solvedTime)))
                     .font(.system(size: 30))
                     .padding(.bottom)
-                Button(action: { self.isPaused.toggle() }) {
+                Button(action: { self.unpause() }) {
                     Image(systemName: "play.fill")
                         .accessibilityLabel("Resume")
                         .font(.system(size: 30))
